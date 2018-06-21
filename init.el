@@ -3,6 +3,7 @@
 (setq private/cache-directory "~/.emacs.d/.cache/")
 
 (require 'init-package)
+(require 'init-evil)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
