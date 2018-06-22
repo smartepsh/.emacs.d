@@ -4,7 +4,6 @@
 (setq package-archives '(("melpa-cn" . "http://elpa.zilongshanren.com/melpa/")
                         ("org-cn"   . "http://elpa.zilongshanren.com/org/")
                         ("gnu-cn"   . "http://elpa.zilongshanren.com/gnu/")))
-(setq package-user-dir "~/.emacs.d/packages")
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
