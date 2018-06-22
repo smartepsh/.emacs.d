@@ -8,6 +8,11 @@
 
 (setq private/system-is-mac (eq system-type 'darwin))
 
+;; emacs setting
+(setq auto-save-default nil)
+(setq make-backup-files nil)
+(setq create-lockfiles nil)
+
 (require 'init-package)
 (require 'init-evil)
 (require 'init-chinese)
