@@ -14,6 +14,7 @@
 (setq create-lockfiles nil)
 
 (require 'init-package)
+(require 'init-server)
 (require 'init-evil)
 (require 'init-chinese)
 (require 'init-ui)
