@@ -10,6 +10,7 @@
 
 (require 'init-package)
 (require 'init-evil)
+(require 'init-chinese)
 (require 'init-ui)
 (require 'init-dashboard)
 (require 'init-elixir)
