@@ -22,6 +22,7 @@
 (require 'init-dashboard)
 (require 'init-elixir)
 (require 'init-ivy)
+(require 'init-magit)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
