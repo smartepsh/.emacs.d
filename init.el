@@ -23,6 +23,7 @@
 (require 'init-elixir)
 (require 'init-ivy)
 (require 'init-magit)
+(require 'init-projectile)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
