@@ -20,6 +20,7 @@
 (require 'init-env)
 (require 'init-dashboard)
 (require 'init-elixir)
+(require 'init-ivy)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
