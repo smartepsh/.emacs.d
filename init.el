@@ -24,6 +24,7 @@
 (require 'init-ivy)
 (require 'init-magit)
 (require 'init-projectile)
+(require 'init-company)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
