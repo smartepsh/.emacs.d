@@ -13,9 +13,9 @@
 (setq make-backup-files nil)
 (setq create-lockfiles nil)
 (require 'init-package)
+(require 'init-ui)
 (require 'init-server)
 (require 'init-emacs)
-(require 'init-ui)
 (require 'init-evil)
 (require 'init-chinese)
 (require 'init-env)
@@ -28,6 +28,7 @@
 (require 'init-spell-checking)
 (require 'init-syntax-checking)
 (require 'init-mac)
+(require 'init-org)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
