@@ -6,11 +6,11 @@
   :config
   (mapc #'evil-declare-ignore-repeat
     '(kill-this-buffer
-    ido-kill-buffer
-    save-buffer
-    split-window-below
-    split-window-below-and-focus
-    split-window-right
-    split-window-right-and-focus)))
+     ido-kill-buffer
+     save-buffer
+     split-window-below
+     split-window-below-and-focus
+     split-window-right
+     split-window-right-and-focus)))
 
 (provide 'init-evil)
