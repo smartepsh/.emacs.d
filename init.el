@@ -29,6 +29,7 @@
 (require 'init-syntax-checking)
 (require 'init-mac)
 (require 'init-org)
+(require 'init-file-nav)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
