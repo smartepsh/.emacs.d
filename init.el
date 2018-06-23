@@ -12,7 +12,6 @@
 (setq auto-save-default nil)
 (setq make-backup-files nil)
 (setq create-lockfiles nil)
-
 (require 'init-package)
 (require 'init-server)
 (require 'init-ui)
@@ -27,6 +26,7 @@
 (require 'init-company)
 (require 'init-spell-checking)
 (require 'init-syntax-checking)
+(require 'init-mac)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
