@@ -26,6 +26,7 @@
 (require 'init-projectile)
 (require 'init-company)
 (require 'init-spell-checking)
+(require 'init-syntax-checking)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
