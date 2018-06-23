@@ -25,6 +25,7 @@
 (require 'init-magit)
 (require 'init-projectile)
 (require 'init-company)
+(require 'init-spell-checking)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
