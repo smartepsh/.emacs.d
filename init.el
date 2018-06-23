@@ -15,9 +15,9 @@
 
 (require 'init-package)
 (require 'init-server)
+(require 'init-ui)
 (require 'init-evil)
 (require 'init-chinese)
-(require 'init-ui)
 (require 'init-env)
 (require 'init-dashboard)
 (require 'init-elixir)
