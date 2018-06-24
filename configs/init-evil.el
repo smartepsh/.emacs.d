@@ -1,3 +1,20 @@
+(use-package general
+  :config
+  (general-evil-setup)
+  (general-create-definer my-leader-def
+    :prefix-name "SPC"
+    :prefix "SPC"
+    :keymaps '(motion normal emacs))
+  (general-create-definer common-leader-def
+    :prefix-name "leader"
+    :prefix ","
+    :keymaps '(motion normal emacs))
+  )
+
+(use-package which-key
+  :init
+  (which-key-mode))
+
 (use-package evil
   :init
   (setq evil-shift-width 2)

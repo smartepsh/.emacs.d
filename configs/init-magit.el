@@ -1,5 +1,10 @@
 (use-package magit
-  :defer t)
+  :commands (magit-status)
+  :general
+  (common-leader-def
+  "" nil
+  "gs" 'magit-status
+  ))
 
 (use-package evil-magit
   :after magit)
