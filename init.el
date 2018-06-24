@@ -30,6 +30,7 @@
 (require 'init-mac)
 (require 'init-org)
 (require 'init-file-nav)
+(require 'init-basic-settings)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
