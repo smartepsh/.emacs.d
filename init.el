@@ -12,9 +12,10 @@
 (setq auto-save-default nil)
 (setq make-backup-files nil)
 (setq create-lockfiles nil)
+
 (require 'init-package)
-(require 'init-ui)
 (require 'init-evil)
+(require 'init-ui)
 (require 'init-server)
 (require 'init-emacs)
 (require 'init-chinese)

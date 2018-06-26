@@ -7,8 +7,8 @@
 
 (use-package winum
   :init
-  (winum-mode)
   (setq winum-auto-setup-mode-line nil)
+  (winum-mode)
   :config
   ;; window manipulation with command key
   (global-set-key (kbd "s-1") 'winum-select-window-1)
