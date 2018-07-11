@@ -6,10 +6,13 @@
 
 (use-package all-the-icons)
 
-(use-package doom-modeline
-  :ensure t
+(use-package spaceline
   :defer t
-  :hook (after-init . doom-modeline-init))
+  :init
+  (spaceline-emacs-theme)
+  :config
+  
+)
 
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
