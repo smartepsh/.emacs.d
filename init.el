@@ -20,7 +20,7 @@
 (require 'init-emacs)
 (require 'init-chinese)
 (require 'init-env)
-(require 'init-dashboard)
+;; (require 'init-dashboard)
 (require 'init-elixir)
 (require 'init-ivy)
 (require 'init-magit)
