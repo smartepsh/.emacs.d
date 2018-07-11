@@ -1,1 +1,6 @@
-/elpa
+elpa/
+auto-save-list/
+recentf
+recentf~
+/recentf
+company-statistics-cache.el
