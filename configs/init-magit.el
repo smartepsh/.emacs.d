@@ -1,8 +1,7 @@
 (use-package magit
   :commands (magit-status)
   :general
-  (common-leader-def
-  "" nil
+  (my-leader-def
   "gs" 'magit-status
   ))
 
