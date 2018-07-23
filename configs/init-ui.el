@@ -4,17 +4,33 @@
   doom-themes-enable-italic t)
   (load-theme 'doom-one t))
 
-(use-package all-the-icons)
-
-(use-package spaceline
-  :defer t
-  :init
-  (spaceline-emacs-theme)
-  :config
-  
-)
-
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
+
+ (defface egoge-display-time
+   '((((type x w32 mac))
+      ;; #060525 is the background colour of my default face.
+      (:foreground "#060525" :inherit bold))
+     (((type tty))
+      (:foreground "blue")))
+   "Face used to display the time in the mode line.")
+
+(setq display-time-string-forms
+       '((propertize (concat " " 24-hours ":" minutes " ")
+ 		    'face 'egoge-display-time)))
+
+(display-time-mode t)
+
+(display-battery-mode 1)
+
+(use-package linum-relative
+  :defer t
+  :config
+  (setq linum-relative-backend 'display-line-numbers-mode))
+
+(use-package diminish
+  :ensure t
+  :demand t
+  :diminish abbrev-mode)
 
 (provide 'init-ui)
