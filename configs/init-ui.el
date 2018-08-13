@@ -7,17 +7,29 @@
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 
- (defface egoge-display-time
-   '((((type x w32 mac))
-      ;; #060525 is the background colour of my default face.
-      (:foreground "#060525" :inherit bold))
-     (((type tty))
-      (:foreground "blue")))
-   "Face used to display the time in the mode line.")
+(use-package powerline
+  :init
+  (setq powerline-image-apple-rgb t
+	powerline-default-separator 'box)
+  (powerline-vim-theme))
 
-(setq display-time-string-forms
-       '((propertize (concat " " 24-hours ":" minutes " ")
- 		    'face 'egoge-display-time)))
+(use-package airline-themes
+  :after powerline
+  :config
+  (load-theme 'airline-doom-one))
+
+
+;; (defface egoge-display-time
+;;    '((((type x w32 mac))
+;;       ;; #060525 is the background colour of my default face.
+;;       (:foreground "#060525" :inherit bold))
+;;      (((type tty))
+;;       (:foreground "blue")))
+;;    "Face used to display the time in the mode line.")
+
+;; (setq display-time-string-forms
+;;        '((propertize (concat " " 24-hours ":" minutes " ")
+;;  		    'face 'egoge-display-time)))
 
 (display-time-mode t)
 
