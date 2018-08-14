@@ -10,7 +10,7 @@
      magit-blame-read-only-mode-map
      magit-log-mode-map
      git-rebase-mode-map))
-  (my-leader-def
+  (common-leader
   "gs" 'magit-status
   ))
 
