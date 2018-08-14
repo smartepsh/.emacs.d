@@ -9,9 +9,14 @@
 (setq private/system-is-mac (eq system-type 'darwin))
 
 ;; emacs setting
-(setq auto-save-default nil)
-(setq make-backup-files nil)
-(setq create-lockfiles nil)
+(setq auto-save-default nil
+      make-backup-files nil
+      create-lockfiles nil
+      ;; key setting for mac
+      ns-command-modifier 'super
+      ns-option-modifer 'meta
+      ns-right-option-modifier 'hyper
+      ns-right-command-modifier 'hyper)
 
 (require 'init-package)
 (require 'init-evil)

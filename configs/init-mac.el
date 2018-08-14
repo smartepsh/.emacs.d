@@ -39,10 +39,6 @@
       (insert (shell-command-to-string "pbpaste"))
     )
 
-  (setq ns-command-modifier 'super
-    ns-option-modifer 'meta
-    ns-right-option-modifier 'hyper
-    ns-right-command-modifier 'hyper)
  ;; Keybindings
     ;; (global-set-key (kbd-mac-command "=") 'spacemacs/scale-up-font)
     ;; (global-set-key (kbd-mac-command "-") 'spacemacs/scale-down-font)
