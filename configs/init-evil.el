@@ -1,14 +1,15 @@
 (use-package general
   :config
   (general-evil-setup)
+  (general-auto-unbind-keys)
   (general-create-definer my-leader-def
     :prefix-name "SPC"
     :prefix "SPC"
-    :keymaps '(motion normal emacs))
+    :states '(motion normal emacs))
   (general-create-definer common-leader-def
     :prefix-name "leader"
     :prefix ","
-    :keymaps '(motion normal emacs))
+    :states '(motion normal emacs))
   )
 
 (use-package which-key
