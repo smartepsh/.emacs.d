@@ -1,5 +1,4 @@
 (use-package projectile
-             :delight
              :commands (projectile-find-file)
 	     :general
 	     (my-leader-def
