@@ -9,4 +9,7 @@
 (use-package swiper
   :after ivy)
 
+(use-package counsel
+  :after ivy)
+
 (provide 'init-ivy)
