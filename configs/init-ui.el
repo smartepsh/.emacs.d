@@ -39,7 +39,7 @@
 
 (use-package spaceline
   :ensure t
-  :config
+  :init
   (setq powerline-image-apple-rgb t
 	spaceline-buffer-size-p nil
 	spaceline-flycheck-error-p nil
