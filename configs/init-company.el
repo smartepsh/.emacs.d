@@ -1,5 +1,4 @@
 (use-package company
-  :diminish
   :defer t
   :init
   (global-company-mode)
@@ -17,7 +16,6 @@
   (add-hook 'company-mode-hook 'company-statistics-mode))
 
 (use-package smartparens
-  :diminish
   :defer t
   :init
   (smartparens-global-mode)

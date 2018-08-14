@@ -63,9 +63,4 @@
   :config
   (setq linum-relative-backend 'display-line-numbers-mode))
 
-(use-package diminish
-  :ensure t
-  :demand t
-  :diminish abbrev-mode)
-
 (provide 'init-ui)
