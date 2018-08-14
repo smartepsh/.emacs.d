@@ -1,7 +1,7 @@
 (use-package projectile
              :commands (projectile-find-file)
 	     :general
-	     (my-leader-def
+	     (common-leader
 	       "pf" 'projectile-find-file)
              )
 

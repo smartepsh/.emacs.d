@@ -2,15 +2,17 @@
   :config
   (general-evil-setup)
   (general-auto-unbind-keys)
-  (general-create-definer my-leader-def
+  (general-create-definer common-leader
     :prefix-name "SPC"
     :prefix "SPC"
     :states '(motion normal emacs))
-  (general-create-definer common-leader-def
+  (general-create-definer local-leader
     :prefix-name "leader"
     :prefix ","
     :states '(motion normal emacs))
-  )
+  (general-create-definer clear-spc
+    :prefix-name "NOSPC"
+    "SPC" nil))
 
 (use-package which-key
   :init

@@ -3,8 +3,7 @@
   (global-set-key (kbd "H-r") 'restart-emacs)
   )
 
-  (my-leader-def
-    "" nil
+  (common-leader
     "SPC" 'execute-extended-command
     "ff" 'find-file)
 
