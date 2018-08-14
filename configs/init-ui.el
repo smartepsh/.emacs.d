@@ -7,16 +7,27 @@
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 
-(use-package powerline
-  :init
-  (setq powerline-image-apple-rgb t
-	powerline-default-separator 'box)
-  (powerline-vim-theme))
-
-(use-package airline-themes
-  :after powerline
+(use-package moody
   :config
-  (load-theme 'airline-doom-one))
+  (setq x-underline-at-descent-line t)
+  (moody-replace-mode-line-buffer-identification)
+  (moody-replace-vc-mode) 
+  (setq moody-slant-function #'moody-slant-apple-rgb)
+  )
+
+(use-package minions
+  :config
+  (minions-mode t))
+;; (use-package powerline
+;;   :init
+;;   (setq powerline-image-apple-rgb t
+;; 	powerline-default-separator 'box)
+;;   (powerline-vim-theme))
+;; 
+;; (use-package airline-themes
+;;   :after powerline
+;;   :config
+;;   (load-theme 'airline-doom-one))
 
 
 ;; (defface egoge-display-time
