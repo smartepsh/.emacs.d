@@ -59,10 +59,7 @@
     (global-set-key (kbd "s-`") 'other-frame)
     (global-set-key (kbd "s-z") 'undo-tree-undo)
     (global-set-key (kbd "s-Z") 'undo-tree-redo)
-    (global-set-key (kbd "s-s")
-                    (lambda ()
-                      (interactive)
-                      (call-interactively (key-binding "\C-x\C-s"))))
+    (global-set-key (kbd "s-s") 'evil-write)
 
     (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
     (global-set-key (kbd "s-s-h") 'ns-do-hide-others)
