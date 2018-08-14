@@ -7,44 +7,45 @@
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 
-(use-package moody
+(use-package eyebrowse
+  :ensure t
+  :init
+  (eyebrowse-mode t))
+
+(use-package evil-anzu
+  :after evil
+  :init
+  (setq anzu-cons-mode-line-p nil)
+  (global-anzu-mode 1)
   :config
-  (setq x-underline-at-descent-line t)
-  (moody-replace-mode-line-buffer-identification)
-  (moody-replace-vc-mode) 
-  (setq moody-slant-function #'moody-slant-apple-rgb)
+  (set-face-attribute 'anzu-mode-line nil
+		      :foreground "yellow" :weight 'bold)
   )
 
-(use-package minions
+(use-package nyan-mode
+  :ensure t
+  :init
+  (nyan-mode))
+
+(use-package spaceline
+  :ensure t
   :config
-  (minions-mode t))
-;; (use-package powerline
-;;   :init
-;;   (setq powerline-image-apple-rgb t
-;; 	powerline-default-separator 'box)
-;;   (powerline-vim-theme))
-;; 
-;; (use-package airline-themes
-;;   :after powerline
-;;   :config
-;;   (load-theme 'airline-doom-one))
-
-
-;; (defface egoge-display-time
-;;    '((((type x w32 mac))
-;;       ;; #060525 is the background colour of my default face.
-;;       (:foreground "#060525" :inherit bold))
-;;      (((type tty))
-;;       (:foreground "blue")))
-;;    "Face used to display the time in the mode line.")
-
-;; (setq display-time-string-forms
-;;        '((propertize (concat " " 24-hours ":" minutes " ")
-;;  		    'face 'egoge-display-time)))
-
-(display-time-mode t)
-
-(display-battery-mode 1)
+  (setq powerline-image-apple-rgb t
+	spaceline-buffer-size-p nil
+	spaceline-flycheck-error-p nil
+	spaceline-flycheck-warning-p nil
+	spaceline-flycheck-info-p nil
+	spaceline-minor-modes-p nil
+	;; spaceline-anzu-p t
+	;; spaceline-evil-state-p t
+	;; spaceline-projectile-root-p t
+	powerline-default-separator 'box
+	spaceline-separator-dir-left '(right . right)
+	spaceline-separator-dir-right '(left . left)
+	spaceline-window-numbers-unicode t
+	spaceline-highlight-face-func 'spaceline-highlight-face-evil-state
+	spaceline-workspace-numbers-unicode t)
+  (spaceline-emacs-theme))
 
 (use-package linum-relative
   :defer t

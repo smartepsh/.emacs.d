@@ -7,6 +7,7 @@
 
 (use-package winum
   :init
+  (setq winum-auto-setup-mode-line nil)
   (winum-mode)
   :config
   ;; window manipulation with command key
