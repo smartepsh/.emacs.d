@@ -1,6 +1,6 @@
 (setq gc-cons-threshold most-positive-fixnum)
 (add-hook 'after-init-hook #'(lambda ()
-                               (setq gc-cons-threshold 4000000)))
+                               (setq gc-cons-threshold 2010241024)))
 
 (add-to-list 'load-path "~/.emacs.d/configs/")
 
@@ -41,11 +41,12 @@
  '(column-number-mode t)
  '(custom-safe-themes
    (quote
-    ("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
+    ("a94f1a015878c5f00afab321e4fef124b2fc3b823c8ddd89d360d710fc2bddfc" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
  '(line-number-mode nil)
  '(package-selected-packages
    (quote
     (diminish linum-relative alchemist ob-elixir elixir-mode dashboard page-break-lines evil use-package)))
+ '(powerline-height 15)
  '(size-indication-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
