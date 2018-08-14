@@ -30,8 +30,7 @@
   (global-anzu-mode 1)
   :config
   (set-face-attribute 'anzu-mode-line nil
-		      :foreground "yellow" :weight 'bold)
-  )
+		      :foreground "yellow" :weight 'bold))
 
 (use-package nyan-mode
   :ensure t
