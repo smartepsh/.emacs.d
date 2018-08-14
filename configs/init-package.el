@@ -17,6 +17,9 @@
   :ensure t
   :config
   (setq auto-package-update-delete-old-versions nil))
+
+(use-package quelpa-use-package
+  :after use-package)
   
 
 (provide 'init-package)

@@ -2,8 +2,8 @@
   :defer t)
 
 (use-package counsel-projectile
+  :quelpa (counsel-projectile :fetcher github :repo "smartepsh/counsel-projectile")
   :defer t
-  :after counsel projectile
   :general
   (common-leader
   "pf" 'counsel-projectile-find-file
