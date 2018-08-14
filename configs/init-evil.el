@@ -33,4 +33,11 @@
      split-window-right
      split-window-right-and-focus)))
 
+(use-package evil-escape
+  :after evil
+  :config
+  (evil-escape-mode)
+  (setq evil-escape-key-sequence "jk"
+	evil-escape-daly 0.1))
+
 (provide 'init-evil)
