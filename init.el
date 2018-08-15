@@ -42,6 +42,7 @@
 (require 'init-mac)
 (require 'init-org)
 (require 'init-file-nav)
+(require 'init-jumping)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -55,7 +56,7 @@
  '(line-number-mode nil)
  '(package-selected-packages
    (quote
-    (evil-surround evil-matchit counsel-projectile quelpa diminish linum-relative alchemist ob-elixir elixir-mode dashboard page-break-lines evil use-package)))
+    (vimish-fold evil-surround evil-matchit counsel-projectile quelpa diminish linum-relative alchemist ob-elixir elixir-mode dashboard page-break-lines evil use-package)))
  '(powerline-height 15)
  '(size-indication-mode t))
 (custom-set-faces
@@ -63,4 +64,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(vimish-fold-fringe ((t (:foreground "SteelBlue2")))))
