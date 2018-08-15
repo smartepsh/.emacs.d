@@ -15,6 +15,7 @@
     "SPC" nil))
 
 (use-package which-key
+  :defer t
   :init
   (which-key-mode))
 
@@ -54,7 +55,6 @@
   :defer t
   :after avy
   :config
-  (setq vimish-fold-fringe ())
   (vimish-fold-global-mode t)
   :general
   (common-leader
