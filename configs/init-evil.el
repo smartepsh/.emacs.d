@@ -17,6 +17,7 @@
 (use-package which-key
   :init
   (which-key-mode))
+
 (use-package evil
   :init
   (setq evil-shift-width 2)

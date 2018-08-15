@@ -8,7 +8,6 @@
 (tool-bar-mode -1)
 
 (use-package eyebrowse
-  :ensure t
   :init
   (eyebrowse-mode t)
   :config
@@ -34,12 +33,10 @@
 		      :foreground "yellow" :weight 'bold))
 
 (use-package nyan-mode
-  :ensure t
   :init
   (nyan-mode))
 
 (use-package spaceline
-  :ensure t
   :init
   (setq powerline-image-apple-rgb t
 	spaceline-buffer-size-p nil
@@ -49,7 +46,7 @@
 	spaceline-minor-modes-p nil
 	;; spaceline-anzu-p t
 	;; spaceline-evil-state-p t
-	;; spaceline-projectile-root-p t
+	spaceline-projectile-root-p nil
 	powerline-default-separator 'box
 	spaceline-separator-dir-left '(right . right)
 	spaceline-separator-dir-right '(left . left)
