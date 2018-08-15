@@ -46,4 +46,9 @@
 ;;  (evil-define-key 'normal evil-matchit-mode-map "%" 'evilmi-jump-items)
   (global-evil-matchit-mode t))
 
+(use-package evil-surround
+  :after evil
+  :config
+  (global-evil-surround-mode t))
+
 (provide 'init-evil)
