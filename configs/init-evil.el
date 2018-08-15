@@ -38,6 +38,12 @@
   :config
   (evil-escape-mode)
   (setq evil-escape-key-sequence "jk"
-	evil-escape-daly 0.1))
+	evil-escape-delay 0.1))
+
+(use-package evil-matchit
+  :after evil
+  :config
+;;  (evil-define-key 'normal evil-matchit-mode-map "%" 'evilmi-jump-items)
+  (global-evil-matchit-mode t))
 
 (provide 'init-evil)
