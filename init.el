@@ -16,7 +16,12 @@
       ns-command-modifier 'super
       ns-option-modifer 'meta
       ns-right-option-modifier 'hyper
-      ns-right-command-modifier 'hyper)
+      ns-right-command-modifier 'hyper
+      url-proxy-services
+      '(
+	("no_proxy" . "zilongshanren\\.com")
+	("http" . "localhost:1087")
+	("https" . "localhost:1087")))
 
 (require 'init-package)
 (require 'init-evil)
