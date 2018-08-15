@@ -24,6 +24,7 @@
 	("https" . "localhost:1087")))
 
 (require 'init-package)
+(require 'init-basic-settings)
 (require 'init-evil)
 (require 'init-ui)
 (require 'init-server)
@@ -41,7 +42,6 @@
 (require 'init-mac)
 (require 'init-org)
 (require 'init-file-nav)
-(require 'init-basic-settings)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
