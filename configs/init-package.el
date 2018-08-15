@@ -6,7 +6,7 @@
 
 ;; disable update during quelpa initialized
 (setq quelpa-update-melpa-p nil)
-(setq quelpa-checkout-melpa-p nil)
+(setq quelpa-checkout-melpa-p t)
 ;; install quelpa
 (unless (require 'quelpa nil t)
   (with-temp-buffer
