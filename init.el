@@ -38,7 +38,7 @@
 (require 'init-emacs)
 (require 'init-chinese)
 (require 'init-env)
-(require 'init-dashboard)
+;; (require 'init-dashboard)
 (require 'init-elixir)
 (require 'init-ivy)
 (require 'init-magit)
@@ -50,6 +50,8 @@
 (require 'init-org)
 (require 'init-file-nav)
 (require 'init-jumping)
+
+(ido-switch-buffer *Messages*)
 
 ;;(custom-set-variables
 ;; ;; custom-set-variables was added by Custom.
