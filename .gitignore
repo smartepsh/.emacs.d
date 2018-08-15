@@ -7,3 +7,4 @@ company-statistics-cache.el
 .last-package-update-day
 quelpa/
 vimish-fold/
+custom.el

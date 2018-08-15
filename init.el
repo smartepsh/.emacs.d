@@ -16,12 +16,18 @@
       ns-command-modifier 'super
       ns-option-modifer 'meta
       ns-right-option-modifier 'hyper
-      ns-right-command-modifier 'hyper
-      url-proxy-services
-      '(
-	("no_proxy" . "zilongshanren\\.com")
-	("http" . "localhost:1087")
-	("https" . "localhost:1087")))
+      ns-right-command-modifier 'hyper)
+
+;; put this config to custom.el
+;;      url-proxy-services
+;;      '(
+;;	("no_proxy" . "zilongshanren\\.com")
+;;	("http" . "localhost:1087")
+;;	("https" . "localhost:1087"))
+
+(setq custom-file "~/.emacs.d/custom.el")
+(if (file-exists-p custom-file)
+  (load custom-file))
 
 (require 'init-package)
 (require 'init-basic-settings)
