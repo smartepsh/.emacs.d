@@ -34,7 +34,6 @@
 
 (quelpa-use-package-activate-advice)
 
-
 (use-package auto-package-update
   :config
   (setq auto-package-update-delete-old-versions nil))

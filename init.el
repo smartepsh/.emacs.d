@@ -55,7 +55,7 @@
  '(line-number-mode nil)
  '(package-selected-packages
    (quote
-    (diminish linum-relative alchemist ob-elixir elixir-mode dashboard page-break-lines evil use-package)))
+    (counsel-projectile quelpa diminish linum-relative alchemist ob-elixir elixir-mode dashboard page-break-lines evil use-package)))
  '(powerline-height 15)
  '(size-indication-mode t))
 (custom-set-faces
