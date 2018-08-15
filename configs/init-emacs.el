@@ -4,7 +4,7 @@
   )
 
   (common-leader
-    "SPC" 'execute-extended-command
-    "ff" 'find-file)
+    "SPC" 'execute-extended-command)
+    ;;"ff" 'find-file)
 
 (provide 'init-emacs)
