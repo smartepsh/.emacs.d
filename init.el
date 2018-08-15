@@ -18,16 +18,17 @@
       ns-right-option-modifier 'hyper
       ns-right-command-modifier 'hyper)
 
-;; put this config to custom.el
+;; put this config to proxy.el
 ;;      url-proxy-services
 ;;      '(
 ;;	("no_proxy" . "zilongshanren\\.com")
 ;;	("http" . "localhost:1087")
 ;;	("https" . "localhost:1087"))
 
-(setq proxy-file "~/.emacs.d/proxy.el")
-(if (file-exists-p proxy-file)
-  (load proxy-file))
+(let ((proxy-file "~/.emacs.d/proxy.el"))
+  (if (file-exists-p proxy-file)
+      (load proxy-file)
+    (message "no proxy setting!")))
 
 (require 'init-package)
 (require 'init-basic-settings)
