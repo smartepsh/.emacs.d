@@ -25,6 +25,7 @@
   (setq evil-flash-delay 1)
   (evil-mode t)
   :config
+  (setq-default evil-shift-width 2)
   (mapc #'evil-declare-ignore-repeat
     '(kill-this-buffer
      ido-kill-buffer
