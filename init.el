@@ -18,13 +18,6 @@
       ns-right-option-modifier 'hyper
       ns-right-command-modifier 'hyper)
 
-;; put this config to proxy.el
-;;      url-proxy-services
-;;      '(
-;;	("no_proxy" . "zilongshanren\\.com")
-;;	("http" . "localhost:1087")
-;;	("https" . "localhost:1087"))
-
 (let ((proxy-file "~/.emacs.d/proxy.el"))
   (if (file-exists-p proxy-file)
       (load proxy-file)
@@ -50,8 +43,6 @@
 (require 'init-org)
 (require 'init-file-nav)
 (require 'init-jumping)
-
-(ido-switch-buffer *Messages*)
 
 ;;(custom-set-variables
 ;; ;; custom-set-variables was added by Custom.
