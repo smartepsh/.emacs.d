@@ -56,8 +56,8 @@
   (spaceline-emacs-theme))
 
 (use-package linum-relative
-  :defer t
-  :config
+  :commands (linum-relative-mode linum-relative-global-mode)
+  :init
   (setq linum-relative-backend 'display-line-numbers-mode))
 
 (provide 'init-ui)
