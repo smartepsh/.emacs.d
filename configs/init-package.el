@@ -1,8 +1,8 @@
 (package-initialize)
 
-;; (unless (package-installed-p 'use-package)
-;;   (package-refresh-contents)
-;;   (package-install 'use-package))
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
 ;; disable update during quelpa initialized
 (setq quelpa-update-melpa-p nil)
@@ -22,7 +22,8 @@
    :url "https://framagit.org/steckerhalter/quelpa-use-package.git"))
 (require 'quelpa-use-package)
 
-;; (require 'use-package)
+(eval-when-compile
+  (require `use-package))
 
 ;; (setq use-package-ensure-function 'quelpa)
 (setq use-package-expand-minimally t
