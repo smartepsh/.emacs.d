@@ -1,3 +1,4 @@
+(setq emacs-start-time (current-time))
 (setq gc-cons-threshold most-positive-fixnum)
 (add-hook 'after-init-hook #'(lambda ()
                                (setq gc-cons-threshold 2010241024)))
