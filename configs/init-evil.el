@@ -51,22 +51,9 @@
   :config
   (global-evil-surround-mode t))
 
-(use-package vimish-fold
-  :defer t
-  :after avy
-  :config
-  (vimish-fold-global-mode t)
-  :general
-  (common-leader
-    "fc" `vimish-fold
-    "fu" `vimish-fold-unfold
-    "fj" `vimish-fold-avy
-    "fz" `vimish-fold-toggle
-    "fd" `vimish-fold-delete
-    "fad" `vimish-fold-delete-all
-    "fau" `vimish-fold-unfold-all
-    "far" `vimish-fold-refold-all
-    "fat" `vimish-fold-toggle-all
-    ))
+(use-package evil-embrace
+             :after evil-surround
+             :config
+             (evil-embrace-enable-evil-surround-integration))
 
 (provide 'init-evil)
