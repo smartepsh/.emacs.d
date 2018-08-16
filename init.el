@@ -44,17 +44,3 @@
 (require 'init-jumping)
 (require 'init-server)
 (require 'init-dashboard)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (evil-embrace winum which-key vimish-fold spaceline smartparens restart-emacs quelpa-use-package popwin osx-trash ob-elixir nyan-mode neotree linum-relative general flyspell-correct-ivy flycheck eyebrowse exec-path-from-shell evil-surround evil-matchit evil-magit evil-escape evil-anzu doom-themes dashboard counsel-projectile company-statistics cnfonts avy auto-package-update alchemist))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
