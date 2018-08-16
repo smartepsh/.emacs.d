@@ -44,9 +44,9 @@
 	spaceline-flycheck-warning-p nil
 	spaceline-flycheck-info-p nil
 	spaceline-minor-modes-p nil
-	;; spaceline-anzu-p t
-	;; spaceline-evil-state-p t
+	spaceline-anzu-p t
 	spaceline-projectile-root-p nil
+	spaceline-version-control-p nil
 	powerline-default-separator 'box
 	spaceline-separator-dir-left '(right . right)
 	spaceline-separator-dir-right '(left . left)
