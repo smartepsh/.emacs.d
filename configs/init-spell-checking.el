@@ -1,4 +1,5 @@
-(use-package ispell)
+(use-package ispell
+  :defer t)
 
 (use-package flyspell
   :defer t)

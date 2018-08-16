@@ -15,15 +15,15 @@
     "SPC" nil))
 
 (use-package which-key
-  :defer t
-  :init
+  :defer 5
+  :config
   (which-key-mode))
 
 (use-package evil
   :init
   (setq evil-shift-width 2)
   (setq evil-flash-delay 1)
-  (evil-mode 1)
+  (evil-mode t)
   :config
   (mapc #'evil-declare-ignore-repeat
     '(kill-this-buffer

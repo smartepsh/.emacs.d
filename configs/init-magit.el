@@ -1,5 +1,5 @@
 (use-package magit
-  :commands (magit-status)
+  :commands (magit-status magit-blame)
   :general
   (clear-spc
    :keymaps

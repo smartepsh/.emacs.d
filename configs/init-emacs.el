@@ -1,5 +1,6 @@
 (use-package restart-emacs
-  :config
+  :commands restart-emacs
+  :init
   (global-set-key (kbd "H-r") 'restart-emacs))
 
 (common-leader

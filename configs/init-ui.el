@@ -1,16 +1,16 @@
 (use-package doom-themes
   :init
   (setq doom-themes-enable-bold t
-  doom-themes-enable-italic t)
+	doom-themes-enable-italic t)
   (load-theme 'doom-one t))
 
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 
 (use-package eyebrowse
-  :init
-  (eyebrowse-mode t)
+  :defer t
   :config
+  (eyebrowse-mode t)
   (global-set-key (kbd "H-1") 'eyebrowse-switch-to-window-config-1)
   (global-set-key (kbd "H-2") 'eyebrowse-switch-to-window-config-2)
   (global-set-key (kbd "H-3") 'eyebrowse-switch-to-window-config-3)

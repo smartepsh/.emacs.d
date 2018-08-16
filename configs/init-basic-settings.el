@@ -1,6 +1,7 @@
 (use-package popwin
+  :defer 5
   :config
-  (popwin-mode 1))
+  (popwin-mode t))
 
 (setq ring-bell-function 'ignore)
 (fset #'yes-or-no-p #'y-or-n-p)

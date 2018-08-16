@@ -5,8 +5,9 @@
   (package-install 'use-package))
 
 ;; disable update during quelpa initialized
-(setq quelpa-update-melpa-p nil)
-(setq quelpa-checkout-melpa-p t)
+(setq quelpa-update-melpa-p nil
+      quelpa-checkout-melpa-p t)
+
 ;; install quelpa
 (unless (require 'quelpa nil t)
   (with-temp-buffer
@@ -15,15 +16,15 @@
 
 ;; (quelpa-self-upgrade)
 
+(eval-when-compile
+  (require `use-package))
+
 ;; install quelpa-use-package
 (quelpa
  '(quelpa-use-package
    :fetcher git
    :url "https://framagit.org/steckerhalter/quelpa-use-package.git"))
 (require 'quelpa-use-package)
-
-(eval-when-compile
-  (require `use-package))
 
 ;; (setq use-package-ensure-function 'quelpa)
 (setq use-package-expand-minimally t
@@ -36,6 +37,7 @@
 (quelpa-use-package-activate-advice)
 
 (use-package auto-package-update
+  :defer t
   :config
   (setq auto-package-update-delete-old-versions nil))
 

@@ -6,6 +6,7 @@
 ;; brew install trash
 
 (use-package winum
+  :defer t
   :init
   (setq winum-auto-setup-mode-line nil)
   (winum-mode)

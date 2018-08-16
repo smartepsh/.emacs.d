@@ -10,9 +10,11 @@
     "/" 'counsel-ag))
 
 (use-package swiper
+  :defer t
   :after ivy)
 
 (use-package counsel
+  :defer t
   :after ivy)
 
 (provide 'init-ivy)

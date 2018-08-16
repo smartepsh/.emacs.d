@@ -9,6 +9,7 @@
     "jl" 'avy-goto-line))
 
 (use-package vimish-fold
+  :defer t
   :config
   (vimish-fold-global-mode t)
   :general

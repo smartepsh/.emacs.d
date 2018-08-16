@@ -1,4 +1,5 @@
-(use-package page-break-lines)
+(use-package page-break-lines
+  :defer t)
 
 (use-package dashboard
    :init
