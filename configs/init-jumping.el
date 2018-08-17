@@ -14,7 +14,6 @@
   (vimish-fold-global-mode t)
   :general
   (common-leader
-    :keymaps 'vimish-fold-mode-map
     "fc" `vimish-fold
     "fu" `vimish-fold-unfold
     "fj" `vimish-fold-avy
