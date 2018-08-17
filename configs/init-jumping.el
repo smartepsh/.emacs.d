@@ -12,11 +12,13 @@
   :defer t
   :config
   (vimish-fold-global-mode t)
+  :custom-face
+  (vimish-fold-fringe ((t (:foreground "DeepSkyBlue2"))))
   :general
   (common-leader
     "fc" `vimish-fold
     "fu" `vimish-fold-unfold
-    "fj" `vimish-fold-avy
+    "fl" `vimish-fold-avy
     "fz" `vimish-fold-toggle
     "fd" `vimish-fold-delete
     "fad" `vimish-fold-delete-all
