@@ -16,4 +16,10 @@
     "ck" 'org-mac-skim-insert-page
     "cf" 'org-mac-finder-insert-selected))
 
+(use-package ob-elixir
+  :defer t
+  :after org
+  :init
+  (add-to-list 'org-babel-load-languages '(elixir . t)))
+
 (provide 'init-org)
