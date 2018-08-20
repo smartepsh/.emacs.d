@@ -9,8 +9,9 @@
 
 (use-package eyebrowse
   :defer t
-  :config
+  :init
   (eyebrowse-mode t)
+  :config
   (global-set-key (kbd "H-1") 'eyebrowse-switch-to-window-config-1)
   (global-set-key (kbd "H-2") 'eyebrowse-switch-to-window-config-2)
   (global-set-key (kbd "H-3") 'eyebrowse-switch-to-window-config-3)
