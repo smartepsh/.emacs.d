@@ -4,10 +4,12 @@
   (general-auto-unbind-keys)
   (general-create-definer common-leader
     :prefix-name "SPC"
+    :global-prefix "H-g"
     :prefix "SPC"
     :states '(motion normal emacs))
   (general-create-definer local-leader
     :prefix-name "leader"
+    :global-prefix "H-b"
     :prefix ","
     :states '(motion normal emacs))
   (general-create-definer clear-spc
@@ -56,5 +58,8 @@
              :after evil-surround
              :config
              (evil-embrace-enable-evil-surround-integration))
+
+(use-package free-keys
+  :commands free-keys)
 
 (provide 'init-evil)
