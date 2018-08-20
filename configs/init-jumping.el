@@ -16,15 +16,15 @@
   (vimish-fold-fringe ((t (:foreground "DeepSkyBlue2"))))
   :general
   (common-leader
-    "fc" `vimish-fold
-    "fu" `vimish-fold-unfold
-    "fl" `vimish-fold-avy
-    "fz" `vimish-fold-toggle
-    "fd" `vimish-fold-delete
-    "fad" `vimish-fold-delete-all
-    "fau" `vimish-fold-unfold-all
-    "far" `vimish-fold-refold-all
-    "fat" `vimish-fold-toggle-all))
+    "vc" `vimish-fold
+    "vu" `vimish-fold-unfold
+    "vl" `vimish-fold-avy
+    "vz" `vimish-fold-toggle
+    "vd" `vimish-fold-delete
+    "vad" `vimish-fold-delete-all
+    "vau" `vimish-fold-unfold-all
+    "var" `vimish-fold-refold-all
+    "vat" `vimish-fold-toggle-all))
 
 
 (provide 'init-jumping)
