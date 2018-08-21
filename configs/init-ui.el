@@ -61,4 +61,7 @@
   :init
   (setq linum-relative-backend 'display-line-numbers-mode))
 
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
 (provide 'init-ui)
