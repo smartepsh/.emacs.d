@@ -1,12 +1,11 @@
 (use-package projectile
-  :defer 2)
+  :defer t)
 
 (use-package counsel-projectile
   :quelpa (counsel-projectile :fetcher github :repo "smartepsh/counsel-projectile")
-  :defer 2
+  :commands (counsel-projectile-find-file)
   :general
   (common-leader
-  "pf" 'counsel-projectile-find-file)
-  )
+    "pf" 'counsel-projectile-find-file))
 
 (provide 'init-projectile)
