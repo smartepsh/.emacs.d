@@ -5,6 +5,7 @@
 
 (use-package dired
   :ensure nil
+  :commands (dired-jump dired-jump-other-window)
   :init
   (setq dired-dwim-target t
 	dired-listing-switches "-alh")
