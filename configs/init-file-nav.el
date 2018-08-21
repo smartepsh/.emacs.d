@@ -22,8 +22,6 @@
     "fD" 'dired-jump-other-window))
 
 (use-package dired-k
-  :hook dired-mode
-  :config
-  (dired-k))
+  :hook (dired-mode . dired-k))
 
 (provide 'init-file-nav)
