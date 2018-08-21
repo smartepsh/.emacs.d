@@ -64,4 +64,12 @@
     "sP" 'org-noter-sync-prev-page-or-chapter
     "sp" 'org-noter-sync-prev-note))
 
+;; (use-package calibre-mode
+;;   :quelpa (calibre-mode :fetcher github :repo "smartepsh/calibre-mode")
+;;   :commands (calibre-list calibre-find)
+;;   :init
+;;   (setq sql-sqlite-program "/usr/bin/sqlite3"
+;; 	calibre-root-dir (expand-file-name "~/onedrive/calibre")
+;; 	calibre-db (concat calibre-root-dir "/metadata.db")))
+
 (provide 'init-org)
