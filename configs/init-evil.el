@@ -62,4 +62,12 @@
 (use-package free-keys
   :commands free-keys)
 
+(use-package evil-nerd-commenter
+  :commands (evilnc-comment-or-uncomment-lines)
+  :config
+  (evilnc-default-hotkeys)
+  :general
+  (common-leader
+    "gc" 'evilnc-comment-or-uncomment-lines))
+
 (provide 'init-evil)
