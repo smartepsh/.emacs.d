@@ -45,6 +45,16 @@
 (require 'init-server)
 (require 'init-dashboard)
 
+;; shell setting
+;; .zshenv
+;;
+;; test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
+;; [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+;; export NVM_DIR="$HOME/.nvm"
+;; [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+;; [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+;; eval "$(rbenv init -)"
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
