@@ -1,5 +1,7 @@
-(use-package neotree
-  :defer t)
+;; (use-package neotree
+;;   :general
+;;   (general-define-key
+;;    "<f5>" 'neotree-toggle))
 
 (use-package dired
   :ensure nil
