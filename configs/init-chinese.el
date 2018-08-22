@@ -1,5 +1,6 @@
 (use-package cnfonts
-  :config
-  (cnfonts-enable))
+  :defer t
+  :init
+  (add-hook 'after-init-hook #'cnfonts-enable))
 
 (provide 'init-chinese)
