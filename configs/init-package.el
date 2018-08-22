@@ -41,4 +41,6 @@
   :config
   (setq auto-package-update-delete-old-versions nil))
 
+(use-package use-package-ensure-system-package)
+
 (provide 'init-package)
