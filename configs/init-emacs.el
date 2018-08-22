@@ -9,7 +9,8 @@
 (common-leader
   "SPC" 'execute-extended-command
   "fed" 'open-config-file
-  "ff" 'find-file)
+  "ff" 'counsel-find-file
+  "bb" 'counsel-ibuffer)
 
 ;; (vimish-fold--vimish-overlay-p)
 
