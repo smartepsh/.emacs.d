@@ -21,6 +21,7 @@
   (clear-spc
     :keymaps 'dired-mode-map)
   (common-leader
+    "f" '(:ignore t :whick-key "files")
     "fd" 'dired-jump
     "fD" 'dired-jump-other-window))
 

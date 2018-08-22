@@ -5,6 +5,7 @@
 	avy-background t)
   :general
   (common-leader
+    "j" '(:ignore t :which-key "jumping")
     "jj" 'avy-goto-char-2
     "jl" 'avy-goto-line))
 
@@ -25,6 +26,7 @@
     "vau" `vimish-fold-unfold-all
     "var" `vimish-fold-refold-all
     "vat" `vimish-fold-toggle-all))
+    "v" '(:ignore t :which-key "vimish-fold")
 
 
 (provide 'init-jumping)

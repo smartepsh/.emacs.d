@@ -26,6 +26,10 @@
   :general
   (local-leader
     :keymaps 'alchemist-mode-map
+    "." '(alchemist-goto-definition-at-point :which-key "jump-to")
+    "," '(alchemist-goto-definition-at-point :which-key "jump-back")
+
+    "t" '(:ignore t :which-key "test")
     "ta" 'alchemist-mix-test
     "tt" 'alchemist-mix-test-at-point
     "tb" 'alchemist-mix-test-buffer
@@ -34,11 +38,13 @@
     "tw" 'alchemist-test-toggle-test-report-display
     "tf" 'alchemist-project-toggle-file-and-tests
 
+    "m" '(:ignore t :which-key "mix")
     "m:" 'alchemist-mix-run
     "mx" 'alchemist-mix
     "mc" 'alchemist-mix-compile
     "mr" 'alchemist-mix-rerun-last-task
 
+    "h" '(:ignore t :which-key "hex")
     "hi" 'alchemist-hex-info-at-point
     "hr" 'alchemist-hex-releases-at-point
     "hI" 'alchemist-hex-info
@@ -46,18 +52,18 @@
     "hs" 'alchemist-hex-search
     "hd" 'alchemist-hex-all-dependences
 
+    "c" '(:ignore t :which-key "compile")
     "cb" 'alchemist-compile-this-buffer
     "cc" 'alchemist-compile
 
-    "eb" 'alchemist-execute-this-buffer
-    "ee" 'alchemist-execute
-
+    "p" '(:ignore t :which-key "project")
     "ps" 'alchemist-project-toggle-file-and-tests
     "po" 'alchemist-project-toggle-file-and-tests-other-window
     "pt" 'alchemist-project-run-tests-for-current-file
     "pf" 'alchemist-project-find-test
     "pl" 'alchemist-project-find-lib
 
+    "f" '(:ignore t :which-key "phoenix-find")
     "fw" 'alchemist-phoenix-find-web
     "fc" 'alchemist-phoenix-find-controllers
     "fl" 'alchemist-phoenix-find-channels
@@ -68,19 +74,20 @@
     "fr" 'alchemist-phoenix-router
     "fR" 'alchemist-phoenix-routes
 
+    "h" '(:ignore t :which-key "help")
     "hh" 'alchemist-help
     "hi" 'alchemist-help-history
     "he" 'alchemist-help-search-at-point
     "hr" 'alchemist-refcard
 
+    "g" '(:ignore t :which-key "goto")
     "gg" 'alchemist-goto-definition-at-point
-    "." 'alchemist-goto-definition-at-point
     "gb" 'alchemist-goto-definition-at-point
-    "," 'alchemist-goto-definition-at-point
     "gp" 'alchemist-jump-to-previous-def-symbol
     "gn" 'alchemist-jump-to-next-def-symbol
     "gs" 'alchemist-goto-list-symbol-definitions'
 
+    "i" '(:ignore t :which-key "iex")
     "ii" 'alchemist-iex-run
     "ip" 'alchemist-iex-project-run
     "il" 'alchemist-iex-send-current-line
@@ -90,6 +97,7 @@
     "ib" 'alchemist-iex-compile-this-buffer
     "iR" 'alchemist-iex-reload-module
 
+    "e" '(:ignore :which-key "eval")
     "el" 'alchemist-eval-current-line
     "ek" 'alchemist-eval-print-current-line
     "ej" 'alchemist-eval-quoted-current-line
@@ -104,6 +112,7 @@
     "er" 'alchemist-eval-print-quoted-buffer
     "e!" 'alchemist-eval-close-popup
 
+    "o" '(:ignore t :which-key "macro")
     "ol" 'alchemist-macroexpand-once-current-line
     "oL" 'alchemist-macroexpand-once-print-current-line
     "ok" 'alchemist-macroexpand-current-line

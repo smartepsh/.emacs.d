@@ -2,6 +2,7 @@
   :commands (projectile-dired)
   :general
   (common-leader
+    "p" '(:ignore t :which-key "projectile")
     "pd" 'projectile-dired))
 
 (use-package counsel-projectile
@@ -9,6 +10,7 @@
   :commands (counsel-projectile-find-file)
   :general
   (common-leader
+    "p" '(:ignore t :which-key "projectile")
     "pf" 'counsel-projectile-find-file))
 
 (provide 'init-projectile)

@@ -15,6 +15,7 @@
   :general
   (local-leader
     :keymaps 'org-mode-map
+    "c" '(:ignore t :which-key "capture")
     "cc" 'org-mac-chrome-insert-frontmost-url
     "ck" 'org-mac-skim-insert-page
     "cf" 'org-mac-finder-insert-selected))
@@ -42,6 +43,7 @@
     :keymaps 'org-noter-doc-mode-map
     "i" 'org-noter-insert-note
     "I" 'org-noter-insert-precise-note
+    "s" '(:ignore t :which-key "org-noter-sync")
     "sC" 'org-noter-sync-current-page-or-chapter
     "sc" 'org-noter-sync-current-note
     "sN" 'org-noter-sync-next-page-or-chapter
@@ -57,6 +59,7 @@
   :general
   (local-leader
     :keymaps 'org-noter-notes-mode-map
+    "s" '(:ignore t :which-key "org-noter-sync")
     "sC" 'org-noter-sync-current-page-or-chapter
     "sc" 'org-noter-sync-current-note
     "sN" 'org-noter-sync-next-page-or-chapter
