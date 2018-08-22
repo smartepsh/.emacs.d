@@ -19,10 +19,10 @@
       ns-right-option-modifier 'hyper
       ns-right-command-modifier 'hyper)
 
-(let ((proxy-file "~/.emacs.d/proxy.el"))
-  (if (file-exists-p proxy-file)
-      (load proxy-file)
-    (message "no proxy setting!")))
+(let ((custom-file "~/.emacs.d/custom.el"))
+  (if (file-exists-p custom-file)
+      (load custom-file)
+    (message "no custom setting file!")))
 
 (require 'init-package)
 (require 'init-evil)
@@ -55,16 +55,3 @@
 ;; [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 ;; [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 ;; eval "$(rbenv init -)"
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
-)
