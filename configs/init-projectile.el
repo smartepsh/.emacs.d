@@ -1,5 +1,4 @@
 (use-package projectile
-  :defer t
   :commands (projectile-dired)
   :general
   (common-leader

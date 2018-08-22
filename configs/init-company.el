@@ -1,7 +1,7 @@
 (use-package company
   :defer t
   :init
-  (global-company-mode)
+  (add-hook 'after-init-hook #'global-company-mode)
   (setq company-idle-delay nil
 	company-require-match 'never
 	company-tooltip-align-annotations t

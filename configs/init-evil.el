@@ -17,15 +17,15 @@
     "SPC" nil))
 
 (use-package which-key
-  :defer 5
-  :config
-  (which-key-mode))
+  :defer t
+  :init
+  (add-hook 'after-init-hook #'whick-key-mode))
 
 (use-package evil
   :init
-  (setq evil-shift-width 2)
-  (setq evil-flash-delay 1)
-  (evil-mode t)
+  (setq evil-shift-width 2
+        evil-flash-delay 1)
+  (evil-mode)
   :config
   (setq-default evil-shift-width 2)
   (mapc #'evil-declare-ignore-repeat
@@ -38,26 +38,31 @@
      split-window-right-and-focus)))
 
 (use-package evil-escape
+  :defer t
   :after evil
+  :init
+  (add-hook 'evil-after-load-hook 'evil-escape-mode)
   :config
-  (evil-escape-mode)
   (setq evil-escape-key-sequence "jk"
-	evil-escape-delay 0.1))
+        evil-escape-delay 0.1))
 
 (use-package evil-matchit
+  :defer t
   :after evil
-  :config
-  (global-evil-matchit-mode t))
+  :init
+  (add-hook 'evil-after-load-hook 'global-evil-matchit-mode))
 
 (use-package evil-surround
+  :defer t
   :after evil
-  :config
-  (global-evil-surround-mode t))
+  :init
+  (add-hook 'evil-after-load-hook 'global-evil-surround-mode))
 
 (use-package evil-embrace
-             :after evil-surround
-             :config
-             (evil-embrace-enable-evil-surround-integration))
+  :defer t
+  :after evil-surround
+  :init
+  (add-hook 'global-evil-surround-mode-hook 'evil-embrace-enable-evil-surround-integration))
 
 (use-package free-keys
   :commands free-keys)

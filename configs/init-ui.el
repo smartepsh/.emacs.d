@@ -10,7 +10,7 @@
 (use-package eyebrowse
   :defer t
   :init
-  (eyebrowse-mode t)
+  (add-hook 'after-init-hook #'eyebrowse-mode)
   :config
   (global-set-key (kbd "H-1") 'eyebrowse-switch-to-window-config-1)
   (global-set-key (kbd "H-2") 'eyebrowse-switch-to-window-config-2)
@@ -28,14 +28,14 @@
   :after evil
   :init
   (setq anzu-cons-mode-line-p nil)
-  (global-anzu-mode 1)
+  (add-hook 'after-init-hook #'global-anzu-mode)
   :config
   (set-face-attribute 'anzu-mode-line nil
 		      :foreground "yellow" :weight 'bold))
 
 (use-package nyan-mode
   :init
-  (nyan-mode))
+  (add-hook 'after-init-hook #'nyan-mode))
 
 (use-package spaceline
   :init
@@ -54,7 +54,7 @@
 	spaceline-window-numbers-unicode t
 	spaceline-highlight-face-func 'spaceline-highlight-face-evil-state
 	spaceline-workspace-numbers-unicode t)
-  (spaceline-emacs-theme))
+  (add-hook 'after-init-hook #'spaceline-emacs-theme))
 
 (use-package linum-relative
   :commands (linum-relative-mode linum-relative-global-mode)

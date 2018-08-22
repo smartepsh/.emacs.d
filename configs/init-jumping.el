@@ -10,8 +10,8 @@
 
 (use-package vimish-fold
   :defer t
-  :config
-  (vimish-fold-global-mode t)
+  :init
+  (add-hook 'after-init-hook #'vimish-fold-global-mode)
   :custom-face
   (vimish-fold-fringe ((t (:foreground "DeepSkyBlue2"))))
   :general

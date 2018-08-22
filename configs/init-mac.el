@@ -1,6 +1,6 @@
 (use-package osx-trash
              :init
-             (osx-trash-setup)
+             (add-hook 'after-init-hook #'osx-trash-setup)
              :config
              (setq delete-by-moving-to-trash t))
 ;; brew install trash
@@ -9,7 +9,7 @@
   :defer t
   :init
   (setq winum-auto-setup-mode-line nil)
-  (winum-mode)
+  (add-hook 'after-init-hook #'winum-mode)
   :config
   ;; window manipulation with command key
   (global-set-key (kbd "s-1") 'winum-select-window-1)

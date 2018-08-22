@@ -1,19 +1,19 @@
 (use-package ivy
   :defer t 
+  :ensure-system-package (ag . the-silver-searcher)
   :init
   (add-hook 'after-init-hook #'ivy-mode)
-  :config
   (setq ivy-use-virtual-buffers t
         enable-recursive-minibuffers t)
   :general
-  (general-define-key
-   "C-s" 'swiper)
   (common-leader
     "/" 'counsel-ag))
 
 (use-package swiper
-  :defer t
-  :after ivy)
+  :commands (swiper)
+  :general
+  (general-define-key
+   "C-s" 'swiper))
 
 (use-package counsel
   :defer t

@@ -1,6 +1,7 @@
 (use-package server
+  :defer t
   :init
   (setq server-name "kenton")
-  (server-start))
+  (add-hook 'after-init-hook #'server-start))
 
 (provide 'init-server)

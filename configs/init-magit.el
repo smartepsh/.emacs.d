@@ -12,9 +12,10 @@
      git-rebase-mode-map))
   (common-leader
   "gs" 'magit-status
+  "gb" 'magit-blame
   ))
 
 (use-package evil-magit
-  :after magit)
+  :after (magit))
 
 (provide 'init-magit)
