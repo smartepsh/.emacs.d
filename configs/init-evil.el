@@ -17,7 +17,6 @@
     "SPC" nil))
 
 (use-package which-key
-  :defer t
   :init
   (add-hook 'after-init-hook #'whick-key-mode))
 
