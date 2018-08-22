@@ -3,7 +3,7 @@
   :general
   (clear-spc
    :keymaps
-   `(magit-mode-map
+   '(magit-mode-map
      magit-status-mode-map
      magit-diff-mode-map
      magit-process-mode-map

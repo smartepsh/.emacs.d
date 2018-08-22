@@ -11,18 +11,19 @@
   :defer t
   :init
   (add-hook 'after-init-hook #'eyebrowse-mode)
-  :config
-  (global-set-key (kbd "H-1") 'eyebrowse-switch-to-window-config-1)
-  (global-set-key (kbd "H-2") 'eyebrowse-switch-to-window-config-2)
-  (global-set-key (kbd "H-3") 'eyebrowse-switch-to-window-config-3)
-  (global-set-key (kbd "H-4") 'eyebrowse-switch-to-window-config-4)
-  (global-set-key (kbd "H-5") 'eyebrowse-switch-to-window-config-5)
-  (global-set-key (kbd "H-6") 'eyebrowse-switch-to-window-config-6)
-  (global-set-key (kbd "H-7") 'eyebrowse-switch-to-window-config-7)
-  (global-set-key (kbd "H-8") 'eyebrowse-switch-to-window-config-8)
-  (global-set-key (kbd "H-9") 'eyebrowse-switch-to-window-config-9)
-  (global-set-key (kbd "H-`") 'eyebrowse-rename-window-config)
-  (global-set-key (kbd "H-q") 'eyebrowse-close-window-config))
+  :general
+  (general-define-key
+   "H-1" 'eyebrowse-switch-to-window-config-1
+   "H-2" 'eyebrowse-switch-to-window-config-2
+   "H-3" 'eyebrowse-switch-to-window-config-3
+   "H-4" 'eyebrowse-switch-to-window-config-4
+   "H-5" 'eyebrowse-switch-to-window-config-5
+   "H-6" 'eyebrowse-switch-to-window-config-6
+   "H-7" 'eyebrowse-switch-to-window-config-7
+   "H-8" 'eyebrowse-switch-to-window-config-8
+   "H-9" 'eyebrowse-switch-to-window-config-9
+   "H-`" 'eyebrowse-rename-window-config
+   "H-q" 'eyebrowse-close-window-config))
 
 (use-package evil-anzu
   :after evil

@@ -38,31 +38,21 @@
      split-window-right-and-focus)))
 
 (use-package evil-escape
-  :defer t
   :after evil
-  :init
-  (add-hook 'evil-after-load-hook 'evil-escape-mode)
   :config
   (setq evil-escape-key-sequence "jk"
         evil-escape-delay 0.1))
 
 (use-package evil-matchit
-  :defer t
-  :after evil
-  :init
-  (add-hook 'evil-after-load-hook 'global-evil-matchit-mode))
+  :after evil)
 
 (use-package evil-surround
-  :defer t
-  :after evil
-  :init
-  (add-hook 'evil-after-load-hook 'global-evil-surround-mode))
+  :after evil)
 
 (use-package evil-embrace
-  :defer t
   :after evil-surround
-  :init
-  (add-hook 'global-evil-surround-mode-hook 'evil-embrace-enable-evil-surround-integration))
+  :config
+  (evil-embrace-enable-evil-surround-integration))
 
 (use-package free-keys
   :commands free-keys)

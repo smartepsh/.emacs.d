@@ -17,7 +17,7 @@
 ;; (quelpa-self-upgrade)
 
 (eval-when-compile
-  (require `use-package))
+  (require 'use-package))
 
 ;; install quelpa-use-package
 (quelpa
