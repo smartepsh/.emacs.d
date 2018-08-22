@@ -1,8 +1,3 @@
-(use-package popwin
-  :defer t
-  :init
-  (add-hook 'after-init-hook #'popwin-mode))
-
 (setq ring-bell-function 'ignore
       scroll-margin 0
       scroll-conservatively 1001
