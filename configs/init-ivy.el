@@ -16,7 +16,13 @@
    "C-s" 'swiper))
 
 (use-package counsel
-  :defer t
   :after ivy)
+
+(use-package ivy-prescient
+  :after ivy
+  :config
+  (setq ivy-prescient-retain-classic-highlighting t)
+  (ivy-prescient-mode))
+
 
 (provide 'init-ivy)

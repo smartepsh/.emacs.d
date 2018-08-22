@@ -32,6 +32,11 @@
 (use-package company-statistics
   :hook (company-mode . company-statistics-mode))
 
+(use-package company-prescient
+  :after company
+  :config
+  (company-prescient-mode))
+
 (use-package smartparens
   :hook (prog-mode . smartparens-mode)
   :config

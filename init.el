@@ -27,6 +27,7 @@
 (require 'init-package)
 (require 'init-evil)
 (require 'init-basic-settings)
+(require 'init-support)
 (require 'init-ui)
 (require 'init-emacs)
 (require 'init-chinese)
