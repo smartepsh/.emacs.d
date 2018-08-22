@@ -1,11 +1,13 @@
 (use-package ivy
+  :defer t 
   :init
-  (ivy-mode 1)
+  (add-hook 'after-init-hook #'ivy-mode)
   :config
-  (setq ivy-use-virtual-buffers t)
-  (setq enable-recursive-minibuffers t)
-  (global-set-key "\C-s" 'swiper)
+  (setq ivy-use-virtual-buffers t
+        enable-recursive-minibuffers t)
   :general
+  (general-define-key
+   "C-s" 'swiper)
   (common-leader
     "/" 'counsel-ag))
 
