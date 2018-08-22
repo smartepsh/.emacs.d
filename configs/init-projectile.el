@@ -1,5 +1,9 @@
 (use-package projectile
-  :defer t)
+  :defer t
+  :commands (projectile-dired)
+  :general
+  (common-leader
+    "pd" 'projectile-dired))
 
 (use-package counsel-projectile
   :quelpa (counsel-projectile :fetcher github :repo "smartepsh/counsel-projectile")
