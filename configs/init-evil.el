@@ -18,7 +18,7 @@
 
 (use-package which-key
   :init
-  (add-hook 'after-init-hook #'whick-key-mode))
+  (add-hook 'after-init-hook #'which-key-mode))
 
 (use-package evil
   :init
