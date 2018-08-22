@@ -11,7 +11,6 @@
   (setq company-backends
 	'(company-keywords
 	  company-files
-	  company-caps
 	  company-dabbrev-code
 	  company-dabbrev))
   :config
