@@ -13,7 +13,8 @@
     "pd" 'projectile-dired))
 
 (use-package counsel-projectile
-  :quelpa (counsel-projectile :fetcher github :repo "smartepsh/counsel-projectile")
+  ;; fix bugs from my own repo, but it fixed now
+  ;; :quelpa (counsel-projectile :fetcher github :repo "smartepsh/counsel-projectile")
   :commands (counsel-projectile-find-file)
   :general
   (common-leader
