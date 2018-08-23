@@ -34,7 +34,7 @@
   (setq ivy-virtual-abbreviate 'full
 	ivy-rich-switch-buffer-align-virtual-buffer t)
   :config
-  (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transaformer))
+  (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer))
 
 (use-package ivy-prescient
   :after ivy
