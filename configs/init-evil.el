@@ -75,4 +75,13 @@
   (setq evil-visualstar/persistent t)
   (global-evil-visualstar-mode))
 
+;; (use-package multiple-cursors
+;;   :defer t
+;;   :general
+;;   (general-define-key
+;;    "C-s-l" 'mc/edit-lines
+;;    "C-s-n" 'mc/mark-next-like-this
+;;    "C-s-p" 'mc/mark-previous-like-this
+;;    "C-s-b" 'mc/mark-all-like-this))
+
 (provide 'init-evil)
