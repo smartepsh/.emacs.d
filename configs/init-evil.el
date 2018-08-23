@@ -46,7 +46,12 @@
   :after evil)
 
 (use-package evil-surround
-  :after evil)
+  :after evil 
+  :config (global-evil-surround-mode t)
+  :general
+  (general-define-key
+   :states 'motion
+   "s" 'evil-surround-region))
 
 (use-package evil-embrace
   :after evil-surround
