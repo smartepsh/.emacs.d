@@ -20,7 +20,7 @@
   :config
   (setq alchemist-test-status-modeline nil
 	alchemist-test-display-compilation-output t
-	alchemist-test-truncate-lines t)
+	alchemist-test-truncate-lines nil)
 	;; alchemist-goto-elixir-source-dir "~/kenton/elixir"
 	;; alchemist-goto-elixir-source-dir "/usr/local/Cellar/elixir/1.7.2")
 	;; alchemist-goto-erlang-source-dir "~/kenton/erlang")
