@@ -2,7 +2,7 @@
   :defer t
   :init
   (add-hook 'after-init-hook #'global-company-mode)
-  (setq company-idle-delay nil
+  (setq company-idle-delay 0.1
 	company-require-match 'never
 	company-tooltip-align-annotations t
 	company-dabbrev-ignore-case nil
@@ -11,6 +11,7 @@
   (setq company-backends
 	'(company-keywords
 	  company-files
+	  company-capf
 	  company-dabbrev-code
 	  company-dabbrev))
   :config
