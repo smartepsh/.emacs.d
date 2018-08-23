@@ -46,7 +46,7 @@
   :after evil)
 
 (use-package evil-surround
-  :after evil 
+  :after evil
   :config (global-evil-surround-mode t)
   :general
   (general-define-key
@@ -68,5 +68,11 @@
   :general
   (common-leader
     "gc" 'evilnc-comment-or-uncomment-lines))
+
+(use-package evil-visualstar
+  :after evil
+  :config
+  (setq evil-visualstar/persistent t)
+  (global-evil-visualstar-mode))
 
 (provide 'init-evil)
