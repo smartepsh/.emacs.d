@@ -12,8 +12,10 @@
 	'(company-keywords
 	  company-files
 	  company-capf
+	  company-yasnippet
 	  company-dabbrev-code
 	  company-dabbrev))
+
   :config
   (defun +evil-complete (arg)
     (interactive)
@@ -42,5 +44,13 @@
   :hook (prog-mode . smartparens-mode)
   :config
   (show-smartparens-mode))
+
+(use-package yasnippet
+  :hook (prog-mode . yas-minor-mode))
+
+(use-package yasnippet-snippets
+  :after yasnippet
+  :config
+  (yas-reload-all))
 
 (provide 'init-company)
