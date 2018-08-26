@@ -32,8 +32,8 @@
    "C-n" 'company-select-next
    "C-p" 'company-select-previous))
 
-(use-package company-statistics
-  :hook (company-mode . company-statistics-mode))
+;; (use-package company-statistics
+;;   :hook (company-mode . company-statistics-mode))
 
 (use-package company-prescient
   :after company
