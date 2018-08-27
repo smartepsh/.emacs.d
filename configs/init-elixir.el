@@ -33,8 +33,8 @@
     "t" '(:ignore t :which-key "test")
     "ta" 'alchemist-mix-test
     "tt" 'alchemist-mix-test-at-point
-    "tb" 'alchemist-mix-test-buffer
-    "tr" 'alchemist-mix-test-rerun-last-test
+    "tb" 'alchemist-mix-test-this-buffer
+    "tr" 'alchemist-mix-rerun-last-test
     "ts" 'alchemist-mix-test-stale
     "tw" 'alchemist-test-toggle-test-report-display
     "tf" 'alchemist-project-toggle-file-and-tests
