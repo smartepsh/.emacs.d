@@ -1,13 +1,12 @@
+(setq org-directory "~/onedrive/bookshelf/notes/")
+
 (use-package org
   :ensure org-plus-contrib
   :ensure-system-package terminal-notifier
   :pin org-cn
   :defer t
-  :init
-  (setq org-directory "~/onedrive/bookshelf"
-	org-agenda-files (list (concat org-directory "/notes"))
-	org-default-notes-file (concat org-directory "/defaults.org"))
   :config
+  (setq org-default-notes-file (concat org-directory "defaults.org"))
   (nconc org-modules '(org-id org-protocol))
   (defun org-capture-screenshot ()
     "Take a screenshot into a time stamped unique-named file in the
@@ -40,6 +39,15 @@ same directory as the org-buffer and insert a link to this file."
   (local-leader
     :keymaps 'org-mode-map
     "sc" 'org-capture-screenshot))
+
+(use-package org-agenda
+  :ensure org-plus-contrib
+  :commands (org-agenda-list
+	     org-agenda
+	     org-agenda-to-appt)
+  :init
+  (setq org-agenda-files (directory-files-recursively org-directory "\.org$"))
+  (setq org-agenda-diary-file (concat org-directory "diary.org")))
 
 (use-package org-clock
   :after org
