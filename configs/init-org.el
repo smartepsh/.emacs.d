@@ -41,7 +41,15 @@ same directory as the org-buffer and insert a link to this file."
     :keymaps 'org-mode-map
     "sc" 'org-capture-screenshot))
 
+(use-package org-clock
+  :after org
+  :ensure org-plus-contrib
+  :config
+  (setq org-clock-clocked-in-display nil
+	org-clock-mode-line-total 'current))
+
 (use-package org-pomodoro
+  :commands org-pomodoro
   :config
   (add-hook 'org-pomodoro-finished-hook
 	    (lambda()
