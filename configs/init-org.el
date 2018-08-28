@@ -4,8 +4,8 @@
   :pin org-cn
   :defer t
   :init
-  (setq org-directory "~/onedrive/bookshelf/"
-	org-agenda-files (list (concat org-directory "/notes")
+  (setq org-directory "~/onedrive/bookshelf"
+	org-agenda-files (list (concat org-directory "/notes"))
 	org-default-notes-file (concat org-directory "/defaults.org"))
   :config
   (nconc org-modules '(org-id org-protocol))
@@ -17,17 +17,12 @@ same directory as the org-buffer and insert a link to this file."
     (setq filename
 	  (concat
 	   (make-temp-name
-	    (concat (file-name-nondirectory (buffer-file-name))
-		    "_imgs/"
+	    (concat (concat org-directory (concat "/images/" (buffer-name)))
 		    (format-time-string "%Y%m%d_%H%M%S_")) ) ".png"))
     (unless (file-exists-p (file-name-directory filename))
       (make-directory (file-name-directory filename)))
-	; take screenshot
     (if (eq system-type 'darwin)
 	(call-process "screencapture" nil nil nil "-i" filename))
-    (if (eq system-type 'gnu/linux)
-	(call-process "import" nil nil nil filename))
-					; insert into file if correctly taken
     (if (file-exists-p filename)
 	(insert (concat "[[file:" filename "]]"))))
 
