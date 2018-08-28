@@ -1,9 +1,14 @@
 (use-package flyspell
   :ensure-system-package hunspell
   :hook (text-mode . flyspell-mode)
-  :hook (prog-mode . flyspell-prog-mode)
+  ;; :hook (prog-mode . flyspell-prog-mode)
   :init
-  (setq ispell-program-name (executable-find "hunspell")
+  (add-hook 'prog-mode-hook
+	    (lambda ()
+	      (unless (derived-mode-p 'dashboard-mode
+				      (flyspell-prog-mode)))))
+  :config
+    (setq ispell-program-name (executable-find "hunspell")
 	ispell-dictionary "en_US"
 	ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US,en_US-med") nil utf-8))))
 
