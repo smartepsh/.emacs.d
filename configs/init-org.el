@@ -3,6 +3,10 @@
   :ensure-system-package terminal-notifier
   :pin org-cn
   :defer t
+  :init
+  (setq org-directory "~/onedrive/bookshelf/"
+	org-agenda-files (list (concat org-directory "/notes")
+	org-default-notes-file (concat org-directory "/defaults.org"))
   :config
   (nconc org-modules '(org-id org-protocol))
   (defun org-capture-screenshot ()
@@ -18,7 +22,7 @@ same directory as the org-buffer and insert a link to this file."
 		    (format-time-string "%Y%m%d_%H%M%S_")) ) ".png"))
     (unless (file-exists-p (file-name-directory filename))
       (make-directory (file-name-directory filename)))
-					; take screenshot
+	; take screenshot
     (if (eq system-type 'darwin)
 	(call-process "screencapture" nil nil nil "-i" filename))
     (if (eq system-type 'gnu/linux)
@@ -26,6 +30,7 @@ same directory as the org-buffer and insert a link to this file."
 					; insert into file if correctly taken
     (if (file-exists-p filename)
 	(insert (concat "[[file:" filename "]]"))))
+
   (defun notify-osx (title meassage)
     (call-process "terminal-notifier"
 		  nil 0 nil
@@ -36,7 +41,10 @@ same directory as the org-buffer and insert a link to this file."
 		  "-activate" "org.gnu.Emacs"))
   :general
   (common-leader
-    "on" 'org-noter))
+    "on" 'org-noter)
+  (local-leader
+    :keymaps 'org-mode-map
+    "sc" 'org-capture-screenshot))
 
 (use-package org-pomodoro
   :config
