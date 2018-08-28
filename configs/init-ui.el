@@ -49,6 +49,7 @@
 	spaceline-anzu-p t
 	spaceline-projectile-root-p nil
 	spaceline-version-control-p nil
+	spaceline-org-pomodoro-p t
 	powerline-default-separator 'box
 	spaceline-separator-dir-left '(right . right)
 	spaceline-separator-dir-right '(left . left)
