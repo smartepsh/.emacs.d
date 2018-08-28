@@ -1,5 +1,6 @@
 (use-package org
   :ensure org-plus-contrib
+  :ensure-system-package terminal-notifier
   :pin org-cn
   :defer t
   :config
