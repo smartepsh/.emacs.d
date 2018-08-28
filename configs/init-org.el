@@ -4,9 +4,53 @@
   :defer t
   :config
   (nconc org-modules '(org-id org-protocol))
+  (defun org-capture-screenshot ()
+    "Take a screenshot into a time stamped unique-named file in the
+same directory as the org-buffer and insert a link to this file."
+    (interactive)
+    (org-display-inline-images)
+    (setq filename
+	  (concat
+	   (make-temp-name
+	    (concat (file-name-nondirectory (buffer-file-name))
+		    "_imgs/"
+		    (format-time-string "%Y%m%d_%H%M%S_")) ) ".png"))
+    (unless (file-exists-p (file-name-directory filename))
+      (make-directory (file-name-directory filename)))
+					; take screenshot
+    (if (eq system-type 'darwin)
+	(call-process "screencapture" nil nil nil "-i" filename))
+    (if (eq system-type 'gnu/linux)
+	(call-process "import" nil nil nil filename))
+					; insert into file if correctly taken
+    (if (file-exists-p filename)
+	(insert (concat "[[file:" filename "]]"))))
+  (defun notify-osx (title meassage)
+    (call-process "terminal-notifier"
+		  nil 0 nil
+		  "-group" "Emacs"
+		  "-title" title
+		  "-sender" "org.gnu.Emacs"
+		  "-mesage" message
+		  "-activate" "org.gnu.Emacs"))
   :general
   (common-leader
     "on" 'org-noter))
+
+(use-package org-pomodoro
+  :config
+  (add-hook 'org-pomodoro-finished-hook
+	    (lambda()
+	      (notify-osx "Pomodoro completed!" "Time for a break.")))
+  (add-hook 'org-pomodoro-break-finished-hook
+	    (lambda()
+	      (notify-osx "Pomodoro Short Break Finished!" "Ready for Another?")))
+  (add-hook 'org-pomodoro-long-break-finished-hook
+	    (lambda()
+	      (notify-osx "Pomodoro Long Break Finished!" "Ready for Another?")))
+  (add-hook 'org-pomodoro-killed-hook
+	    (lambda()
+	      (notify-osx "Pomodoro Killed!" "One des not simply kill a pomodoro!"))))
 
 (use-package org-capture
   :after org
