@@ -44,6 +44,7 @@
 (require 'init-file-nav)
 (require 'init-jumping)
 (require 'init-server)
+(require 'init-sql)
 (require 'init-dashboard)
 
 ;; shell setting
