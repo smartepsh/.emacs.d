@@ -90,4 +90,9 @@
 ;;    "C-s-p" 'mc/mark-previous-like-this
 ;;    "C-s-b" 'mc/mark-all-like-this))
 
+(use-package evil-mc
+  :after evil
+  :init
+  (global-evil-mc-mode t))
+
 (provide 'init-evil)
