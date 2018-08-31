@@ -17,7 +17,8 @@
       ns-command-modifier 'super
       ns-option-modifer 'meta
       ns-right-option-modifier 'hyper
-      ns-right-command-modifier 'hyper)
+      ns-right-command-modifier 'hyper
+      inhibit-startup-screen t)
 
 (let ((custom-file "~/.emacs.d/custom.el"))
   (if (file-exists-p custom-file)
