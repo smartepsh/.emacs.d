@@ -1,12 +1,9 @@
 (use-package flyspell
   :ensure-system-package hunspell
   :hook (text-mode . flyspell-mode)
-  ;; :hook (prog-mode . flyspell-prog-mode)
+  :hook (elixir-mode . flyspell-prog-mode)
   :init
-  (add-hook 'prog-mode-hook
-	    (lambda ()
-	      (unless (derived-mode-p 'dashboard-mode
-				      (flyspell-prog-mode)))))
+  (setq flyspell-issue-welcome-flag nil)
   :config
     (setq ispell-program-name (executable-find "hunspell")
 	ispell-dictionary "en_US"
