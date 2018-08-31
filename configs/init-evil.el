@@ -23,7 +23,8 @@
 (use-package evil
   :init
   (setq evil-shift-width 2
-        evil-flash-delay 1)
+        evil-flash-delay 1
+	evil-want-integration nil)
   (evil-mode)
   :config
   (setq-default evil-shift-width 2)
@@ -74,6 +75,11 @@
   :config
   (setq evil-visualstar/persistent t)
   (global-evil-visualstar-mode))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))
 
 ;; (use-package multiple-cursors
 ;;   :defer t
