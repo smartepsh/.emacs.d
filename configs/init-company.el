@@ -28,6 +28,7 @@
   :general
   (general-define-key
    :keymaps 'company-active-map
+   "[return]" nil
    "C-w" nil
    "C-n" 'company-select-next
    "C-p" 'company-select-previous))
