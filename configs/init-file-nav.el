@@ -17,7 +17,8 @@
   :general
   (general-nmap
    :keymaps 'dired-mode-map
-   "w" 'wdired-change-to-wdired-mode)
+   "w" 'wdired-change-to-wdired-mode
+   "<return>" 'dired-find-file)
   (clear-spc
     :keymaps 'dired-mode-map)
   (common-leader
