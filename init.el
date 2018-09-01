@@ -20,10 +20,10 @@
       ns-right-command-modifier 'hyper
       inhibit-startup-screen t)
 
-(let ((custom-file "~/.emacs.d/custom.el"))
-  (if (file-exists-p custom-file)
-      (load custom-file)
-    (message "no custom setting file!")))
+(setq custom-file "~/.emacs.d/custom.el")
+(if (file-exists-p custom-file)
+    (load custom-file)
+  (message "no custom setting file!"))
 
 (require 'init-package)
 (require 'init-evil)
