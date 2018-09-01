@@ -76,10 +76,10 @@
   (setq evil-visualstar/persistent t)
   (global-evil-visualstar-mode))
 
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init))
+;; (use-package evil-collection
+;;   :after evil
+;;   :config
+;;   (evil-collection-init))
 
 ;; (use-package multiple-cursors
 ;;   :defer t
