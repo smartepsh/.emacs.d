@@ -40,6 +40,7 @@
 (use-package evil-escape
   :after evil
   :config
+  (evil-escape-mode)
   (setq evil-escape-key-sequence "jk"
         evil-escape-delay 0.1))
 
