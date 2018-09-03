@@ -63,6 +63,7 @@ same directory as the org-buffer and insert a link to this file."
     "it" 'org-set-tags
     "ip" 'org-set-property
     "l" '(:ignore t :which-key "links")
+    "lt" 'org-toggle-link-display
     "ls" 'org-store-link
     "lI" 'org-insert-last-stored-link
     "li" 'org-insert-link
