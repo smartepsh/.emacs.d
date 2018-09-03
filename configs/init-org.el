@@ -6,7 +6,10 @@
   :pin org-cn
   :defer t
   :config
-  (setq org-default-notes-file (concat org-directory "defaults.org"))
+  (setq org-todo-keywords '((sequence "TODO(t)" "VERIFY(v)" "|" "DONE(d)" "DELEGATED(g)" "CANCELED(c)"))
+	org-default-notes-file (concat org-directory "defaults.org")
+	org-archive-location (concat org-directory "/Archived/" "%s_archive::")
+	org-log-done 'time)
   (nconc org-modules '(org-id org-protocol))
   (defun org-capture-screenshot ()
     "Take a screenshot into a time stamped unique-named file in the
@@ -38,7 +41,33 @@ same directory as the org-buffer and insert a link to this file."
     "on" 'org-noter)
   (local-leader
     :keymaps 'org-mode-map
-    "sc" 'org-capture-screenshot))
+    "A" 'org-attach
+    "a" 'org-agenda
+    "t" 'org-todo
+    "sa" 'org-archive-subtree
+    "sc" 'org-capture-screenshot
+    "ss" 'org-sparse-tree
+    "sr" 'org-refile
+    "bb" 'org-switchb
+    "p" '(:ignore t :which-key "priorities")
+    "pp" 'org-priority
+    "pu" 'org-priority-up
+    "pd" 'org-priority-down
+    "d" '(:ignore t :which-key "datetimes")
+    "dt" 'org-time-stamp
+    "dT" 'org-time-stamp-inactive
+    "ds" 'org-schedule
+    "dd" 'org-deadline
+    "i" '(:ignore t :which-key "inserts")
+    "if" 'org-footnote-new
+    "it" 'org-set-tags
+    "ip" 'org-set-property
+    "l" '(:ignore t :which-key "links")
+    "ls" 'org-store-link
+    "lI" 'org-insert-last-stored-link
+    "li" 'org-insert-link
+    "ll" 'org-open-at-point
+    "lb" 'org-mark-ring-goto))
 
 (use-package org-agenda
   :ensure org-plus-contrib
