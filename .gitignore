@@ -12,6 +12,5 @@ company-statistics-cache.el
 var/
 projectile.cache
 projectile-bookmarks.eld
-cnfonts/
 eshell/
 url/
