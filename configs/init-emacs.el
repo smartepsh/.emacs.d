@@ -10,6 +10,7 @@
   "SPC" 'execute-extended-command
   "fed" 'open-config-file
   "ff" 'counsel-find-file
+  "fr" 'counsel-recentf
   "bb" 'counsel-ibuffer)
 
 ;; (vimish-fold--vimish-overlay-p)
