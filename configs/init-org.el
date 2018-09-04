@@ -378,5 +378,15 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
+(use-package anki-editor
+  :after org
+  :config
+  (anki-editor-mode)
+  :general
+  (local-leader
+    :keymaps 'org-mode-map
+    "kp" 'anki-editor-push-notes
+    "ki" 'anki-editor-insert-note))
+
 
 (provide 'init-org)
