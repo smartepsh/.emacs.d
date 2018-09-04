@@ -73,7 +73,8 @@
   :after org
   :config
   (setq org-download-method 'attach
-	org-download-screenshot-method "screencapture -i %s")
+	org-download-screenshot-method "screencapture -i %s"
+	org-download-image-dir (concat org-directory "images/"))
   :general
   (local-leader
     :keymaps 'org-mode-map
