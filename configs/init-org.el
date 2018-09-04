@@ -11,22 +11,6 @@
 	org-archive-location (concat org-directory "/Archived/" "%s_archive::")
 	org-log-done 'time)
   (nconc org-modules '(org-id org-protocol))
-  (defun org-capture-screenshot ()
-    "Take a screenshot into a time stamped unique-named file in the
-same directory as the org-buffer and insert a link to this file."
-    (interactive)
-    (org-display-inline-images)
-    (setq filename
-	  (concat
-	   (make-temp-name
-	    (concat (concat org-directory (concat "/images/" (buffer-name)))
-		    (format-time-string "%Y%m%d_%H%M%S_")) ) ".png"))
-    (unless (file-exists-p (file-name-directory filename))
-      (make-directory (file-name-directory filename)))
-    (if (eq system-type 'darwin)
-	(call-process "screencapture" nil nil nil "-i" filename))
-    (if (file-exists-p filename)
-	(insert (concat "[[file:" filename "]]"))))
 
   (defun notify-osx (title meassage)
     (call-process "terminal-notifier"
@@ -45,7 +29,6 @@ same directory as the org-buffer and insert a link to this file."
     "a" 'org-agenda
     "t" 'org-todo
     "sa" 'org-archive-subtree
-    "sc" 'org-capture-screenshot
     "ss" 'org-sparse-tree
     "sr" 'org-refile
     "bb" 'org-switchb
@@ -85,6 +68,16 @@ same directory as the org-buffer and insert a link to this file."
   :config
   (setq org-clock-clocked-in-display nil
 	org-clock-mode-line-total 'current))
+
+(use-package org-download
+  :after org
+  :config
+  (setq org-download-method 'attach
+	org-download-screenshot-method "screencapture -i %s")
+  :general
+  (local-leader
+    :keymaps 'org-mode-map
+    "sc" 'org-download-screenshot))
 
 (use-package org-pomodoro
   :commands org-pomodoro
