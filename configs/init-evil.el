@@ -45,9 +45,7 @@
         evil-escape-delay 0.1))
 
 (use-package evil-matchit
-  :after evil
-  :config
-  (evil-matchit-mode t))
+  :hook (prog-mode . evil-matchit-mode))
 
 (use-package evil-surround
   :after evil
