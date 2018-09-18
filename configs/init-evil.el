@@ -96,4 +96,11 @@
   :init
   (global-evil-mc-mode t))
 
+(use-package undo-tree
+  :init
+  (setq undo-tree-auto-save-history t)
+  (setq undo-tree-visualizer-timestamps t)
+  (setq undo-tree-enable-undo-in-region nil)
+  (global-undo-tree-mode))
+
 (provide 'init-evil)
