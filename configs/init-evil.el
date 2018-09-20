@@ -98,6 +98,7 @@
 
 (use-package undo-tree
   :init
+  (setq undo-tree-history-directory-alist `(("." . ,"~/.emacs.d/undo-tree-history")))
   (setq undo-tree-auto-save-history t)
   (setq undo-tree-visualizer-timestamps t)
   (setq undo-tree-enable-undo-in-region nil)
