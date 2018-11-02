@@ -28,6 +28,9 @@
   (evil-mode)
   :config
   (setq-default evil-shift-width 2)
+  (general-define-key
+   :states 'insert
+   "\C-h" 'delete-backward-char)
   (mapc #'evil-declare-ignore-repeat
     '(kill-this-buffer
      ido-kill-buffer
@@ -37,12 +40,12 @@
      split-window-right
      split-window-right-and-focus)))
 
-(use-package evil-escape
-  :after evil
-  :config
-  (evil-escape-mode)
-  (setq evil-escape-key-sequence "jk"
-        evil-escape-delay 0.1))
+;; (use-package evil-escape
+;;   :after evil
+;;   :config
+;;   (evil-escape-mode)
+;;   (setq evil-escape-key-sequence "jk"
+;;         evil-escape-delay 0.1))
 
 (use-package evil-matchit
   :hook (prog-mode . evil-matchit-mode))
