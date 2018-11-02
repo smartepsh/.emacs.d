@@ -30,7 +30,9 @@
   (setq-default evil-shift-width 2)
   (general-define-key
    :states 'insert
-   "\C-h" 'delete-backward-char)
+   "\C-h" 'delete-backward-char
+   "\C-d" 'delete-char
+   )
   (mapc #'evil-declare-ignore-repeat
     '(kill-this-buffer
      ido-kill-buffer
