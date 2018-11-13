@@ -18,6 +18,7 @@
 (require 'init-chinese)
 (require 'init-env)
 (require 'init-elixir)
+(require 'init-dart)
 (require 'init-ivy)
 (require 'init-magit)
 (require 'init-projectile)
