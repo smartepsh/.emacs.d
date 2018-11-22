@@ -28,7 +28,7 @@
   (local-leader
     :keymaps 'alchemist-mode-map
     "." '(alchemist-goto-definition-at-point :which-key "jump-to")
-    "," '(alchemist-goto-definition-at-point :which-key "jump-back")
+    "," '(alchemist-goto-jump-back :which-key "jump-back")
 
     "t" '(:ignore t :which-key "test")
     "ta" 'alchemist-mix-test
