@@ -1,5 +1,5 @@
 (use-package ivy
-  :defer t 
+  :defer t
   :ensure-system-package (ag . the-silver-searcher)
   :init
   (add-hook 'after-init-hook #'ivy-mode)
@@ -32,15 +32,23 @@
   :after ivy
   :init
   (setq ivy-virtual-abbreviate 'full
-	ivy-rich-switch-buffer-align-virtual-buffer t)
-  :config
-  (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer))
+	ivy-rich-switch-buffer-align-virtual-buffer t))
+  ;; :config
+  ;; (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer))
 
 (use-package ivy-prescient
   :after ivy
   :config
   (setq ivy-prescient-retain-classic-highlighting t)
   (ivy-prescient-mode))
+
+(use-package all-the-icons-ivy
+  :after ivy
+  :init
+  (setq all-the-icons-ivy-file-commands
+	`(counsel-find-file counsel-file-jump counsel-recentf counsel-projectile counsel-projectile-find-file counsel-projectile-find-dir counsel-git counsel-ibuffer))
+  :config
+  (all-the-icons-ivy-setup))
 
 
 (provide 'init-ivy)
