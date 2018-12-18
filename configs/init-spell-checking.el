@@ -1,7 +1,7 @@
 (use-package flyspell
   :ensure-system-package hunspell
   :hook (text-mode . flyspell-mode)
-  :hook (elixir-mode . flyspell-prog-mode)
+  :hook (prog-mode . flyspell-prog-mode)
   :init
   (setq flyspell-issue-welcome-flag nil)
   :config
