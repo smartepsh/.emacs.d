@@ -27,12 +27,6 @@
 	evil-want-integration nil)
   (evil-mode)
   :config
-  (defun evil-switch-to-us ()
-    "set input method to US"
-    (interactive)
-    (message (shell-command-to-string (format "%s %s"
-     "issw"
-     "com.apple.keylayout.US"))))
   (setq-default evil-shift-width 2)
   (evil-switch-to-us)
   (general-define-key
@@ -47,9 +41,7 @@
 	  split-window-below
 	  split-window-below-and-focus
 	  split-window-right
-	  split-window-right-and-focus))
-
-  (add-hook 'evil-insert-state-exit-hook 'evil-switch-to-us))
+	  split-window-right-and-focus)))
 
 ;; (use-package evil-escape
 ;;   :after evil
