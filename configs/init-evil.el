@@ -28,7 +28,6 @@
   (evil-mode)
   :config
   (setq-default evil-shift-width 2)
-  (evil-switch-to-us)
   (general-define-key
    :states 'insert
    "\C-h" 'delete-backward-char

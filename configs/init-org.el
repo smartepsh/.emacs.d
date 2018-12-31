@@ -378,6 +378,10 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
+(use-package org-bullets
+  :hook (org-mode . org-bullets-mode)
+  )
+
 (use-package anki-editor
   :after org
   :config
