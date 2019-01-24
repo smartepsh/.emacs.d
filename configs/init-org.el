@@ -1,4 +1,4 @@
-(setq org-directory "~/onedrive/bookshelf/notes/")
+(setq org-directory "~/onedrive/Dropbox/notes/")
 
 (use-package org
   :ensure org-plus-contrib
@@ -8,7 +8,7 @@
   :config
   (setq org-todo-keywords '((sequence "TODO(t)" "VERIFY(v)" "|" "DONE(d)" "DELEGATED(g)" "CANCELED(c)"))
 	org-default-notes-file (concat org-directory "defaults.org")
-	org-archive-location (concat org-directory "/Archived/" "%s_archive::")
+	org-archive-location (concat org-directory "Archived/" "%s_archive::")
 	org-log-done 'time)
   (nconc org-modules '(org-id org-protocol))
 
