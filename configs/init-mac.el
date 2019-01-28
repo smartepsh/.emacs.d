@@ -60,6 +60,7 @@
 (global-set-key (kbd "s-s") 'evil-write)
 
 (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
+(global-set-key (kbd "s-C-f") 'toggle-frame-fullscreen)
 (global-set-key (kbd "s-s-h") 'ns-do-hide-others)
 
 (provide 'init-mac)
