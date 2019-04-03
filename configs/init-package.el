@@ -1,11 +1,11 @@
-(package-initialize)
+(unless package--initialized (package-initialize))
 
 (setq use-package-expand-minimally t
       use-package-always-ensure t
       package-enable-at-startup nil
-      package-archives '(("melpa-cn" . "http://elpa.zilongshanren.com/melpa/")
-                        ("org-cn"   . "http://elpa.zilongshanren.com/org/")
-                        ("gnu-cn"   . "http://elpa.zilongshanren.com/gnu/")))
+      package-archives '(("melpa-cn" . "https://elpa.emacs-china.org/melpa/")
+                        ("org-cn"   . "https://elpa.emacs-china.org/org/")
+                        ("gnu-cn"   . "https://elpa.emacs-china.org/gnu/")))
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
