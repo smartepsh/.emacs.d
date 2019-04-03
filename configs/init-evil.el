@@ -99,7 +99,11 @@
 (use-package evil-mc
   :after evil
   :init
-  (global-evil-mc-mode t))
+  (global-evil-mc-mode t)
+  :config
+  (setq evil-mc-one-cursor-show-mode-line-text nil
+	;; evil-mc-enable-bar-cursor nil
+	))
 
 (use-package undo-tree
   :init
