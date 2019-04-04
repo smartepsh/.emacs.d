@@ -1,4 +1,5 @@
-(unless package--initialized (package-initialize))
+;; (unless package--initialized (package-initialize))
+(package-initialize)
 
 (setq use-package-expand-minimally t
       use-package-always-ensure t
