@@ -1,3 +1,5 @@
+(require 'company-simple-complete)
+
 (use-package company
   :defer t
   :init
@@ -22,13 +24,19 @@
     (unless (company-complete)
       (hippie-expand arg)))
 
-  (setq evil-complete-next-func '+evil-complete
-	evil-complete-previous-func '+evil-complete)
+  (setq
+   company-require-match nil
+   evil-complete-next-func '+evil-complete
+   evil-complete-previous-func '+evil-complete)
 
   :general
   (general-define-key
    :keymaps 'company-active-map
-   "[return]" nil
+   "<tab>" 'company-complete-selection
+   ;; "TAB" 'company-simple-complete-next
+   ;; "<S-tab>" 'company-simple-complete-previous
+   "<RET>" nil
+   "<return>" nil
    "C-w" nil
    "C-n" 'company-select-next
    "C-p" 'company-select-previous))
