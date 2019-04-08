@@ -7,6 +7,7 @@
   "sd" 'scheme-send-definition
   "," '+scheme-send-last-sexp
   "r" '+run-scheme-split
+  "c" '+clear-scheme-buffer
   )
 
 (local-leader
@@ -42,5 +43,11 @@
 (defun +scheme-send-line ()
   (interactive)
   (scheme-send-region (line-beginning-position) (line-end-position)))
+
+(defun +clear-scheme-buffer ()
+  (interactive)
+  (switch-to-buffer "*scheme*")
+  (comint-clear-buffer)
+  (switch-to-prev-buffer))
 
 (provide 'init-scheme)
