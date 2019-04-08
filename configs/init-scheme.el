@@ -5,7 +5,7 @@
   "sr" 'scheme-send-region
   "sd" 'scheme-send-definition
   "," 'scheme-send-last-sexp
-  "r" 'run-scheme
+  "r" 'run-shceme-split
   )
 
 (local-leader
@@ -20,6 +20,16 @@
   (if (get-buffer-process (current-buffer))
       (progn
 	(set-process-query-on-exit-flag (get-buffer-process (current-buffer)) nil)
-	(kill-current-buffer))))
+	(kill-buffer-and-window))))
+
+(defun run-scheme-split ()
+  (interactive)
+  (if (get-buffer "*scheme*")
+      (display-buffer "*scheme*")
+    (split-window-horizontally)
+    (other-window 1)
+    (run-scheme scheme-program-name)
+    (other-window 1)
+    ))
 
 (provide 'init-scheme)
