@@ -17,6 +17,7 @@
 (require 'init-emacs)
 (require 'init-chinese)
 (require 'init-env)
+(require 'init-scheme)
 (require 'init-elixir)
 (require 'init-web)
 (require 'init-dart)
