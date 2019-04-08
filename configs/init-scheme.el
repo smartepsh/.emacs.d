@@ -5,7 +5,7 @@
   "sr" 'scheme-send-region
   "sd" 'scheme-send-definition
   "," 'scheme-send-last-sexp
-  "r" 'run-shceme-split
+  "r" 'run-scheme-split
   )
 
 (local-leader
@@ -29,7 +29,6 @@
     (split-window-horizontally)
     (other-window 1)
     (run-scheme scheme-program-name)
-    (other-window 1)
-    ))
+    (other-window 1)))
 
 (provide 'init-scheme)
