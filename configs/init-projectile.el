@@ -10,6 +10,7 @@
   :general
   (common-leader
     "p" '(:ignore t :which-key "projectile")
+    "pc" 'projectile-kill-buffers
     "pd" 'projectile-dired
     "pI" 'projectile-invalidate-cache))
 
