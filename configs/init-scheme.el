@@ -3,9 +3,10 @@
 (local-leader
   :keymaps 'scheme-mode-map
   "sr" 'scheme-send-region
+  "sl" '+scheme-send-line
   "sd" 'scheme-send-definition
-  "," 'scheme-send-last-sexp
-  "r" 'run-scheme-split
+  "," '+scheme-send-last-sexp
+  "r" '+run-scheme-split
   )
 
 (local-leader
@@ -15,14 +16,14 @@
   "q" 'close-scheme
   )
 
-(defun close-scheme ()
+(defun +close-scheme ()
   (interactive)
   (if (get-buffer-process (current-buffer))
       (progn
 	(set-process-query-on-exit-flag (get-buffer-process (current-buffer)) nil)
 	(kill-buffer-and-window))))
 
-(defun run-scheme-split ()
+(defun +run-scheme-split ()
   (interactive)
   (if (get-buffer "*scheme*")
       (display-buffer "*scheme*")
@@ -30,5 +31,16 @@
     (other-window 1)
     (run-scheme scheme-program-name)
     (other-window 1)))
+
+(defun +scheme-send-last-sexp ()
+  (interactive)
+  (right-char)
+  (scheme-send-last-sexp)
+  (backward-char)
+  )
+
+(defun +scheme-send-line ()
+  (interactive)
+  (scheme-send-region (line-beginning-position) (line-end-position)))
 
 (provide 'init-scheme)
