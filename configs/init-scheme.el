@@ -5,7 +5,8 @@
   "sr" 'scheme-send-region
   "sl" '+scheme-send-line
   "sd" 'scheme-send-definition
-  "," '+scheme-send-last-sexp
+  "ss" '+scheme-send-last-sexp
+  "," '+scheme-send-line
   "r" '+run-scheme-split
   "c" '+clear-scheme-buffer
   )
