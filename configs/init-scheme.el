@@ -15,7 +15,7 @@
   :keymaps 'inferior-scheme-mode-map
   "l" 'scheme-load-file
   "c" 'comint-clear-buffer
-  "q" 'close-scheme
+  "q" '+close-scheme
   )
 
 (defun +close-scheme ()
