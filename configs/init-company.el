@@ -4,7 +4,7 @@
   :defer t
   :init
   (add-hook 'after-init-hook #'global-company-mode)
-  (setq company-idle-delay 0.5
+  (setq company-idle-delay 0.3
 	company-require-match 'never
 	company-tooltip-align-annotations t
 	company-dabbrev-ignore-case nil
