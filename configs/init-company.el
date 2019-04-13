@@ -63,6 +63,16 @@
   :config
   (yas-reload-all))
 
+;; (use-package lsp-mode
+;;   :ensure-system-package (vls . "npm install -g vue-language-server")
+;;   :hook (prog-mode . lsp-mode))
+
+;; (use-package company-lsp
+;;   :after (company, lsp-mode)
+;;   :init
+;;   (push 'company-lsp company-backends)
+;;   (setq company-lsp-enable-snippet t))
+
 (use-package company-quickhelp
   :after company
   :init
