@@ -1,4 +1,4 @@
-(require 'company-simple-complete)
+;; (require 'company-simple-complete)
 
 (use-package company
   :defer t
@@ -39,7 +39,8 @@
    "<return>" nil
    "C-w" nil
    "C-n" 'company-select-next
-   "C-p" 'company-select-previous))
+   "C-p" 'company-select-previous
+   "M-h" 'company-quickhelp-manual-begin))
 
 ;; (use-package company-statistics
 ;;   :hook (company-mode . company-statistics-mode))
@@ -61,5 +62,13 @@
   :after yasnippet
   :config
   (yas-reload-all))
+
+(use-package company-quickhelp
+  :after company
+  :init
+  (company-quickhelp-mode)
+  (setq company-quickhelp-delay nil
+	company-quickhelp-color-background "windowBackgroundColor"
+	company-quickhelp-color-foreground "wheat1"))
 
 (provide 'init-company)
