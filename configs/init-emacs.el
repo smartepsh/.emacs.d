@@ -61,6 +61,8 @@
   ;; Then new bookmarks can be saved before the buffer is reverted.
   ;; Make sure bookmarks is saved before check-in (and revert-buffer)
   (add-hook 'vc-before-checkin-hook #'bm-buffer-save)
+  :custom-face
+  (bm-persistent-face ((t (:background "blue violet" :foreground "White"))))
   :general
   (general-define-key
     :keymaps 'bm-show-mode-map
