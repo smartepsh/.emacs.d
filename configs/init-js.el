@@ -9,10 +9,4 @@
   :hook ('js2-mode-hook 'indium-interaction-mode)
   )
 
-(use-package tern
-  :defer t
-  :ensure-system-package (tern . "npm install -g tern")
-  :hook ('js2-mode-hook 'tern-mode)
-  )
-
 (provide 'init-js)
