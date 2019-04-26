@@ -17,3 +17,4 @@ url/
 undo-tree-history/
 transient/
 bms
+.lsp-session*

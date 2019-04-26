@@ -33,5 +33,4 @@
 (require 'init-jumping)
 (require 'init-server)
 (require 'init-sql)
-(require 'init-js)
 (require 'init-dashboard)
