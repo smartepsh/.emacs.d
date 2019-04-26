@@ -6,7 +6,7 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (fset #'yes-or-no-p #'y-or-n-p)
 
-(setq-default ident-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
 (setq tab-width 2)
 
 ;; emacs setting
