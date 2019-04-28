@@ -20,11 +20,11 @@
             (if (gethash "vue" (gethash "dependencies" json))
                 t)))))
 
-(local-leader
+(general-define-key
   :keymaps 'vue-minor-mode-map
-  "t" '+vue/find-template-file
-  "q" '+vue/find-style-file
-  "w" '+vue/find-script-file)
+  "C-j t" '+vue/find-template-file
+  "C-j s" '+vue/find-style-file
+  "C-j j" '+vue/find-script-file)
 
 (defun +vue/find-template-file ()
     (interactive)
