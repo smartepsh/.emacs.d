@@ -3,11 +3,12 @@
   :hook (text-mode . flyspell-mode)
   :hook (prog-mode . flyspell-prog-mode)
   :init
+  (setenv "LANG" "en_US")
   (setq flyspell-issue-welcome-flag nil)
   :config
     (setq ispell-program-name (executable-find "hunspell")
-	ispell-dictionary "en_US"
-	ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US,en_US-med") nil utf-8))))
+        ispell-dictionary "en_US"
+        ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8))))
 
 (use-package flyspell-correct-ivy
   :after flyspell-correct)
