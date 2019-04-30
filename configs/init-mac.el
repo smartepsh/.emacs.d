@@ -20,22 +20,22 @@
    "s-8" 'winum-select-window-8
    "s-9" 'winum-select-window-9))
 
-(defun copy-to-clipboard()
-  "Copies selection to x-clipboard."
-  (interactive)
-  (if (display-graphic-p)
-      (progn
-	(shell-command-on-region (region-beginning) (region-end) "pbcopy")
-	(message "Yanked region to clipboard!")
-	(deactivate-mark))
-    (message "No region active; can't yank to clipboard!"))
-  )
+;; (defun copy-to-clipboard()
+;;   "Copies selection to x-clipboard."
+;;   (interactive)
+;;   (if (display-graphic-p)
+;;       (progn
+;; 	(shell-command-on-region (region-beginning) (region-end) "pbcopy")
+;; 	(message "Yanked region to clipboard!")
+;; 	(deactivate-mark))
+;;     (message "No region active; can't yank to clipboard!"))
+;;   )
 
-(defun paste-from-clipboard ()
-  "Pastes from x-clipboard."
-  (interactive)
-  (insert (shell-command-to-string "pbpaste"))
-  )
+;; (defun paste-from-clipboard ()
+;;   "Pastes from x-clipboard."
+;;   (interactive)
+;;   (insert (shell-command-to-string "pbpaste"))
+;;   )
 
 ;; Keybindings
 ;; (global-set-key (kbd-mac-command "=") 'spacemacs/scale-up-font)
@@ -46,8 +46,8 @@
 (global-set-key (kbd "s-q") 'save-buffers-kill-terminal)
 ;; (global-set-key (kbd-mac-command "v") 'clipboard-yank)
 ;; (global-set-key (kbd-mac-command "c") 'clipboard-kill-ring-save)
-(global-set-key (kbd "s-v") 'paste-from-clipboard)
-(global-set-key (kbd "s-c") 'copy-to-clipboard)
+;; (global-set-key (kbd "s-v") 'paste-from-clipboard)
+;; (global-set-key (kbd "s-c") 'copy-to-clipboard)
 (global-set-key (kbd "s-a") 'mark-whole-buffer)
 ;; (global-set-key (kbd-mac-command "x") 'clipboard-kill-region)
 (global-set-key (kbd "s-x") 'kill-region)

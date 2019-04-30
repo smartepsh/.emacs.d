@@ -24,23 +24,48 @@
   :init
   (setq evil-shift-width 2
         evil-flash-delay 1
-	evil-want-integration nil)
+        evil-want-integration nil)
   (evil-mode)
   :config
+  (defun copy-to-clipboard()
+    "Copies selection to x-clipboard."
+    (interactive)
+    (if (display-graphic-p)
+        (progn
+          (if (use-region-p)
+              (progn
+                (evil-yank (region-beginning) (region-end) t (evil-use-register ?+))
+                (message "Yanked region to clipboard!")
+                (deactivate-mark))
+            (message "No region active; can't yank to clipboard!"))
+          )
+      ))
+
+  (defun paste-from-clipboard ()
+    "Pastes from x-clipboard."
+    (interactive)
+    (evil-paste-after 1 (evil-use-register ?+))
+    )
+
   (setq-default evil-shift-width 2)
+
   (general-define-key
    :states 'insert
    "\C-h" 'delete-backward-char
    "\C-d" 'delete-char
    )
+  (general-define-key
+   "s-c" 'copy-to-clipboard
+   "s-v" 'paste-from-clipboard
+   )
   (mapc #'evil-declare-ignore-repeat
-	'(kill-this-buffer
-	  ido-kill-buffer
-	  save-buffer
-	  split-window-below
-	  split-window-below-and-focus
-	  split-window-right
-	  split-window-right-and-focus)))
+        '(kill-this-buffer
+          ido-kill-buffer
+          save-buffer
+          split-window-below
+          split-window-below-and-focus
+          split-window-right
+          split-window-right-and-focus)))
 
 ;; (use-package evil-escape
 ;;   :after evil
