@@ -8,6 +8,7 @@
 
 (setq-default indent-tabs-mode nil)
 (setq tab-width 2)
+(set-default-coding-systems 'utf-8-unix)
 
 ;; emacs setting
 (setq auto-save-default nil
