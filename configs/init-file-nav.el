@@ -18,6 +18,7 @@
   (general-nmap
    :keymaps 'dired-mode-map
    "w" 'wdired-change-to-wdired-mode
+   "+" 'dired-create-directory
    "<return>" 'dired-find-file)
   (clear-spc
     :keymaps 'dired-mode-map)
