@@ -25,6 +25,8 @@
     "fd" 'dired-jump
     "fD" 'dired-jump-other-window))
 
+(use-package hydra)
+
 (use-package dired-quick-sort
   :hook (dired-mode . dired-quick-sort-setup))
 
