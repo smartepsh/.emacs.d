@@ -18,6 +18,12 @@
   :init
   (add-hook 'elixir-mode-hook 'alchemist-mode)
   :config
+  (defun run-elixir-tests ()
+    (interactive)
+    (if (string-equal "exs" (file-name-extension (buffer-file-name (current-buffer))))
+    (alchemist-mix-test-this-buffer)
+    (alchemist-project-run-tests-for-current-file)))
+
   (setq alchemist-test-status-modeline nil
 	alchemist-test-display-compilation-output t
 	alchemist-test-truncate-lines nil)
@@ -33,7 +39,7 @@
     "t" '(:ignore t :which-key "test")
     "ta" 'alchemist-mix-test
     "tt" 'alchemist-mix-test-at-point
-    "tb" 'alchemist-mix-test-this-buffer
+    "tb" 'run-elixir-tests
     "tr" 'alchemist-mix-rerun-last-test
     "ts" 'alchemist-mix-test-stale
     "tw" 'alchemist-test-toggle-test-report-display
