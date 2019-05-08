@@ -18,12 +18,15 @@
   (general-nmap
    :keymaps 'dired-mode-map
    "w" 'wdired-change-to-wdired-mode
+   "+" 'dired-create-directory
    "<return>" 'dired-find-file)
   (clear-spc
     :keymaps 'dired-mode-map)
   (common-leader
     "fd" 'dired-jump
     "fD" 'dired-jump-other-window))
+
+(use-package hydra)
 
 (use-package dired-quick-sort
   :hook (dired-mode . dired-quick-sort-setup))
