@@ -2,7 +2,6 @@
   :commands (projectile-dired)
   :init
   (setq projectile-sort-order 'recentf
-        projectile-enable-caching t
 	project-cache-file "~/.emacs.d/projectile.cache"
 	project-known-projects-file "~/.emacs.d/projectile-bookmarks.eld"
 	projectile-completion-system 'ivy)
