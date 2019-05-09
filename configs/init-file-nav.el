@@ -19,6 +19,7 @@
    :keymaps 'dired-mode-map
    "w" 'wdired-change-to-wdired-mode
    "+" 'dired-create-directory
+   "gb" 'revert-buffer
    "<return>" 'dired-find-file)
   (clear-spc
     :keymaps 'dired-mode-map)
