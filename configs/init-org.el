@@ -45,6 +45,7 @@
     "if" 'org-footnote-new
     "it" 'org-set-tags
     "ip" 'org-set-property
+    "is" 'org-insert-structure-template
     "l" '(:ignore t :which-key "links")
     "lt" 'org-toggle-link-display
     "ls" 'org-store-link
