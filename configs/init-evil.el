@@ -4,17 +4,20 @@
   (general-auto-unbind-keys)
   (general-create-definer common-leader
     :prefix-name "SPC"
-    :global-prefix "H-g"
+    :non-normal-prefix "C-SPC"
     :prefix "SPC"
-    :states '(motion normal emacs))
+    :states '(insert motion normal emacs))
   (general-create-definer local-leader
     :prefix-name "leader"
-    :global-prefix "H-b"
+    :non-normal-prefix "C-,"
     :prefix ","
-    :states '(motion normal emacs))
+    :states '(insert motion normal emacs))
   (general-create-definer clear-spc
     :prefix-name "NOSPC"
-    "SPC" nil))
+    "SPC" nil)
+  (general-define-key
+   :keymaps '(global-map)
+   "C-SPC" nil))
 
 (use-package which-key
   :init

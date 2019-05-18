@@ -21,6 +21,7 @@
   :general
   (general-define-key
    :keymaps 'flyspell-mode-map
-   "C-;" 'flyspell-correct-previous-word-generic))
+   "C-;" 'flyspell-correct-previous-word-generic
+   "C-," nil))
 
 (provide 'init-spell-checking)
