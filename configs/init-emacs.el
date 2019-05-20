@@ -11,7 +11,8 @@
   "fed" 'open-config-file
   "ff" 'counsel-find-file
   "fr" 'counsel-recentf
-  "fb" 'counsel-ibuffer)
+  "fb" 'counsel-ibuffer
+  "sw" 'window-swap-states)
 
 ;; (vimish-fold--vimish-overlay-p)
 
