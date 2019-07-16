@@ -23,7 +23,9 @@
   :commands (swiper)
   :general
   (general-define-key
-   "C-s" 'swiper))
+   "C-s" 'swiper
+   "s-f" 'swiper-isearch-thing-at-point
+   ))
 
 (use-package counsel
   :after ivy)
