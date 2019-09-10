@@ -16,7 +16,7 @@
 (use-package alchemist
   :defer t
   :init
-  (add-hook 'elixir-mode-hook 'alchemist-mode)
+  ;; (add-hook 'elixir-mode-hook 'alchemist-mode)
   :config
   (defun run-elixir-tests ()
     (interactive)
@@ -129,5 +129,9 @@
     "or" 'alchemist-macroexpand-region
     "oR" 'alchemist-macroexpand-print-region
     "o!" 'alchemist-macroexpand-close-popup))
+
+(use-package dap-elixir
+  :commands (dap-debug-edit-template)
+  :ensure dap-mode)
 
 (provide 'init-elixir)

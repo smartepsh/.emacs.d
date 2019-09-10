@@ -33,4 +33,5 @@
 (require 'init-jumping)
 (require 'init-server)
 (require 'init-sql)
+(require 'init-lsp)
 (require 'init-dashboard)
