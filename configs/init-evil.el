@@ -106,9 +106,10 @@
 
 (use-package evil-visualstar
   :after evil
+  :init
+  (global-evil-visualstar-mode)
   :config
-  (setq evil-visualstar/persistent t)
-  (global-evil-visualstar-mode))
+  (setq evil-visualstar/persistent t))
 
 ;; (use-package evil-collection
 ;;   :after evil
@@ -124,14 +125,14 @@
 ;;    "C-s-p" 'mc/mark-previous-like-this
 ;;    "C-s-b" 'mc/mark-all-like-this))
 
-(use-package evil-mc
-  :after evil
-  :init
-  (global-evil-mc-mode t)
-  :config
-  (setq evil-mc-one-cursor-show-mode-line-text nil
-	;; evil-mc-enable-bar-cursor nil
-	))
+;; (use-package evil-mc
+;;   :after evil
+;;   :init
+;;   (global-evil-mc-mode t)
+;;   :config
+;;   (setq evil-mc-one-cursor-show-mode-line-text nil
+;; 	;; evil-mc-enable-bar-cursor nil
+;; 	))
 
 (use-package undo-tree
   :init
