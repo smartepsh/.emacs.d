@@ -6,7 +6,9 @@
   :ensure-system-package (vls . "npm install -g vue-language-server")
   :init
   (add-to-list 'exec-path "~/.emacs.d/lsp/")
-  (add-to-list 'company-backends 'company-lsp))
+  (add-to-list 'company-backends 'company-lsp)
+  :config
+  (setq lsp-file-watch-threshold nil))
 
 (use-package lsp-ui
   :after (lsp-mode)
