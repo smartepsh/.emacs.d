@@ -26,7 +26,7 @@
 (require 'init-projectile)
 (require 'init-company)
 (require 'init-spell-checking)
-(require 'init-syntax-checking)
+;; (require 'init-syntax-checking)
 (require 'init-mac)
 (require 'init-org)
 (require 'init-file-nav)
