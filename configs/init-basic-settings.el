@@ -42,6 +42,17 @@
 		   (sql-database "postgres")
 		   (sql-port 5432))))
 
+(defun goproxy()
+  (interactive)
+  (setq url-proxy-services '(("no_proxy" . "^\\(localhost\\|10\\..*\\|192\\.168\\..*\\)")
+                             ("http" . "192.168.50.111:8118")
+                             ("https" . "192.168.50.111:8118")
+                             )
+        ))
+
+(defun disproxy()
+  (interactive)
+  (setq url-proxy-services nil))
 ;; shell setting
 ;; .zshenv
 ;;
