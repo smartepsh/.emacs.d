@@ -1,4 +1,4 @@
-(setq org-directory "~/onedrive/Dropbox/notes/")
+(setq org-directory "~/Users/smartepsh/Qsync/notes/")
 
 (use-package org
   :ensure org-plus-contrib
