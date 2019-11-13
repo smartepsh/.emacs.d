@@ -1,4 +1,10 @@
-(setq org-directory "~/Users/smartepsh/Qsync/notes/")
+(setq org-directory "~/Qsync/notes/")
+
+(defun open-orgs()
+  (interactive)
+  (if (buffer-live-p "work.org")
+      (pop-to-buffer "work.org")
+    (find-file (concat org-directory "work.org"))))
 
 (use-package org
   :ensure org-plus-contrib
@@ -22,7 +28,8 @@
 		  "-activate" "org.gnu.Emacs"))
   :general
   (common-leader
-    "on" 'org-noter)
+    "on" 'org-noter
+    "oo" 'open-orgs)
   (local-leader
     :keymaps 'org-mode-map
     "A" 'org-attach
