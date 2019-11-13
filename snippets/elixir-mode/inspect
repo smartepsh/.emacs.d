@@ -2,4 +2,4 @@
 # name: inspect
 # key: ins
 # --
-IO.inspect(${1:args})
+IO.inspect(${})
