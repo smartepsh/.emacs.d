@@ -1,7 +1,23 @@
-;; (use-package neotree
-;;   :general
-;;   (general-define-key
-;;    "<f5>" 'neotree-toggle))
+(use-package neotree
+  :defer t
+  :commands (neotree neotree-toggle)
+  :init
+  :config
+  (setq neo-theme(if (display-graphic-p) 'icons 'arrow))
+  (common-leader
+    "ft" 'neotree-toggle)
+  (general-nmap
+    :keymaps 'neotree-mode-map
+    "a" 'neotree-stretch-toggle
+    "r" 'neotree-rename-node
+    "c" 'neotree-create-node
+    "d" 'neotree-delete-node
+    "h" 'neotree-hidden-file-toggle
+    "J" 'neotree-select-up-node
+    "K" 'neotree-select-down-node
+    "R" 'neotree-change-root
+    "g" 'neotree-refresh
+    "<return>" 'neotree-quick-look))
 
 (use-package dired
   :ensure nil
