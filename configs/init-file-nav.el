@@ -2,10 +2,10 @@
   :defer t
   :commands (neotree neotree-toggle)
   :init
-  :config
-  (setq neo-theme(if (display-graphic-p) 'icons 'arrow))
   (common-leader
     "ft" 'neotree-toggle)
+  :config
+  (setq neo-theme(if (display-graphic-p) 'icons 'arrow))
   (general-nmap
     :keymaps 'neotree-mode-map
     "a" 'neotree-stretch-toggle
