@@ -2,8 +2,14 @@
   :defer t
   :commands (neotree neotree-toggle)
   :init
+  (defun projectile-neotree()
+    "Open neotree for projectile root directory."
+    (interactive)
+    (if buffer-file-name
+        (neotree-dir (projectile-project-p))
+      (neotree-toggle)))
   (common-leader
-    "ft" 'neotree-toggle)
+    "ft" 'projectile-neotree)
   :config
   (setq neo-theme(if (display-graphic-p) 'icons 'arrow))
   (general-nmap
@@ -13,11 +19,14 @@
     "c" 'neotree-create-node
     "d" 'neotree-delete-node
     "h" 'neotree-hidden-file-toggle
-    "J" 'neotree-select-up-node
-    "K" 'neotree-select-down-node
+    "J" 'neotree-select-next-sibling-node
+    "K" 'neotree-select-previous-sibling-node
+    "H" 'neotree-select-up-node
+    "L" 'neotree-select-down-node
     "R" 'neotree-change-root
     "g" 'neotree-refresh
-    "<return>" 'neotree-quick-look))
+    "<tab>" 'neotree-quick-look
+    "<enter>" 'neotree-enter))
 
 (use-package dired
   :ensure nil
