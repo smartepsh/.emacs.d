@@ -1,5 +1,5 @@
-;; (unless package--initialized (package-initialize))
-(package-initialize)
+(unless (or (version= "27" emacs-version) package--initialized)
+  (package-initialize))
 
 (setq use-package-expand-minimally t
       use-package-always-ensure t
