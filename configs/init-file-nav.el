@@ -26,7 +26,7 @@
     "R" 'neotree-change-root
     "g" 'neotree-refresh
     "<tab>" 'neotree-quick-look
-    "<enter>" 'neotree-enter))
+    "<return>" 'neotree-enter))
 
 (use-package dired
   :ensure nil
