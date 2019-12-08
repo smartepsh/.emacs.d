@@ -400,5 +400,10 @@
     "kp" 'anki-editor-push-notes
     "ki" 'anki-editor-insert-note))
 
+(use-package toc-org
+  :commands (toc-org-markdown-follow-thing-at-point)
+  :init
+  (add-hook 'org-mode-hook 'toc-org-mode))
+
 
 (provide 'init-org)
