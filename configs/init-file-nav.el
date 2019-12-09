@@ -17,6 +17,7 @@
     "a" 'neotree-stretch-toggle
     "r" 'neotree-rename-node
     "c" 'neotree-create-node
+    "C" 'neotree-copy-node
     "d" 'neotree-delete-node
     "h" 'neotree-hidden-file-toggle
     "J" 'neotree-select-next-sibling-node
