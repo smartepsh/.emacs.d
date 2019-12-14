@@ -1,3 +1,5 @@
+(require 'skim)
+
 (setq org-directory "~/Qsync/notes/")
 
 (defun open-orgs()
@@ -59,7 +61,14 @@
     "lI" 'org-insert-last-stored-link
     "li" 'org-insert-link
     "ll" 'org-open-at-point
-    "lb" 'org-mark-ring-goto))
+    "lb" 'org-mark-ring-goto
+    "k" '(:ignore t :which-key "skim")
+    "kn" 'skim-next-page
+    "kp" 'skim-prev-page
+    "ki" 'skim-insert-page-link
+    "kb" 'skim-insert-book-link
+    "ko" 'open-link-in-skim
+    "kg" 'skim-goto))
 
 (use-package org-agenda
   :ensure org-plus-contrib
