@@ -72,7 +72,7 @@ end tell"))
   (let ((link (org-element-context)))
     (if (string-equal (org-element-property :type link) "skim")
         (progn
-          (skim-open (org-element-property :path link))
+          (org-mac-skim-open (org-element-property :path link))
           (skim-kill-other-windows)
           (sleep-for 0 100)
           (do-applescript "tell application \"Emacs\" to activate"))
