@@ -406,8 +406,8 @@
   :general
   (local-leader
     :keymaps 'org-mode-map
-    "kp" 'anki-editor-push-notes
-    "ki" 'anki-editor-insert-note))
+    "kap" 'anki-editor-push-notes
+    "kai" 'anki-editor-insert-note))
 
 (use-package toc-org
   :commands (toc-org-markdown-follow-thing-at-point)
