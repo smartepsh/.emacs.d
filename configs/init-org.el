@@ -4,9 +4,9 @@
 
 (defun open-orgs()
   (interactive)
-  (if (buffer-live-p "work.org")
-      (pop-to-buffer "work.org")
-    (find-file (concat org-directory "work.org"))))
+  (if (buffer-live-p "default.org")
+      (pop-to-buffer "default.org")
+    (find-file (concat org-directory "default.org"))))
 
 (use-package org
   :ensure org-plus-contrib
