@@ -12,8 +12,11 @@
      git-rebase-mode-map))
   (common-leader
   "gs" 'magit-status
-  "gb" 'magit-blame
-  ))
+  "gb" 'magit-blame)
+  (general-nmap
+    :keymaps 'magit-mode-map
+    "s-<return>" 'magit-diff-visit-file-other-window)
+  )
 
 (use-package evil-magit
   :after (magit))
