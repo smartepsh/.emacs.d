@@ -32,6 +32,17 @@
   (common-leader
     "on" 'org-noter
     "oo" 'open-orgs)
+
+  (general-nmap
+    :keymaps 'org-mode-map
+    "C-s-n" 'skim-next-page
+    "C-s-p" 'skim-prev-page
+    )
+  (general-imap
+    :keymaps 'org-mode-map
+    "C-s-n" 'skim-next-page
+    "C-s-p" 'skim-prev-page
+    )
   (local-leader
     :keymaps 'org-mode-map
     "A" 'org-attach
