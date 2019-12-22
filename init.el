@@ -3,6 +3,8 @@
 (add-hook 'after-init-hook #'(lambda ()
                                (setq gc-cons-threshold 5121024)))
 
+(setq private/config-directory "~/.emacs.d/")
+
 (add-to-list 'load-path "~/.emacs.d/configs/")
 
 (setq private/cache-directory "~/.emacs.d/.cache/")

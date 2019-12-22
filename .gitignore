@@ -18,3 +18,6 @@ undo-tree-history/
 transient/
 bms
 .lsp-session*
+/pyim/dcache/
+/rime/luna*
+/rime/build/
