@@ -23,7 +23,7 @@
   (setq pyim-default-scheme 'rime-quanpin)
   :general
   (general-define-key
-   "s-SPC" 'toggle-input-method))
+   "M-SPC" 'toggle-input-method))
 
 (use-package posframe
   :defer t)
