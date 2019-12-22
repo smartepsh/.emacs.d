@@ -7,7 +7,6 @@
   (add-hook 'after-init-hook #'cnfonts-enable))
 
 (use-package liberime
-  :defer t
   :load-path private/rime-directory
   :config
   (liberime-start private/offical-rime-directory (expand-file-name private/rime-directory))
@@ -15,18 +14,13 @@
 
 (use-package pyim
   :after liberime
-  :commands (toggle-input-method)
   :init
   (setq pyim-page-tooltip 'posframe)
   (setq pyim-page-length 9)
   (setq default-input-method "pyim")
-  (setq pyim-default-scheme 'rime-quanpin)
-  :general
-  (general-define-key
-   "M-SPC" 'toggle-input-method))
+  (setq pyim-default-scheme 'rime-quanpin))
 
 (use-package posframe
   :defer t)
 
-(liberime-get-schema-list)
 (provide 'init-chinese)
