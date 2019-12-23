@@ -18,7 +18,19 @@
   (setq pyim-page-tooltip 'posframe)
   (setq pyim-page-length 9)
   (setq default-input-method "pyim")
-  (setq pyim-default-scheme 'rime-quanpin))
+  (setq pyim-default-scheme 'rime)
+  ;; 全角半角切换列表: 半角/全校/自动切换
+  (setq pyim-punctuation-translate-p '(no yes))
+  :config
+  (global-set-key (kbd "M-f") 'pyim-forward-word)
+  (global-set-key (kbd "M-b") 'pyim-backward-word)
+  ;; 全角半角切换
+  (global-set-key (kbd "C-`") 'pyim-punctuation-toggle)
+  :general
+  (general-define-key
+   :keymaps '(pyim-mode-map)
+   "]" 'pyim-page-next-page
+   "[" 'pyim-page-previous-page))
 
 (use-package posframe
   :defer t)
