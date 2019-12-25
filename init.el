@@ -4,8 +4,9 @@
                                (setq gc-cons-threshold 5121024)))
 
 (setq private/config-directory "~/.emacs.d/")
+(setq private/configs-directory "~/.emacs.d/configs/")
 
-(add-to-list 'load-path "~/.emacs.d/configs/")
+(add-to-list 'load-path private/configs-directory)
 
 (setq private/cache-directory "~/.emacs.d/.cache/")
 
