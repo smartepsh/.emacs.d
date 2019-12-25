@@ -58,7 +58,10 @@
   (all-the-icons-ivy-setup))
 
 (use-package highlight-global
-  :quelpa (highlight-global :fetcher file :path (concat private/configs-directory "highlight-global.el"))
+  :quelpa (highlight-global
+            :fetcher file
+            :path "~/.emacs.d/configs/"
+            :files ("highlight-global.el"))
   :commands (highlight-frame-toggle))
 
 (provide 'init-ivy)
