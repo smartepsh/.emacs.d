@@ -81,4 +81,11 @@
     "bp" 'bm-lifo-previous
     ))
 
+(use-package transpose-frame
+  :defer t
+  :commands (transpose-frame)
+  :general
+  (common-leader
+    "st" 'transpose-frame))
+
 (provide 'init-emacs)
