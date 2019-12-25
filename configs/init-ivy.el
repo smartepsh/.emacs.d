@@ -28,24 +28,29 @@
    ))
 
 (use-package counsel
-  :after ivy)
+  :after ivy
+  :hook (ivy-mode . counsel-mode))
 
 (use-package ivy-rich
   :after ivy
+  :hook (ivy-mode . ivy-rich-mode)
   :init
   (setq ivy-virtual-abbreviate 'full
-	ivy-rich-switch-buffer-align-virtual-buffer t))
-  ;; :config
-  ;; (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer))
+        ivy-rich-switch-buffer-align-virtual-buffer t)
+  :config
+  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
+  (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer))
 
 (use-package ivy-prescient
   :after ivy
+  :hook (ivy-mode . ivy-prescient-mode)
   :config
   (setq ivy-prescient-retain-classic-highlighting t)
   (ivy-prescient-mode))
 
 (use-package all-the-icons-ivy
   :after ivy
+  ;; :hook (ivy-mode . ivy-rich-mode)
   :init
   (setq all-the-icons-ivy-file-commands
 	`(counsel-find-file counsel-file-jump counsel-recentf counsel-projectile counsel-projectile-find-file counsel-projectile-find-dir counsel-git counsel-ibuffer))
