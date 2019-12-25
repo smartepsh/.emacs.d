@@ -19,5 +19,6 @@ transient/
 bms
 .lsp-session*
 /pyim/dcache/
-/rime/luna*
-/rime/build/
+!/rime/default.custom.yaml
+!/rime/liberime.so
+/rime
