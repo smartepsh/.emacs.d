@@ -15,6 +15,7 @@
 (use-package pyim
   :after liberime
   :init
+  (setq pyim-title "Chinese")
   (setq pyim-page-tooltip 'posframe)
   (setq pyim-page-length 9)
   (setq default-input-method "pyim")
