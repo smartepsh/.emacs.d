@@ -11,6 +11,7 @@
   :defer t
   :init
   (add-hook 'after-init-hook #'eyebrowse-mode)
+  (setq eyebrowse-keymap-prefix "")
   :general
   (general-define-key
    "H-1" 'eyebrowse-switch-to-window-config-1
