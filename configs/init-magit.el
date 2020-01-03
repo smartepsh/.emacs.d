@@ -1,5 +1,7 @@
 (use-package magit
   :commands (magit-status magit-blame)
+  :init
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
   :general
   (clear-spc
    :keymaps
@@ -16,12 +18,14 @@
   "gi" 'vc-msg-show)
   (general-nmap
     :keymaps 'magit-mode-map
-    "s-<return>" 'magit-diff-visit-file-other-window)
-  )
+    "s-<return>" 'magit-diff-visit-file-other-window))
 
 (use-package evil-magit
   :after (magit))
 
+(use-package diff-hl
+  :defer t
+  :hook (prog-mode . diff-hl-flydiff-mode))
 
 (use-package vc-msg
   :defer t
