@@ -8,6 +8,8 @@
 
 (use-package liberime
   :load-path private/rime-directory
+  :init
+  (add-hook 'after-init-hook #'liberime-sync-user-data)
   :config
   (liberime-start private/offical-rime-directory (expand-file-name private/rime-directory))
   (liberime-select-schema "luna_pinyin_simp"))
