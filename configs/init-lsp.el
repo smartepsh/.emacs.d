@@ -1,15 +1,16 @@
-;; (use-package lsp-mode
-;;   :hook (elixir-mode . lsp)
-;;   :commands lsp
-;;   :ensure-system-package (tsc . "npm install -g typescript")
-;;   :ensure-system-package (typescript-language-server . "npm install -g typescript-language-server")
-;;   :ensure-system-package (vls . "npm install -g vue-language-server")
-;;   :init
-;;   (add-to-list 'exec-path "~/.emacs.d/lsp/")
-;;   (add-to-list 'company-backends 'company-lsp)
-;;   :config
-;;   (setq lsp-file-watch-threshold nil))
-;;
+(use-package lsp-mode
+  ;; :hook (elixir-mode . lsp)
+  :commands lsp
+  ;; :ensure-system-package (tsc . "npm install -g typescript")
+  ;; :ensure-system-package (typescript-language-server . "npm install -g typescript-language-server")
+  ;; :ensure-system-package (vls . "npm install -g vue-language-server")
+  :init
+  (add-to-list 'exec-path "~/.emacs.d/lsp/")
+  (add-to-list 'company-backends 'company-lsp)
+  (setq lsp-keymap-prefix "s-l")
+  :config
+  (setq lsp-file-watch-threshold nil))
+
 ;; (use-package lsp-ui
 ;;   :after (lsp-mode)
 ;;   :hook (lsp-mode . lsp-ui-mode))
@@ -30,4 +31,4 @@
 ;;   (tootip-mode t))
 ;;
 ;;
-;; (provide 'init-lsp)
+(provide 'init-lsp)
