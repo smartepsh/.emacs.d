@@ -1,5 +1,5 @@
 (use-package lsp-mode
-  ;; :hook (elixir-mode . lsp)
+  :hook (c-mode . lsp)
   :commands lsp
   ;; :ensure-system-package (tsc . "npm install -g typescript")
   ;; :ensure-system-package (typescript-language-server . "npm install -g typescript-language-server")
@@ -11,24 +11,24 @@
   :config
   (setq lsp-file-watch-threshold nil))
 
-;; (use-package lsp-ui
-;;   :after (lsp-mode)
-;;   :hook (lsp-mode . lsp-ui-mode))
-;;
-;; (use-package company-lsp
-;;   :after (company, lsp-mode)
-;;   :init
-;;   (setq company-lsp-enable-snippet t)
-;;   (push 'company-lsp company-backends))
-;;
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode))
+
+(use-package company-lsp
+  :init
+  (setq company-lsp-enable-snippet t)
+  (push 'company-lsp company-backends))
+
+(use-package lsp-ivy
+  :commands lsp-ivy-workspace-symbol)
+
 ;; (use-package dap-mode
-;;   :defer t
 ;;   :init
 ;;   (add-hook 'lsp 'dap-mode)
 ;;   (add-hook 'lsp 'dap-ui-mode)
 ;;   :config
-;;   (dap-tootip-mode t)
-;;   (tootip-mode t))
-;;
-;;
+;;   ;; (require 'dap-lldb)
+;;   (dap-tooltip-mode t)
+;;   (tooltip-mode t))
+
 (provide 'init-lsp)
