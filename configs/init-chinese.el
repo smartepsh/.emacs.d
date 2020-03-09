@@ -11,8 +11,7 @@
   :init
   (add-hook 'after-init-hook #'liberime-sync-user-data)
   :config
-  (liberime-start private/offical-rime-directory (expand-file-name private/rime-directory))
-  (liberime-select-schema "luna_pinyin_simp"))
+  (liberime-start private/offical-rime-directory (expand-file-name private/rime-directory)))
 
 (use-package pyim
   :after liberime
