@@ -425,5 +425,15 @@
   :init
   (add-hook 'org-mode-hook 'toc-org-mode))
 
+;; (use-package grip-mode
+;;   :hook ((markdown-mode org-mode) . grip-mode)
+;;   :init
+;;   :config
+;;   (setq grip-preview-use-webkit t
+;;         grip-github-user "smartepsh"
+;;         grip-github-password "dd5918431926fa3d62612aeb208e9d7f1e45b7aa"
+;;         grip-update-after-change nil))
+
+;; (use-package ox-gfm)
 
 (provide 'init-org)
