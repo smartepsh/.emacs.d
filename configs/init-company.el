@@ -8,7 +8,8 @@
 	company-require-match 'never
 	company-tooltip-align-annotations t
 	company-dabbrev-ignore-case nil
-	company-dabbrev-downcase nil)
+	company-dabbrev-downcase nil
+        company-minimum-prefix-length 1)
 
   (setq company-backends
 	'(company-keywords
