@@ -1,5 +1,6 @@
 (use-package lsp-mode
   :hook (c-mode . lsp)
+  :hook (elixir-mode . lsp)
   :commands lsp
   ;; :ensure-system-package (tsc . "npm install -g typescript")
   ;; :ensure-system-package (typescript-language-server . "npm install -g typescript-language-server")
