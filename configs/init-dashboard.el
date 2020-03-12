@@ -19,8 +19,10 @@
 
 (setq initial-scratch-message nil)
 ;; (toggle-frame-maximized)
-(set-frame-position (selected-frame) 0 0)
-(set-frame-width (selected-frame) 100)
-(set-frame-height (selected-frame) 150)
+(setq frame-resize-pixelwise t)
+(set-frame-position (selected-frame) 1780 0)
+(set-frame-size (selected-frame) 760 1400 t)
+;; (set-frame-width (selected-frame) 120)
+;; (set-frame-height (selected-frame) 80)
 
 (provide 'init-dashboard)
