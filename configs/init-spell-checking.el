@@ -14,14 +14,13 @@
   :after flyspell-correct)
 
 (use-package flyspell-correct
-  :commands (flyspell-correct-word-generic
-	     flyspell-correct-previous-word-generic)
+  :commands (flyspell-correct-wrapper)
   :init
   (setq flyspell-correct-interface 'flyspell-correct-ivy)
   :general
   (general-define-key
    :keymaps 'flyspell-mode-map
-   "C-;" 'flyspell-correct-previous-word-generic
+   "C-;" 'flyspell-correct-wrapper
    "C-," nil))
 
 (provide 'init-spell-checking)
