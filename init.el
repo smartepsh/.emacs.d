@@ -11,6 +11,8 @@
 (setq private/cache-directory "~/.emacs.d/.cache/")
 
 (setq private/system-is-mac (eq system-type 'darwin))
+(setq epg-pinentry-mode 'loopback)
+(setq epa-pinentry-mode 'loopback)
 
 (require 'init-package)
 (require 'init-basic-settings)
