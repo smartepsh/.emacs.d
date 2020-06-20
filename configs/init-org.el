@@ -15,7 +15,7 @@
   :defer t
   :config
   (setq org-todo-keywords '((sequence "TODO(t)" "VERIFY(v)" "|" "DONE(d)" "DELEGATED(g)" "CANCELED(c)"))
-	org-default-notes-file (concat org-directory "defaults.org")
+	org-default-notes-file (concat org-directory "default.org")
 	org-archive-location (concat org-directory "Archived/" "%s_archive::")
 	org-log-done 'time)
   (nconc org-modules '(org-id org-protocol))
