@@ -27,11 +27,11 @@
   :defer t
   :hook (prog-mode . diff-hl-flydiff-mode))
 
-(use-package magithub
-  :after magit
-  :config
-  (magithub-feature-autoinject t)
-  (setq magithub-clone-default-directory "~/kenton"))
+;; (use-package magithub
+;;   :after magit
+;;   :config
+;;   (magithub-feature-autoinject t)
+;;   (setq magithub-clone-default-directory "~/kenton"))
 
 (use-package vc-msg
   :defer t
