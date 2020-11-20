@@ -137,7 +137,7 @@
   (local-leader
     :keymaps 'org-mode-map
     "c" '(:ignore t :which-key "capture")
-    "cc" 'org-mac-chrome-insert-frontmost-url
+    "cc" 'org-mac-safari-insert-frontmost-url
     "ck" 'org-mac-skim-insert-page
     "cf" 'org-mac-finder-insert-selected))
 
