@@ -168,7 +168,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 	      (notify-osx "Pomodoro Long Break Finished!" "Ready for Another?")))
   (add-hook 'org-pomodoro-killed-hook
 	    (lambda()
-	      (notify-osx "Pomodoro Killed!" "One des not simply kill a pomodoro!"))))
+	      (notify-osx "Pomodoro Killed!" "One does not simply kill a pomodoro!"))))
 
 (use-package org-capture
   :after org
