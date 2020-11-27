@@ -8,12 +8,51 @@
       (pop-to-buffer "default.org")
     (find-file (concat org-directory "default.org"))))
 
+;;; Only display inline images under current subtree.
+(defun org-display-subtree-inline-images (&optional state)
+  "Toggle the display of inline images under current subtree.
+INCLUDE-LINKED is passed to `org-display-inline-images'."
+  (interactive)
+  (save-excursion
+    (save-restriction
+      (org-narrow-to-subtree)
+      (let* ((beg (point-min))
+             (end (point-max))
+             (image-overlays (cl-intersection
+                              org-inline-image-overlays
+                              (overlays-in beg end)))
+             (display-inline-images-local
+              (lambda ()
+                (org-display-inline-images t t beg end)
+                (setq image-overlays (cl-intersection
+                                      org-inline-image-overlays
+                                      (overlays-in beg end)))
+                (if (and (org-called-interactively-p) image-overlays)
+                    (message "%d images displayed inline"
+                             (length image-overlays)))))
+             (hide-inline-images-local
+              (lambda ()
+                (org-remove-inline-images)
+                (message "Inline image display turned off"))))
+        (if state
+            (pcase state
+              ('subtree
+               (funcall display-inline-images-local))
+              ('folded
+               (funcall hide-inline-images-local)))
+          (if image-overlays
+              (funcall display-inline-images-local)
+            (funcall hide-inline-images-local)))))))
+
+
 (use-package org
   :ensure org-plus-contrib
   :ensure-system-package terminal-notifier
   :pin org-cn
   :defer t
   :config
+  ;;; auto display inline images on Org TAB cycle expand headlines.
+  (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
   (setq org-todo-keywords '((sequence "TODO(t)" "VERIFY(v)" "|" "DONE(d)" "DELEGATED(g)" "CANCELED(c)"))
 	org-default-notes-file (concat org-directory "default.org")
 	org-archive-location (concat org-directory "Archived/" "%s_archive::")
@@ -102,11 +141,18 @@
   :config
   (setq org-download-method 'attach
 	org-download-screenshot-method "screencapture -i %s"
+        org-download-display-inline-images 'posframe
+        ;; disable DOWNLOAD link
+        org-download-annotate-function (lambda (_link) "")
+        org-download-image-attr-list '("#+ATTR_HTML: :width 70% :align center")
 	org-download-image-dir (concat org-directory "images/"))
   :general
+  (general-define-key
+   :keymaps 'org-mode-map
+   "C-s-4" 'org-download-screenshot)
   (local-leader
     :keymaps 'org-mode-map
-    "sc" 'org-download-screenshot))
+    "iv" 'org-download-clipboard))
 
 (use-package org-pomodoro
   :commands org-pomodoro
