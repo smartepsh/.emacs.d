@@ -2,6 +2,16 @@
 
 (setq org-directory "~/Qsync/notes/")
 
+
+(defun notify-osx (title message)
+  (call-process "terminal-notifier"
+                nil 0 nil
+                "-group" "Emacs"
+                "-title" title
+                "-sender" "org.gnu.Emacs"
+                "-mesage" message
+                "-activate" "org.gnu.Emacs"))
+
 (defun open-orgs()
   (interactive)
   (if (buffer-live-p "default.org")
@@ -54,19 +64,11 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
   ;;; auto display inline images on Org TAB cycle expand headlines.
   (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
   (setq org-todo-keywords '((sequence "TODO(t)" "VERIFY(v)" "|" "DONE(d)" "DELEGATED(g)" "CANCELED(c)"))
-	org-default-notes-file (concat org-directory "default.org")
-	org-archive-location (concat org-directory "Archived/" "%s_archive::")
-	org-log-done 'time)
+        org-default-notes-file (concat org-directory "default.org")
+        org-archive-location (concat org-directory "Archived/" "%s_archive::")
+        org-log-done 'time)
   (nconc org-modules '(org-id org-protocol))
 
-  (defun notify-osx (title meassage)
-    (call-process "terminal-notifier"
-		  nil 0 nil
-		  "-group" "Emacs"
-		  "-title" title
-		  "-sender" "org.gnu.Emacs"
-		  "-mesage" message
-		  "-activate" "org.gnu.Emacs"))
   :general
   (common-leader
     "on" 'org-noter
@@ -123,8 +125,8 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 (use-package org-agenda
   :ensure org-plus-contrib
   :commands (org-agenda-list
-	     org-agenda
-	     org-agenda-to-appt)
+             org-agenda
+             org-agenda-to-appt)
   :init
   (setq org-agenda-files (directory-files-recursively org-directory "\.org$"))
   (setq org-agenda-diary-file (concat org-directory "diary.org")))
@@ -134,18 +136,18 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
   :ensure org-plus-contrib
   :config
   (setq org-clock-clocked-in-display nil
-	org-clock-mode-line-total 'current))
+        org-clock-mode-line-total 'current))
 
 (use-package org-download
   :after org
   :config
   (setq org-download-method 'attach
-	org-download-screenshot-method "screencapture -i %s"
+        org-download-screenshot-method "screencapture -i %s"
         org-download-display-inline-images 'posframe
         ;; disable DOWNLOAD link
         org-download-annotate-function (lambda (_link) "")
         org-download-image-attr-list '("#+ATTR_HTML: :width 70% :align center")
-	org-download-image-dir (concat org-directory "images/"))
+        org-download-image-dir (concat org-directory "images/"))
   :general
   (general-define-key
    :keymaps 'org-mode-map
@@ -158,18 +160,17 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
   :commands org-pomodoro
   :config
   (add-hook 'org-pomodoro-finished-hook
-	    (lambda()
-	      (notify-osx "Pomodoro completed!" "Time for a break.")))
+            (lambda()
+              (notify-osx "Pomodoro completed!" "Time for a break.")))
   (add-hook 'org-pomodoro-break-finished-hook
-	    (lambda()
-	      (notify-osx "Pomodoro Short Break Finished!" "Ready for Another?")))
+            (lambda()
+              (notify-osx "Pomodoro Short Break Finished!" "Ready for Another?")))
   (add-hook 'org-pomodoro-long-break-finished-hook
-	    (lambda()
-	      (notify-osx "Pomodoro Long Break Finished!" "Ready for Another?")))
+            (lambda()
+              (notify-osx "Pomodoro Long Break Finished!" "Ready for Another?")))
   (add-hook 'org-pomodoro-killed-hook
-	    (lambda()
-	      (notify-osx "Pomodoro Killed!" "One does not simply kill a pomodoro!"))))
-
+            (lambda()
+              (notify-osx "Pomodoro Killed!" "One does not simply kill a pomodoro!"))))
 (use-package org-capture
   :after org
   :ensure org-plus-contrib)
@@ -177,8 +178,8 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 (use-package org-mac-link
   :ensure org-plus-contrib
   :commands (org-mac-skim-insert-page
-	     org-mac-chrome-insert-frontmost-url
-	     org-mac-finder-insert-selected)
+             org-mac-chrome-insert-frontmost-url
+             org-mac-finder-insert-selected)
   :general
   (local-leader
     :keymaps 'org-mode-map
@@ -447,14 +448,13 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
   :config
   (add-hook 'org-mode-hook 'evil-org-mode)
   (add-hook 'evil-org-mode-hook
-	    (lambda ()
-	      (evil-org-set-key-theme)))
+            (lambda ()
+              (evil-org-set-key-theme)))
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
 (use-package org-bullets
-  :hook (org-mode . org-bullets-mode)
-  )
+  :hook (org-mode . org-bullets-mode))
 
 (use-package anki-editor
   :after org
