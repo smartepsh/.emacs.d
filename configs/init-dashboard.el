@@ -20,8 +20,8 @@
 (setq initial-scratch-message nil)
 ;; (toggle-frame-maximized)
 (setq frame-resize-pixelwise t)
-(set-frame-position (selected-frame) 1780 0)
-(set-frame-size (selected-frame) 760 1400 t)
+(set-frame-position (selected-frame) 1380 0)
+(set-frame-size (selected-frame) 1060 1440 t)
 ;; (set-frame-width (selected-frame) 120)
 ;; (set-frame-height (selected-frame) 80)
 
