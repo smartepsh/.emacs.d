@@ -16,6 +16,7 @@
 
 (require 'init-package)
 (require 'init-basic-settings)
+(require 'init-prog)
 (require 'init-evil)
 (require 'init-support)
 (require 'init-ui)
