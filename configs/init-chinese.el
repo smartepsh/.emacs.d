@@ -6,7 +6,9 @@
   :init
   (add-hook 'after-init-hook #'cnfonts-enable))
 
+;; build *.so and move to .emacs.d/elpa/liberime.xxxx/
 (use-package liberime
+  :quelpa (liberime :fetcher github :repo "merrickluo/liberime")
   :init
   (add-hook 'after-init-hook #'liberime-sync-user-data)
   :config
