@@ -23,18 +23,17 @@
       quelpa-checkout-melpa-p t)
 
 ;; install quelpa
-(unless (require 'quelpa nil t)
+(unless (package-installed-p 'quelpa)
   (with-temp-buffer
-    (url-insert-file-contents "https://framagit.org/steckerhalter/quelpa/raw/master/bootstrap.el")
-    (eval-buffer)))
-
-;; (quelpa-self-upgrade)
+    (url-insert-file-contents "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
+    (eval-buffer)
+    (quelpa-self-upgrade)))
 
 ;; install quelpa-use-package
 (quelpa
  '(quelpa-use-package
    :fetcher git
-   :url "https://framagit.org/steckerhalter/quelpa-use-package.git"))
+   :url "https://github.com/quelpa/quelpa-use-package.git"))
 
 (require 'quelpa-use-package)
 
