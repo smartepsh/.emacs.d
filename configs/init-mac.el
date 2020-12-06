@@ -8,6 +8,7 @@
   :init
   (setq winum-auto-setup-mode-line nil)
   (add-hook 'after-init-hook #'winum-mode)
+  (setq winum-ignored-buffers-regexp '(".*\\*NeoTree\\*.*"))
   :general
   (general-define-key
    "s-1" 'winum-select-window-1
