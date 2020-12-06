@@ -4,10 +4,13 @@
 (setq use-package-expand-minimally t
       use-package-always-ensure t
       package-enable-at-startup nil
-      package-archives '(("melpa-cn" . "https://elpa.emacs-china.org/melpa/")
-                        ("org-cn"   . "https://elpa.emacs-china.org/org/")
-                        ("gnu-cn"   . "https://elpa.emacs-china.org/gnu/")))
+      package-archives '(("melpa" . "https://melpa.org/packages/")
+                        ("org"   . "https://orgmode.org/elpa/")
+                        ("gnu"   . "https://elpa.gnu.org/packages/")))
 
+      ;; package-archives '(("melpa-cn" . "https://elpa.emacs-china.org/melpa/")
+      ;;                   ("org-cn"   . "https://elpa.emacs-china.org/org/")
+      ;;                   ("gnu-cn"   . "https://elpa.emacs-china.org/gnu/"))
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))

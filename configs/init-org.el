@@ -58,7 +58,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 (use-package org
   :ensure org-plus-contrib
   :ensure-system-package terminal-notifier
-  :pin org-cn
+  :pin org
   :defer t
   :config
   ;;; auto display inline images on Org TAB cycle expand headlines.
