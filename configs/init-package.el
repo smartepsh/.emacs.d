@@ -1,4 +1,4 @@
-(unless (or (version= "27" emacs-version) package--initialized)
+(unless (or (version= "28" emacs-version) package--initialized)
   (package-initialize))
 
 (setq use-package-expand-minimally t
