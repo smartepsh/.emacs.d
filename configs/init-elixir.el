@@ -1,17 +1,17 @@
 (use-package elixir-mode
-  :defer t)
-;; :config
-;; (add-hook 'elixir-mode-hook
-;;           (lambda() (add-hook 'before-save-hook 'elixir-format nil t)))
+  :defer t
+  :config
+  (add-hook 'elixir-mode-hook
+	    (lambda() (add-hook 'before-save-hook 'elixir-format nil t)))
 
-;; (defun +reset-mixfmt-args ()
-;;   (let* ((formatter-directory (locate-dominating-file default-directory ".formatter.exs"))
-;;          (formatter-file (concat formatter-directory ".formatter.exs")))
-;;     (if formatter-directory
-;;         (setq elixir-format-arguments (list "--dot-formatter" formatter-file))
-;;       (setq elixir-format-arguments nil))))
+  (defun +reset-mixfmt-args ()
+    (let* ((formatter-directory (locate-dominating-file default-directory ".formatter.exs"))
+	   (formatter-file (concat formatter-directory ".formatter.exs")))
+      (if formatter-directory
+	  (setq elixir-format-arguments (list "--dot-formatter" formatter-file))
+	(setq elixir-format-arguments nil))))
 
-;; (add-hook 'elixir-format-hook #'+reset-mixfmt-args))
+  (add-hook 'elixir-format-hook #'+reset-mixfmt-args))
 
 (use-package alchemist
   :defer t
@@ -21,15 +21,15 @@
   (defun run-elixir-tests ()
     (interactive)
     (if (string-equal "exs" (file-name-extension (buffer-file-name (current-buffer))))
-        (alchemist-mix-test-this-buffer)
-      (alchemist-project-run-tests-for-current-file)))
+    (alchemist-mix-test-this-buffer)
+    (alchemist-project-run-tests-for-current-file)))
 
   (setq alchemist-test-status-modeline nil
 	alchemist-test-display-compilation-output t
 	alchemist-test-truncate-lines nil)
-  ;; alchemist-goto-elixir-source-dir "~/kenton/elixir"
-  ;; alchemist-goto-elixir-source-dir "/usr/local/Cellar/elixir/1.7.2")
-  ;; alchemist-goto-erlang-source-dir "~/kenton/erlang")
+	;; alchemist-goto-elixir-source-dir "~/kenton/elixir"
+	;; alchemist-goto-elixir-source-dir "/usr/local/Cellar/elixir/1.7.2")
+	;; alchemist-goto-erlang-source-dir "~/kenton/erlang")
   :general
   (local-leader
     :keymaps 'alchemist-mode-map
