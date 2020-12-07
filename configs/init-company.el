@@ -64,7 +64,6 @@
   :config
   (yas-reload-all))
 
-
 (use-package company-quickhelp
   :after company
   :init
