@@ -27,7 +27,9 @@
   :init
   (setq evil-shift-width 2
         evil-flash-delay 1
-        evil-want-integration nil)
+        evil-want-integration nil
+        evil-undo-system 'undo-redo
+        )
   (evil-mode)
   :config
   (defun copy-to-clipboard()
@@ -134,12 +136,12 @@
 ;; 	;; evil-mc-enable-bar-cursor nil
 ;; 	))
 
-(use-package undo-tree
-  :init
-  (setq undo-tree-history-directory-alist `(("." . ,"~/.emacs.d/undo-tree-history")))
-  (setq undo-tree-auto-save-history t)
-  (setq undo-tree-visualizer-timestamps t)
-  (setq undo-tree-enable-undo-in-region nil)
-  (global-undo-tree-mode))
+;; (use-package undo-tree
+;;   :init
+;;   (setq undo-tree-history-directory-alist `(("." . ,"~/.emacs.d/undo-tree-history")))
+;;   (setq undo-tree-auto-save-history t)
+;;   (setq undo-tree-visualizer-timestamps t)
+;;   (setq undo-tree-enable-undo-in-region nil)
+;;   (global-undo-tree-mode))
 
 (provide 'init-evil)
