@@ -48,6 +48,10 @@
 ;; replaced by package-utils
 ;; (use-package use-package-ensure-system-package)
 
+(use-package benchmark-init
+  :config
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+
 (use-package package-utils)
 
 (provide 'init-package)
