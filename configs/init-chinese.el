@@ -6,34 +6,21 @@
   :init
   (add-hook 'after-init-hook #'cnfonts-enable))
 
-;; build *.so and move to .emacs.d/elpa/liberime.xxxx/
-(use-package liberime
-  :quelpa (liberime :fetcher github :repo "merrickluo/liberime")
+(use-package rime
+  :defer t
+  :custom
+  (default-input-method "rime")
   :init
-  (add-hook 'after-init-hook #'liberime-sync-user-data)
+  (setq rime-librime-root (concat private/rime-directory "dist/")
+        rime-show-candidate 'posframe
+        rime-posframe-style 'vertical
+        rime-show-preedit 'inline
+        rime-disable-predicates '(rime-predicate-hydra-p
+                                  rime-predicate-evil-mode-p
+                                  rime-predicate-prog-in-code-p
+                                  rime-predicate-punctuation-after-ascii-p))
   :config
-  (liberime-start private/offical-rime-directory (expand-file-name private/rime-directory)))
-
-(use-package pyim
-  :after liberime
-  :init
-  (setq pyim-title "Chinese")
-  (setq pyim-page-tooltip 'posframe)
-  (setq pyim-page-length 9)
-  (setq default-input-method "pyim")
-  (setq pyim-default-scheme 'rime)
-  ;; 全角半角切换列表: 半角/全校/自动切换
-  (setq pyim-punctuation-translate-p '(no yes))
-  :config
-  (global-set-key (kbd "M-f") 'pyim-forward-word)
-  (global-set-key (kbd "M-b") 'pyim-backward-word)
-  ;; 全角半角切换
-  (global-set-key (kbd "C-`") 'pyim-punctuation-toggle)
-  :general
-  (general-define-key
-   :keymaps '(pyim-mode-map)
-   "]" 'pyim-page-next-page
-   "[" 'pyim-page-previous-page))
+  (global-set-key (kbd "M-s-SPC") 'rime-inline-ascii))
 
 (use-package posframe
   :defer t)

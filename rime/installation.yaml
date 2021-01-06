@@ -1,8 +1,7 @@
-distribution_code_name: "emacs-liberime"
+distribution_code_name: "emacs-rime"
 distribution_name: Rime
-distribution_version: 0.1.0
-install_time: "Sat Dec 21 23:38:03 2019"
-installation_id: "emacs-for-pyim"
-rime_version: 1.5.3
+distribution_version: 1.0.1
+installation_id: "emacs-rime"
+rime_version: 1.6.1
 sync_dir: "/Users/smartepsh/Qsync/rimesync"
-update_time: "Mon May 18 11:11:34 2020"
+update_time: "Wed Jan  6 22:10:06 2021"
