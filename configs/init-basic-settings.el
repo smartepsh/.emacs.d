@@ -53,6 +53,11 @@
 (defun disproxy()
   (interactive)
   (setq url-proxy-services nil))
+
+(defun go-ansible()
+  (interactive)
+  (dired "/sshx:ansible-host:/home/smartepsh/")
+  )
 ;; shell setting
 ;; .zshenv
 ;;
