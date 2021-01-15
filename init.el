@@ -29,6 +29,7 @@
 (require 'init-magit)
 (require 'init-projectile)
 (require 'init-company)
+(require 'init-ansible)
 (require 'init-spell-checking)
 ;; (require 'init-syntax-checking)
 (require 'init-mac)
