@@ -15,15 +15,14 @@
         org-archive-location (concat org-directory "Archived/" "%s_archive::")
         org-log-done 'time)
   (nconc org-modules '(org-id org-protocol))
+  (setq org-refile-targets '((org-agenda-files :maxlevel . 3))
+        org-refile-use-outline-path 'file
+        org-outline-path-complete-in-steps nil
+        org-refile-allow-creating-parent-nodes 'confirm)
   :general
   (common-leader
-    "on" 'org-noter
     "oo" 'open-orgs)
   (general-nmap
-    :keymaps 'org-mode-map
-    "C-s-n" 'skim-next-page
-    "C-s-p" 'skim-prev-page)
-  (general-imap
     :keymaps 'org-mode-map
     "C-s-n" 'skim-next-page
     "C-s-p" 'skim-prev-page)
@@ -107,16 +106,19 @@
 
 (use-package evil-org
   :after org
-  :config
+  :init
   (add-hook 'org-mode-hook 'evil-org-mode)
   (add-hook 'evil-org-mode-hook
             (lambda ()
               (evil-org-set-key-theme)))
+  :config
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode))
+
+;;;;;;;;;;;;;;;;;;custom functions;;;;;;;;;;;;;;
 
 (defun open-orgs()
   (interactive)
