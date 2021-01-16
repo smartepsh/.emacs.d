@@ -19,7 +19,12 @@
   (setq org-refile-targets '((org-agenda-files :maxlevel . 3))
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil
-        org-refile-allow-creating-parent-nodes 'confirm)
+        org-refile-allow-creating-parent-nodes 'confirm
+        org-refile-use-cache t)
+  ;; refresh cache when emacs idle 5 mins
+  (run-with-idle-timer 300 t (lambda ()
+                            (org-refile-cache-clear)
+                            (org-refile-get-targets)))
   :general
   (common-leader
     "oo" 'open-orgs)
