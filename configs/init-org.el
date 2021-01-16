@@ -27,7 +27,8 @@
                             (org-refile-get-targets)))
   :general
   (common-leader
-    "oo" 'open-orgs)
+    "oo" 'open-orgs
+    "oa" 'org-agenda)
   (general-nmap
     :keymaps 'org-mode-map
     "C-s-n" 'skim-next-page
@@ -35,12 +36,15 @@
   (local-leader
     :keymaps 'org-mode-map
     "A" 'org-attach
-    "a" 'org-agenda
     "t" 'org-todo
+    "r" 'org-refile
     "sa" 'org-archive-subtree
     "ss" 'org-sparse-tree
-    "sr" 'org-refile
     "bb" 'org-switchb
+    "a" '(:ignore t :which-key "agenda")
+    "aa" 'org-agenda
+    "as" 'org-schedule
+    "ad" 'org-deadline
     "p" '(:ignore t :which-key "priorities")
     "pp" 'org-priority
     "pu" 'org-priority-up
@@ -48,13 +52,12 @@
     "d" '(:ignore t :which-key "datetimes")
     "dt" 'org-time-stamp
     "dT" 'org-time-stamp-inactive
-    "ds" 'org-schedule
-    "dd" 'org-deadline
     "i" '(:ignore t :which-key "inserts")
     "if" 'org-footnote-new
-    "it" 'org-set-tags
+    "it" 'org-set-tags-command
     "ip" 'org-set-property
     "is" 'org-insert-structure-template
+    "il" 'org-insert-link
     "l" '(:ignore t :which-key "links")
     "lt" 'org-toggle-link-display
     "ls" 'org-store-link
