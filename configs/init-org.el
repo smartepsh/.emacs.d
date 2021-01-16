@@ -1,10 +1,11 @@
 (require 'skim)
 
 (setq org-directory "~/Qsync/notes/")
+(setq org-agenda-file (concat org-directory "agenda.org"))
 
 (use-package org
   :ensure org-plus-contrib
-  :ensure-system-package terminal-notifier
+  ;; :ensure-system-package terminal-notifier
   :pin org
   :defer t
   :config
