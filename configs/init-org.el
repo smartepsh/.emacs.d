@@ -16,7 +16,7 @@
         org-archive-location (concat org-directory "Archived/" "%s_archive::")
         org-log-done 'time)
   (nconc org-modules '(org-id org-protocol))
-  (setq org-refile-targets '((org-agenda-files :maxlevel . 3))
+  (setq org-refile-targets '((org-agenda-files :maxlevel . 2))
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil
         org-refile-allow-creating-parent-nodes 'confirm
