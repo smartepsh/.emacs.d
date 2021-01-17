@@ -20,7 +20,8 @@
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil
         org-refile-allow-creating-parent-nodes 'confirm
-        org-refile-use-cache t)
+        org-refile-use-cache t
+        org-startup-truncated nil)
   ;; refresh cache when emacs idle 5 mins
   (run-with-idle-timer 300 t (lambda ()
                             (org-refile-cache-clear)
