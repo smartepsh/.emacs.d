@@ -30,7 +30,7 @@
   (common-leader
     "oo" 'open-orgs
     "oa" 'org-agenda)
-  (general-nmap
+  (general-define-key
     :keymaps 'org-mode-map
     "C-s-n" 'skim-next-page
     "C-s-p" 'skim-prev-page)
