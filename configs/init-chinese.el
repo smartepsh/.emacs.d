@@ -4,7 +4,8 @@
 (use-package cnfonts
   :defer t
   :init
-  (add-hook 'after-init-hook #'cnfonts-enable))
+  (add-hook 'after-init-hook #'cnfonts-enable)
+  (setq cnfonts-use-face-font-rescale t))
 
 (use-package rime
   :defer t
