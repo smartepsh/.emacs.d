@@ -1,6 +1,6 @@
 (use-package ivy
   :defer t
-  :ensure-system-package (ag . the-silver-searcher)
+  :ensure-system-package (rg . ripgrep)
   :init
   (add-hook 'after-init-hook #'ivy-mode)
   (setq ivy-use-virtual-buffers t
@@ -17,7 +17,7 @@
     :keymaps 'ivy-occur-grep-mode-map
     "w" 'ivy-wgrep-change-to-wgrep-mode)
   (common-leader
-    "/" 'counsel-ag))
+    "/" 'counsel-rg))
 
 (use-package swiper
   :commands (swiper)
