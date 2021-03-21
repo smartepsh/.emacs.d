@@ -22,6 +22,9 @@
     "," '(xref-pop-marker-stack :which-key "jump-back")
     "C-," '(xref-find-references :which-key "list references")))
 
+(defun clear-all-key-bindings (mode-map)
+  (setf (cdr mode-map) nil))
+
 (use-package exunit
   :defer t
   :after elixir-mode
@@ -31,6 +34,8 @@
              exunit-verify-single
              exunit-rerun
              exunit-toggle-file-and-test)
+  :config
+  (clear-all-key-bindings exunit-compilation-mode-map)
   :general
   (local-leader
     "t" '(:ignore t :which-key "test")
@@ -40,6 +45,7 @@
     "tr" 'exunit-rerun
     "tf" 'exunit-toggle-file-and-test
     ))
+
 ;; (use-package alchemist
 ;;   :defer t
 ;;   :init
