@@ -13,10 +13,10 @@
   :config
   ;;; auto display inline images on Org TAB cycle expand headlines.
   (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
-  (setq org-todo-keywords '((sequence "TODO(t)" "DOING(i)" "NEXT(n)" "|" "DONE(d)" "DELEGATED(g)" "CANCELED(c)"))
+  (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
         org-default-notes-file (concat org-directory "default.org")
         org-archive-location (concat org-directory "Archived/" "%s_archive::")
-        org-log-done 'time)
+        org-log-done nil)
   (nconc org-modules '(org-id org-protocol))
   (setq org-refile-targets '((org-agenda-files :maxlevel . 2))
         org-refile-use-outline-path 'file
