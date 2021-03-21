@@ -338,6 +338,19 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
                 "-mesage" message
                 "-activate" "org.gnu.Emacs"))
 
+(use-package org-roam
+  :hook (after-init . org-roam-mode)
+  :init
+  (setq org-roam-directory icloud-org-directory
+        org-roam-db-location (concat icloud-org-directory "org-roam.db"))
+  (require 'org-roam-protocol)
+  :config
+  (setq org-roam-completion-system 'ivy)
+  :general
+  (common-leader
+    "r" '(:ignore t :which-key "roam")
+    "rf" 'org-roam-find-file))
+
 (defun my-old-carryover (old_carryover)
   (save-excursion
     (let ((matcher (cdr (org-make-tags-matcher org-journal-carryover-items))))
@@ -372,4 +385,21 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
     "jp" 'org-journal-previous-entry
     "jv" 'org-journal-schedule-view
     ))
+
+(use-package org-roam-server
+  :defer t
+  :commands (org-roam-server-mode)
+  :config
+  (setq org-roam-server-host "127.0.0.1"
+        org-roam-server-port 8080
+        org-roam-server-authenticate nil
+        org-roam-server-export-inline-images t
+        org-roam-server-serve-files nil
+        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+        org-roam-server-network-poll t
+        org-roam-server-network-arrows nil
+        org-roam-server-network-label-truncate t
+        org-roam-server-network-label-truncate-length 60
+        org-roam-server-network-label-wrap-length 20))
+
 (provide 'init-org)
