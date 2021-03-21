@@ -30,7 +30,9 @@
                             (org-refile-get-targets)))
   :general
   (common-leader
-    "oo" 'open-orgs
+    "ii" 'org-journal-new-entry
+    "is" 'org-journal-new-scheduled-entry
+    "oo" 'org-journal-open-current-journal-file
     "oa" 'org-agenda)
   (general-define-key
     :keymaps 'org-mode-map
@@ -194,6 +196,10 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
   :after org
   :ensure org-plus-contrib)
 
+(use-package org-protocol
+  :after org
+  :ensure org-plus-contrib)
+
 (use-package org-mac-link
   :ensure org-plus-contrib
   :commands (org-mac-skim-insert-page
@@ -331,4 +337,39 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
                 "-sender" "org.gnu.Emacs"
                 "-mesage" message
                 "-activate" "org.gnu.Emacs"))
+
+(defun my-old-carryover (old_carryover)
+  (save-excursion
+    (let ((matcher (cdr (org-make-tags-matcher org-journal-carryover-items))))
+      (dolist (entry (reverse old_carryover))
+        (save-restriction
+          (narrow-to-region (car entry) (cadr entry))
+          (goto-char (point-min))
+          (org-scan-tags '(lambda ()
+                            (org-set-tags ":carried:"))
+                         matcher org--matcher-tags-todo-only))))))
+
+(use-package org-journal
+  :defer t
+  :init
+  (setq org-journal-enable-agenda-integration t
+        org-journal-handle-old-carryover 'my-old-carryover)
+  :config
+  (setq org-journal-dir (concat icloud-org-directory "weekly/")
+        org-journal-file-format "%Y%m%d-%V"
+        org-journal-file-type 'weekly
+        org-journal-find-file 'find-file
+        org-extend-today-until 0
+        org-icalendar-store-UID t)
+  ;; org-icalendar-include-todo "all"
+  ;; org-icalendar-combined-agenda-file (concat org-journal-dir "org-journal.ics"))
+  :general
+  (local-leader
+    :keymaps 'org-journal-mode-map
+    "j" '(:ignore t :which-key "journal")
+    "jj" 'org-journal-new-entry
+    "jn" 'org-journal-next-entry
+    "jp" 'org-journal-previous-entry
+    "jv" 'org-journal-schedule-view
+    ))
 (provide 'init-org)
