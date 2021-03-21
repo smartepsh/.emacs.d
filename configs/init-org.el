@@ -2,6 +2,8 @@
 
 (setq org-directory "~/Qsync/notes/")
 (setq org-agenda-file (concat org-directory "agenda.org"))
+(setq icloud-org-directory  "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/")
+
 
 (use-package org
   :ensure org-plus-contrib
