@@ -1,3 +1,6 @@
+(defun clear-all-key-bindings (mode-map)
+  (setf (cdr mode-map) nil))
+
 (use-package elixir-mode
   :defer t
   :config
@@ -22,21 +25,20 @@
     "," '(xref-pop-marker-stack :which-key "jump-back")
     "C-," '(xref-find-references :which-key "list references")))
 
-(defun clear-all-key-bindings (mode-map)
-  (setf (cdr mode-map) nil))
-
 (use-package exunit
   :defer t
   :after elixir-mode
+  :config
   :commands (exunit-verify-all
              exunit-verify
              exunit-verify-all-in-umbrella
              exunit-verify-single
              exunit-rerun
              exunit-toggle-file-and-test)
-  :config
-  (clear-all-key-bindings exunit-compilation-mode-map)
   :general
+  (general-define-key
+   :keymaps '(exunit-compilation-mode-map)
+   "SPC" nil)
   (local-leader
     "t" '(:ignore t :which-key "test")
     "ta" 'exunit-verify-all
