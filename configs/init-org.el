@@ -345,9 +345,9 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
   (setq org-roam-completion-system 'ivy)
   (setq org-roam-capture-ref-templates
         '(("b" "Bookmarks")
-          ("bb" "Bookmark with body" plain (function org-roam-capture--get-point) "%U ${body}\n" :file-name "bookmarks/${slug}" :head "#+title: Bookmark/${title}\n#+roam_key: ${ref}\n#+roam_alias:\n* [[file:bookmarks.org][bookmarks/bookmarks]]\n\n" :immediate-finish t :unnarrowed t)
+          ("bb" "Bookmark with body" plain (function org-roam-capture--get-point) "%U ${body}\n" :file-name "bookmarks/${slug}" :head "#+title: ${title}\n#+roam_tags: bookmark\n#+roam_key: ${ref}\n#+roam_alias:\n* [[file:bookmarks.org][bookmarks/bookmarks]]\n\n" :immediate-finish t :unnarrowed t)
 
-          ("bbw" "Bookmark without body" plain (function org-roam-capture--get-point) "" :file-name "bookmarks/${slug}" :head "#+title: Bookmark/${title}\n#+roam_key: ${ref}\n#+roam_alias:\n* [[file:bookmarks.org][bookmarks/bookmarks]]\n\n" :immediate-finish t :unnarrowed t)
+          ("bbw" "Bookmark without body" plain (function org-roam-capture--get-point) "" :file-name "bookmarks/${slug}" :head "#+title: ${title}\n#+roam_tags: bookmark\n#+roam_key: ${ref}\n#+roam_alias:\n* [[file:bookmarks.org][bookmarks/bookmarks]]\n\n" :immediate-finish t :unnarrowed t)
           ))
   :general
   (common-leader
