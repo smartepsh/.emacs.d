@@ -10,7 +10,8 @@
   :general
   (general-define-key
    :keymaps 'ivy-minibuffer-map
-   [escape] 'minibuffer-keyboard-quit)
+   [escape] 'minibuffer-keyboard-quit
+   "C-<return>" 'ivy-immediate-done)
   (clear-spc
     :keymaps 'ivy-occur-grep-mode-map)
   (local-leader
