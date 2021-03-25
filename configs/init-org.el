@@ -21,9 +21,9 @@
   (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
         org-default-notes-file org-agenda-file
         org-archive-location (concat org-directory "Archived/" "%s_archive::")
-        org-log-done nil)
-  (nconc org-modules '(org-id org-protocol))
-  (setq org-refile-targets '((org-agenda-files :maxlevel . 2))
+        org-log-done nil
+        ;; (nconc org-modules '(org-id))
+        org-refile-targets '((org-agenda-files :maxlevel . 2))
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil
         org-refile-allow-creating-parent-nodes 'confirm
@@ -32,7 +32,8 @@
   ;; refresh cache when emacs idle 5 mins
   (run-with-idle-timer 300 t (lambda ()
                             (org-refile-cache-clear)
-                            (org-refile-get-targets)))
+                            (org-refile-get-targets)
+                            (org-roam-db-build-cache)))
   :general
   (common-leader
     "ii" 'org-journal-new-entry
