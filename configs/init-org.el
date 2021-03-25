@@ -4,6 +4,13 @@
 (setq org-agenda-file (concat org-directory "agenda.org"))
 (setq icloud-org-directory  "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/")
 
+(setq bookmark-file (concat icloud-org-directory "bookmarks/bookmarks.org"))
+
+(defun open-bookmarks ()
+  (interactive)
+  (if (buffer-live-p "bookmarks.org")
+      (pop-to-buffer "bookmarks.org")
+    (find-file bookmark-file)))
 
 (use-package org
   :ensure org-plus-contrib
@@ -33,6 +40,7 @@
     "ii" 'org-journal-new-entry
     "is" 'org-journal-new-scheduled-entry
     "oo" 'org-journal-open-current-journal-file
+    "ob" 'open-bookmarks
     "oa" 'org-agenda)
   (general-define-key
     :keymaps 'org-mode-map
@@ -131,14 +139,6 @@
 
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode))
-
-;;;;;;;;;;;;;;;;;;custom functions;;;;;;;;;;;;;;
-
-(defun open-orgs()
-  (interactive)
-  (if (buffer-live-p "default.org")
-      (pop-to-buffer "default.org")
-    (find-file (concat org-directory "default.org"))))
 
 ;;; Only display inline images under current subtree.
 (defun org-display-subtree-inline-images (&optional state)
@@ -346,10 +346,19 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
   (require 'org-roam-protocol)
   :config
   (setq org-roam-completion-system 'ivy)
+  (setq org-roam-capture-ref-templates
+        '(("b" "Bookmarks")
+          ("bb" "Bookmark with body" plain (function org-roam-capture--get-point) "%U ${body}\n" :file-name "bookmarks/${slug}" :head "#+title: Bookmark/${title}\n#+roam_key: ${ref}\n#+roam_alias:\n* [[file:bookmarks.org][bookmarks/bookmarks]]\n\n" :immediate-finish t :unnarrowed t)
+
+          ("bbw" "Bookmark without body" plain (function org-roam-capture--get-point) "" :file-name "bookmarks/${slug}" :head "#+title: Bookmark/${title}\n#+roam_key: ${ref}\n#+roam_alias:\n* [[file:bookmarks.org][bookmarks/bookmarks]]\n\n" :immediate-finish t :unnarrowed t)
+          ))
   :general
   (common-leader
     "r" '(:ignore t :which-key "roam")
-    "rf" 'org-roam-find-file))
+    "rr" 'org-roam
+    "rf" 'org-roam-find-file
+    "rs" 'org-roam-server-mode
+    "ri" 'org-roam-insert-immediate))
 
 (defun my-old-carryover (old_carryover)
   (save-excursion
