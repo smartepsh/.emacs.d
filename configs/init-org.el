@@ -1,10 +1,8 @@
 (require 'skim)
 
-(setq org-directory "~/Qsync/notes/")
-(setq org-agenda-file (concat org-directory "agenda.org"))
-(setq icloud-org-directory  "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/")
-
-(setq bookmark-file (concat icloud-org-directory "bookmarks/bookmarks.org"))
+(setq org-directory  "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/")
+(setq org-agenda-file (concat org-directory "weekly/agenda.org"))
+(setq bookmark-file (concat org-directory "bookmarks/bookmarks.org"))
 
 (defun open-bookmarks ()
   (interactive)
@@ -21,7 +19,7 @@
   ;;; auto display inline images on Org TAB cycle expand headlines.
   (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
   (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
-        org-default-notes-file (concat org-directory "default.org")
+        org-default-notes-file org-agenda-file
         org-archive-location (concat org-directory "Archived/" "%s_archive::")
         org-log-done nil)
   (nconc org-modules '(org-id org-protocol))
@@ -92,8 +90,7 @@
              org-agenda
              org-agenda-to-appt)
   :init
-  (setq org-agenda-files (directory-files-recursively org-directory "\.org$"))
-  (setq org-agenda-diary-file (concat org-directory "diary.org")))
+  (add-to-list 'org-agenda-files org-agenda-file))
 
 (use-package org-clock
   :after org
@@ -341,8 +338,8 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 (use-package org-roam
   :hook (after-init . org-roam-mode)
   :init
-  (setq org-roam-directory icloud-org-directory
-        org-roam-db-location (concat icloud-org-directory "org-roam.db"))
+  (setq org-roam-directory org-directory
+        org-roam-db-location (concat org-directory "org-roam.db"))
   (require 'org-roam-protocol)
   :config
   (setq org-roam-completion-system 'ivy)
@@ -377,7 +374,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
   (setq org-journal-enable-agenda-integration t
         org-journal-handle-old-carryover 'my-old-carryover)
   :config
-  (setq org-journal-dir (concat icloud-org-directory "weekly/")
+  (setq org-journal-dir (concat org-directory "weekly/")
         org-journal-file-format "%Y%m%d-%V"
         org-journal-file-type 'weekly
         org-journal-find-file 'find-file
@@ -392,8 +389,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
     "jj" 'org-journal-new-entry
     "jn" 'org-journal-next-entry
     "jp" 'org-journal-previous-entry
-    "jv" 'org-journal-schedule-view
-    ))
+    "jv" 'org-journal-schedule-view))
 
 (use-package org-roam-server
   :defer t
