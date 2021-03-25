@@ -21,6 +21,7 @@
   (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
         org-default-notes-file org-agenda-file
         org-archive-location (concat org-directory "Archived/" "%s_archive::")
+        org-id-locations-file (concat org-directory ".org-id-locations")
         org-log-done nil
         ;; (nconc org-modules '(org-id))
         org-refile-targets '((org-agenda-files :maxlevel . 2))
