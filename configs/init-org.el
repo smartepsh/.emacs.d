@@ -102,13 +102,14 @@
 (use-package org-download
   :after org
   :config
-  (setq org-download-method 'attach
+  (setq org-download-method 'directory
+        org-image-actual-width nil
         org-download-screenshot-method "screencapture -i %s"
         org-download-display-inline-images 'posframe
         ;; disable DOWNLOAD link
         org-download-annotate-function (lambda (_link) "")
-        org-download-image-attr-list '("#+ATTR_HTML: :width 70% :align center")
-        org-download-image-dir (concat org-directory "images/"))
+        org-download-image-attr-list '("#+ATTR_HTML: :width 70% :align center"))
+  (setq-default org-download-image-dir (concat org-directory "images/"))
   :general
   (general-define-key
    :keymaps 'org-mode-map
@@ -116,7 +117,6 @@
   (local-leader
     :keymaps 'org-mode-map
     "iv" 'org-download-clipboard))
-
 
 (use-package toc-org
   :commands (toc-org-markdown-follow-thing-at-point)
