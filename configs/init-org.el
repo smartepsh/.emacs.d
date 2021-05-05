@@ -1,4 +1,5 @@
 (require 'skim)
+;; (require 'scimax)
 
 (setq org-directory  "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/")
 (setq org-agenda-file (concat org-directory "weekly/agenda.org"))
@@ -15,8 +16,16 @@
   ;; :ensure-system-package terminal-notifier
   :pin org
   :defer t
+  :init
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (elixir . t)
+     (org . t)
+     (R . t)))
   :config
   ;;; auto display inline images on Org TAB cycle expand headlines.
+  ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
   (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
   (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
         org-default-notes-file org-agenda-file
@@ -212,10 +221,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
     "ck" 'org-mac-skim-insert-page
     "cf" 'org-mac-finder-insert-selected))
 
-(use-package ob-elixir
-  :after org
-  :init
-  (add-to-list 'org-babel-load-languages '(elixir . t)))
+(use-package ob-elixir :after org)
 
 ;; (use-package nov
 ;;   :mode ("\\.epub\\'" . nov-mode)

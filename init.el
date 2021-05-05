@@ -40,6 +40,7 @@
 (require 'init-sql)
 (require 'init-lsp)
 (require 'init-c)
+(require 'init-r)
 (require 'init-dashboard)
 (put 'narrow-to-page 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
