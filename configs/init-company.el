@@ -57,7 +57,8 @@
   (show-smartparens-mode))
 
 (use-package yasnippet
-  :hook (prog-mode . yas-minor-mode))
+  :hook (prog-mode . yas-minor-mode)
+  :hook (org-mode . yas-minor-mode))
 
 (use-package yasnippet-snippets
   :after yasnippet
