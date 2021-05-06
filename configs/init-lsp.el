@@ -44,6 +44,7 @@
   :quelpa (nox :fetcher github :repo "manateelazycat/nox")
   :init
   (add-to-list 'exec-path (concat private/config-directory "elixir-ls"))
-  (add-hook 'elixir-mode-hook 'nox-ensure))
+  (add-hook 'elixir-mode-hook 'nox-ensure)
+  (add-hook 'ess-r-mode-hook 'nox-ensure))
 
 (provide 'init-lsp)
