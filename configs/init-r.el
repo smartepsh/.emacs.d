@@ -30,7 +30,8 @@ options(oo)})\n"  string) buf)
         comint-scroll-to-bottom-on-input t
         comint-scroll-to-bottom-on-output t
         comint-move-point-for-output t
-        ess-default-style 'RStudio)
+        ess-default-style 'RStudio
+        ess-roxy-str "#'")
   :general
   (local-leader
     :keymaps 'ess-r-mode-map
