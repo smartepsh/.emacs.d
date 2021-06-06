@@ -7,11 +7,11 @@
 (fset #'yes-or-no-p #'y-or-n-p)
 
 (setq-default indent-tabs-mode nil)
-(setq tab-width 2)
 (set-default-coding-systems 'utf-8-unix)
 
 ;; emacs setting
-(setq auto-save-default nil
+(setq tab-width 2
+      auto-save-default nil
       make-backup-files nil
       create-lockfiles nil
       x-select-enable-clipboard nil

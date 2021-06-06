@@ -6,6 +6,10 @@
 (setq private/config-directory "~/.emacs.d/")
 (setq private/configs-directory "~/.emacs.d/configs/")
 
+(setq comp-async-jobs-number 5
+      comp-deferred-compilation t
+      comp-async-report-warnings-errors nil)
+
 (add-to-list 'load-path private/configs-directory)
 
 (setq private/cache-directory "~/.emacs.d/.cache/")
