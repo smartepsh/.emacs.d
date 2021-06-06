@@ -1,7 +1,8 @@
 (unless (or (version= "28" emacs-version) package--initialized)
   (package-initialize))
 
-(setq use-package-expand-minimally t
+(setq package-native-compile t
+      use-package-expand-minimally t
       use-package-always-ensure t
       package-enable-at-startup nil
       package-archives '(("melpa" . "https://melpa.org/packages/")
