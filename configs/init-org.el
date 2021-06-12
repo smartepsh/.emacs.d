@@ -38,7 +38,8 @@
         org-outline-path-complete-in-steps nil
         org-refile-allow-creating-parent-nodes 'confirm
         org-refile-use-cache t
-        org-startup-truncated nil)
+        org-startup-truncated nil
+        org-confirm-babel-evaluate nil)
   ;; refresh cache when emacs idle 5 mins
   (run-with-idle-timer 300 t (lambda ()
                             (org-refile-cache-clear)
