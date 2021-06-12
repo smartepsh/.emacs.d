@@ -8,7 +8,7 @@
 
 (setq comp-async-jobs-number 5
       comp-deferred-compilation t
-      comp-async-report-warnings-errors nil)
+      native-comp-async-report-warnings-errors nil)
 
 (add-to-list 'load-path private/configs-directory)
 
@@ -49,3 +49,4 @@
 (put 'narrow-to-page 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 (put 'erase-buffer 'disabled nil)
+(put 'dired-find-alternate-file 'disabled nil)
