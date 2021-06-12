@@ -43,7 +43,7 @@
   ;; refresh cache when emacs idle 5 mins
   (run-with-idle-timer 300 t (lambda ()
                             (org-refile-cache-clear)
-                            (org-refile-get-targets)
+                            ;; (org-refile-get-targets)
                             (org-roam-db-build-cache)))
   :general
   (common-leader
