@@ -16,6 +16,8 @@
 
 ;; (vimish-fold--vimish-overlay-p)
 
+(global-set-key (kbd "s-t") nil)
+
 (use-package bm
   :init
 
