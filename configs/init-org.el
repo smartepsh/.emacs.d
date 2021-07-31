@@ -1,9 +1,34 @@
 (require 'skim)
 ;; (require 'scimax)
 
-(setq org-directory  "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/")
+(setq org-directory  (file-truename "~/kenton-base/"))
 (setq org-agenda-file (concat org-directory "weekly/agenda.org"))
-(setq bookmark-file (concat org-directory "bookmarks/bookmarks.org"))
+(setq bookmark-file (concat org-directory "bookmarks.org"))
+
+(defun org-hide-properties ()
+  "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward
+            "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
+      (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
+        (overlay-put ov_this 'display "")
+        (overlay-put ov_this 'hidden-prop-drawer t))))
+  (put 'org-toggle-properties-hide-state 'state 'hidden))
+
+(defun org-show-properties ()
+  "Show all org-mode property drawers hidden by org-hide-properties."
+  (interactive)
+  (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
+  (put 'org-toggle-properties-hide-state 'state 'shown))
+
+(defun org-toggle-properties ()
+  "Toggle visibility of property drawers."
+  (interactive)
+  (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
+      (org-show-properties)
+    (org-hide-properties)))
 
 (defun open-bookmarks ()
   (interactive)
@@ -42,9 +67,9 @@
         org-confirm-babel-evaluate nil)
   ;; refresh cache when emacs idle 5 mins
   (run-with-idle-timer 300 t (lambda ()
-                            (org-refile-cache-clear)
-                            ;; (org-refile-get-targets)
-                            (org-roam-db-build-cache)))
+                               (org-refile-cache-clear)
+                               ;; (org-refile-get-targets)
+                               (org-roam-db-sync)))
   :general
   (common-leader
     "ii" 'org-journal-new-entry
@@ -53,9 +78,9 @@
     "ob" 'open-bookmarks
     "oa" 'org-agenda)
   (general-define-key
-    :keymaps 'org-mode-map
-    "C-s-n" 'skim-next-page
-    "C-s-p" 'skim-prev-page)
+   :keymaps 'org-mode-map
+   "C-s-n" 'skim-next-page
+   "C-s-p" 'skim-prev-page)
   (local-leader
     :keymaps 'org-mode-map
     "A" 'org-attach
@@ -72,6 +97,7 @@
     "pp" 'org-priority
     "pu" 'org-priority-up
     "pd" 'org-priority-down
+    "ph" 'org-toggle-properties
     "d" '(:ignore t :which-key "datetimes")
     "dt" 'org-time-stamp
     "dT" 'org-time-stamp-inactive
@@ -345,26 +371,45 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
                 "-activate" "org.gnu.Emacs"))
 
 (use-package org-roam
-  :hook (after-init . org-roam-mode)
+  :hook (after-init . org-roam-setup)
   :init
+(setq org-roam-v2-ack t)
   (setq org-roam-directory org-directory
         org-roam-db-location (concat org-directory "org-roam.db"))
+
   (require 'org-roam-protocol)
   :config
-  (setq org-roam-completion-system 'ivy)
+  (setq org-roam-node-display-template "${hierarchy:*}
+${tags:20}")
+  (setq org-roam-completion-everywhere t)
+  ;; (setq org-roam-completion-system 'ivy)
   (setq org-roam-capture-ref-templates
-        '(("b" "Bookmarks")
-          ("bb" "Bookmark with body" plain (function org-roam-capture--get-point) "%U ${body}\n" :file-name "bookmarks/${slug}" :head "#+title: ${title}\n#+roam_tags: bookmark\n#+roam_key: ${ref}\n#+roam_alias:\n" :immediate-finish t :unnarrowed t)
-
-          ("bbw" "Bookmark without body" plain (function org-roam-capture--get-point) "" :file-name "bookmarks/${slug}" :head "#+title: ${title}\n#+roam_tags: bookmark\n#+roam_key: ${ref}\n#+roam_alias:\n" :immediate-finish t :unnarrowed t)
-          ))
+        '(("b" "Bookmark" plain "%?\n** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))) ;;
+  ;; must after use-package org-roam
+  (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
+    "Return the file TITLE for the node."
+    (org-roam-get-keyword "TITLE" (org-roam-node-file node)))
+  (cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
+    "Return the hierarchy for the node."
+    (let ((title (org-roam-node-title node))
+          (olp (org-roam-node-olp node))
+          (level (org-roam-node-level node))
+          (filetitle (org-roam-node-filetitle node)))
+      (concat
+       (if (> level 0) (concat filetitle " > "))
+       (if (> level 1) (concat (string-join olp " > ") " > "))
+       title))
+    )
   :general
   (common-leader
     "r" '(:ignore t :which-key "roam")
-    "rr" 'org-roam
-    "rf" 'org-roam-find-file
-    "rs" 'org-roam-server-mode
-    "ri" 'org-roam-insert-immediate))
+    "rr" 'org-roam-buffer-toggle
+    "rf" 'org-roam-node-find
+    ;; "rs" 'org-roam-server-mode
+    "ri" 'org-roam-node-insert)
+  (general-nmap
+    :keymaps 'org-roam-mode-map
+    [mouse-1] 'org-roam-visit-thing))
 
 (defun my-old-carryover (old_carryover)
   (save-excursion
@@ -400,20 +445,20 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
     "jp" 'org-journal-previous-entry
     "jv" 'org-journal-schedule-view))
 
-(use-package org-roam-server
-  :defer t
-  :commands (org-roam-server-mode)
-  :config
-  (setq org-roam-server-host "127.0.0.1"
-        org-roam-server-port 8080
-        org-roam-server-authenticate nil
-        org-roam-server-export-inline-images t
-        org-roam-server-serve-files nil
-        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
-        org-roam-server-network-poll t
-        org-roam-server-network-arrows nil
-        org-roam-server-network-label-truncate t
-        org-roam-server-network-label-truncate-length 60
-        org-roam-server-network-label-wrap-length 20))
+;; (use-package org-roam-server
+;;   :defer t
+;;   :commands (org-roam-server-mode)
+;;   :config
+;;   (setq org-roam-server-host "127.0.0.1"
+;;         org-roam-server-port 8080
+;;         org-roam-server-authenticate nil
+;;         org-roam-server-export-inline-images t
+;;         org-roam-server-serve-files nil
+;;         org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+;;         org-roam-server-network-poll t
+;;         org-roam-server-network-arrows nil
+;;         org-roam-server-network-label-truncate t
+;;         org-roam-server-network-label-truncate-length 60
+;;         org-roam-server-network-label-wrap-length 20))
 
 (provide 'init-org)
