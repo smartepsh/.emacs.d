@@ -384,7 +384,7 @@ ${tags:20}")
   (setq org-roam-completion-everywhere t)
   ;; (setq org-roam-completion-system 'ivy)
   (setq org-roam-capture-ref-templates
-        '(("b" "Bookmark" plain "%?\n** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))) ;;
+        '(("b" "Bookmark" plain "%?\n** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))) ;;
   ;; must after use-package org-roam
   (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
     "Return the file TITLE for the node."
