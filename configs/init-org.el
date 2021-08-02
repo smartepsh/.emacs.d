@@ -85,7 +85,6 @@
     :keymaps 'org-mode-map
     "A" 'org-attach
     "t" 'org-todo
-    "r" 'org-refile
     "sa" 'org-archive-subtree
     "ss" 'org-sparse-tree
     "bb" 'org-switchb
@@ -406,7 +405,8 @@ ${tags:20}")
     "rr" 'org-roam-buffer-toggle
     "rf" 'org-roam-node-find
     ;; "rs" 'org-roam-server-mode
-    "ri" 'org-roam-node-insert)
+    "ri" 'org-roam-node-insert
+    "re" 'org-roam-refile)
   (general-nmap
     :keymaps 'org-roam-mode-map
     [mouse-1] 'org-roam-visit-thing))
