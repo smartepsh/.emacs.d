@@ -372,8 +372,9 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 (use-package org-roam
   :hook (after-init . org-roam-setup)
   :init
-(setq org-roam-v2-ack t)
-  (setq org-roam-directory org-directory
+  (setq org-roam-v2-ack t
+        org-roam-directory org-directory
+        org-roam-db-gc-threshold most-positive-fixnum
         org-roam-db-location (concat org-directory "org-roam.db"))
 
   (require 'org-roam-protocol)
