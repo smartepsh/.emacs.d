@@ -1,8 +1,11 @@
 (require 'skim)
 ;; (require 'scimax)
 
+(defun org-refresh-agenda-files ()
+  (interactive)
+  (setq org-agenda-files (directory-files (concat org-directory "journal/"))))
+
 (setq org-directory  (file-truename "~/kenton-base/"))
-(setq org-agenda-file (concat org-directory "weekly/agenda.org"))
 (setq bookmark-file (concat org-directory "bookmarks.org"))
 
 (defun org-hide-properties ()
@@ -53,12 +56,12 @@
   ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
   (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
   (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
-        org-default-notes-file org-agenda-file
+        ;; org-default-notes-file org-agenda-file
         org-archive-location (concat org-directory "Archived/" "%s_archive::")
         org-id-locations-file (concat org-directory ".org-id-locations")
         org-log-done nil
         ;; (nconc org-modules '(org-id))
-        org-refile-targets '((org-agenda-files :maxlevel . 2))
+        ;; org-refile-targets '((org-agenda-files :maxlevel . 2))
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil
         org-refile-allow-creating-parent-nodes 'confirm
@@ -72,9 +75,6 @@
                                (org-roam-db-sync)))
   :general
   (common-leader
-    "ii" 'org-journal-new-entry
-    "is" 'org-journal-new-scheduled-entry
-    "oo" 'org-journal-open-current-journal-file
     "ob" 'open-bookmarks
     "oa" 'org-agenda)
   (general-define-key
@@ -127,7 +127,7 @@
              org-agenda
              org-agenda-to-appt)
   :init
-  (add-to-list 'org-agenda-files org-agenda-file))
+  (org-refresh-agenda-files))
 
 (use-package org-clock
   :after org
@@ -375,7 +375,9 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
   (setq org-roam-v2-ack t
         org-roam-directory org-directory
         org-roam-db-gc-threshold most-positive-fixnum
-        org-roam-db-location (concat org-directory "org-roam.db"))
+        org-roam-db-location (concat org-directory "org-roam.db")
+        org-roam-dailies-directory "journal/"
+        )
 
   (require 'org-roam-protocol)
   :config
@@ -412,39 +414,39 @@ ${tags:20}")
     :keymaps 'org-roam-mode-map
     [mouse-1] 'org-roam-visit-thing))
 
-(defun my-old-carryover (old_carryover)
-  (save-excursion
-    (let ((matcher (cdr (org-make-tags-matcher org-journal-carryover-items))))
-      (dolist (entry (reverse old_carryover))
-        (save-restriction
-          (narrow-to-region (car entry) (cadr entry))
-          (goto-char (point-min))
-          (org-scan-tags '(lambda ()
-                            (org-set-tags ":carried:"))
-                         matcher org--matcher-tags-todo-only))))))
+;; (defun my-old-carryover (old_carryover)
+;;   (save-excursion
+;;     (let ((matcher (cdr (org-make-tags-matcher org-journal-carryover-items))))
+;;       (dolist (entry (reverse old_carryover))
+;;         (save-restriction
+;;           (narrow-to-region (car entry) (cadr entry))
+;;           (goto-char (point-min))
+;;           (org-scan-tags '(lambda ()
+;;                             (org-set-tags ":carried:"))
+;;                          matcher org--matcher-tags-todo-only))))))
 
-(use-package org-journal
-  :defer t
-  :init
-  (setq org-journal-enable-agenda-integration t
-        org-journal-handle-old-carryover 'my-old-carryover)
-  :config
-  (setq org-journal-dir (concat org-directory "weekly/")
-        org-journal-file-format "%Y%m%d-%V"
-        org-journal-file-type 'weekly
-        org-journal-find-file 'find-file
-        org-extend-today-until 0
-        org-icalendar-store-UID t)
-  ;; org-icalendar-include-todo "all"
-  ;; org-icalendar-combined-agenda-file (concat org-journal-dir "org-journal.ics"))
-  :general
-  (local-leader
-    :keymaps 'org-journal-mode-map
-    "j" '(:ignore t :which-key "journal")
-    "jj" 'org-journal-new-entry
-    "jn" 'org-journal-next-entry
-    "jp" 'org-journal-previous-entry
-    "jv" 'org-journal-schedule-view))
+;; (use-package org-journal
+;;   :defer t
+;;   :init
+;;   (setq org-journal-enable-agenda-integration t
+;;         org-journal-handle-old-carryover 'my-old-carryover)
+;;   :config
+;;   (setq org-journal-dir (concat org-directory "weekly/")
+;;         org-journal-file-format "%Y%m%d-%V"
+;;         org-journal-file-type 'weekly
+;;         org-journal-find-file 'find-file
+;;         org-extend-today-until 0
+;;         org-icalendar-store-UID t)
+;;   ;; org-icalendar-include-todo "all"
+;;   ;; org-icalendar-combined-agenda-file (concat org-journal-dir "org-journal.ics"))
+;;   :general
+;;   (local-leader
+;;     :keymaps 'org-journal-mode-map
+;;     "j" '(:ignore t :which-key "journal")
+;;     "jj" 'org-journal-new-entry
+;;     "jn" 'org-journal-next-entry
+;;     "jp" 'org-journal-previous-entry
+;;     "jv" 'org-journal-schedule-view))
 
 ;; (use-package org-roam-server
 ;;   :defer t
