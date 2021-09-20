@@ -3,7 +3,7 @@
 
 (defun org-refresh-agenda-files ()
   (interactive)
-  (setq org-agenda-files (directory-files (concat org-directory "journal/"))))
+  (setq org-agenda-files (directory-files (concat org-directory "journal/") t ".org")))
 
 (setq org-directory  (file-truename "~/kenton-base/"))
 (setq bookmark-file (concat org-directory "bookmarks.org"))
@@ -387,6 +387,8 @@ ${tags:20}")
   ;; (setq org-roam-completion-system 'ivy)
   (setq org-roam-capture-ref-templates
         '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))) ;;
+  (setq org-roam-dailies-capture-templates
+        '(("d" "dailies" entry "* %<%R> %?" :target (file+head "%<%Y%m%d-%W>.org" "#+title: %<%Y-%m-%d>\n"))))
   ;; must after use-package org-roam
   (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
     "Return the file TITLE for the node."
@@ -404,10 +406,19 @@ ${tags:20}")
     )
   :general
   (common-leader
+    "ii" 'org-roam-dailies-goto-today
     "r" '(:ignore t :which-key "roam")
     "rr" 'org-roam-buffer-toggle
     "rf" 'org-roam-node-find
     ;; "rs" 'org-roam-server-mode
+    "rd" '(:ignore t :which-key "roam daily")
+    "rdd" 'org-roam-dailies-capture-date
+    "rdt" 'org-roam-dailies-capture-today
+    "rdf" 'org-roam-dailies-goto-date
+    "rdr" 'org-roam-dailies-goto-today
+    "rdn" 'org-roam-dailies-goto-next-note
+    "rdp" 'org-roam-dailies-goto-previous-note
+    "rdo" 'org-roam-dailies-find-directory
     "ri" 'org-roam-node-insert
     "re" 'org-roam-refile)
   (general-nmap
