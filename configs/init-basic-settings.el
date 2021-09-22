@@ -56,7 +56,7 @@
 
 (defun go-ansible()
   (interactive)
-  (dired "/sshx:ansible-host:/home/smartepsh/ansible_playbooks")
+  (dired "/sshx:center:/home/smartepsh/ansible_playbooks")
   )
 ;; shell setting
 ;; .zshenv
