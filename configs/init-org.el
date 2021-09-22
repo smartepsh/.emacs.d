@@ -250,7 +250,10 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 (use-package ob-elixir :after org)
 
 (use-package nov
+  :defer t
   :mode ("\\.epub\\'" . nov-mode)
+  :init
+  (setq nov-save-place-file (concat org-directory "nov-places"))
   :general
   ;; disable special "h" key action
   (general-define-key
