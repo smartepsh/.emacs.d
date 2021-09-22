@@ -475,4 +475,29 @@ ${tags:20}")
 ;;         org-roam-server-network-label-truncate-length 60
 ;;         org-roam-server-network-label-wrap-length 20))
 
+(use-package calibredb
+  :defer t
+  :commands (calibredb)
+  :config
+  (setq calibredb-size-show t
+        calibredb-format-all-the-icons t
+        calibredb-root-dir "/Users/smartepsh/Qsync/Books/"
+        calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
+        calibredb-library-alist '(("/Users/smartepsh/Qsync/Books")))
+  :general
+  (local-leader
+    :keymaps 'calibredb-search-mode-map
+    "." 'calibredb-dispatch
+    "," 'calibredb-toggle-view-at-point
+    "o" 'calibredb-sort-dispatch
+    "s" 'calibredb-set-metadata-dispatch
+    "r" 'calibredb-search-refresh-and-clear-filter
+    "v" 'calibredb-view
+    "V" 'calibredb-open-file-with-default-tool
+    "f" 'calibredb-toggle-favorite-at-point
+    "x" 'calibredb-toggle-archive-at-point
+    "h" 'calibredb-toggle-highlight-at-point
+    "a" 'calibredb-add)
+  )
+
 (provide 'init-org)
