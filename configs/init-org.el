@@ -249,20 +249,20 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 
 (use-package ob-elixir :after org)
 
-;; (use-package nov
-;;   :mode ("\\.epub\\'" . nov-mode)
-;;   :general
-;;   ;; disable special "h" key action
-;;   (general-define-key
-;;    :keymaps '(nov-mode-map)
-;;    "h" nil)
-;;   (clear-spc :keymaps '(nov-mode-map))
-;;   (local-leader
-;;     :keymaps 'nov-mode-map
-;;     "n" 'nov-next-document
-;;     "p" 'nov-previous-document
-;;     "m" 'nov-goto-toc
-;;     "," 'nov-brower-url
+(use-package nov
+  :mode ("\\.epub\\'" . nov-mode)
+  :general
+  ;; disable special "h" key action
+  (general-define-key
+   :keymaps '(nov-mode-map)
+   "h" nil)
+  (clear-spc :keymaps '(nov-mode-map))
+  (local-leader
+    :keymaps 'nov-mode-map
+    "n" 'nov-next-document
+    "p" 'nov-previous-document
+    "m" 'nov-goto-toc
+    "," 'nov-brower-url))
 ;;     :keymaps 'org-noter-doc-mode-map
 ;;     "i" 'org-noter-insert-note
 ;;     "I" 'org-noter-insert-precise-note
@@ -481,23 +481,32 @@ ${tags:20}")
   :config
   (setq calibredb-size-show t
         calibredb-format-all-the-icons t
+        calibredb-id-width 4
+        calibredb-title-width 40
+        calibredb-date-width 0
         calibredb-root-dir "/Users/smartepsh/Qsync/Books/"
         calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
         calibredb-library-alist '(("/Users/smartepsh/Qsync/Books")))
   :general
+  (general-define-key
+    :keymaps 'calibredb-search-mode-map
+   ;; "TAB" 'company-simple-complete-next
+   ;; "<S-tab>" 'company-simple-complete-previous
+   ;; "<RET>" nil
+   "<tab>" 'calibredb-toggle-view-at-point
+   "<return>" 'calibredb-find-file)
   (local-leader
     :keymaps 'calibredb-search-mode-map
     "." 'calibredb-dispatch
-    "," 'calibredb-toggle-view-at-point
+    "," 'calibredb-search-live-filter
     "o" 'calibredb-sort-dispatch
     "s" 'calibredb-set-metadata-dispatch
+    "y" 'calibredb-yank-dispatch
     "r" 'calibredb-search-refresh-and-clear-filter
     "v" 'calibredb-view
     "V" 'calibredb-open-file-with-default-tool
     "f" 'calibredb-toggle-favorite-at-point
     "x" 'calibredb-toggle-archive-at-point
-    "h" 'calibredb-toggle-highlight-at-point
-    "a" 'calibredb-add)
-  )
+    "h" 'calibredb-toggle-highlight-at-point))
 
 (provide 'init-org)
