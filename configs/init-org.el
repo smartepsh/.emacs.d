@@ -490,26 +490,7 @@ ${tags:20}")
         calibredb-root-dir "/Users/smartepsh/Qsync/Books/"
         calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
         calibredb-library-alist '(("/Users/smartepsh/Qsync/Books")))
-  :general
-  (general-define-key
-    :keymaps 'calibredb-search-mode-map
-   ;; "TAB" 'company-simple-complete-next
-   ;; "<S-tab>" 'company-simple-complete-previous
-   ;; "<RET>" nil
-   "<tab>" 'calibredb-toggle-view-at-point
-   "<return>" 'calibredb-find-file)
-  (local-leader
-    :keymaps 'calibredb-search-mode-map
-    "." 'calibredb-dispatch
-    "," 'calibredb-search-live-filter
-    "o" 'calibredb-sort-dispatch
-    "s" 'calibredb-set-metadata-dispatch
-    "y" 'calibredb-yank-dispatch
-    "r" 'calibredb-search-refresh-and-clear-filter
-    "v" 'calibredb-view
-    "V" 'calibredb-open-file-with-default-tool
-    "f" 'calibredb-toggle-favorite-at-point
-    "x" 'calibredb-toggle-archive-at-point
-    "h" 'calibredb-toggle-highlight-at-point))
+  (evil-set-initial-state 'calibredb-search-mode 'emacs)
+  (evil-set-initial-state 'calibredb-show-mode 'emacs))
 
 (provide 'init-org)
