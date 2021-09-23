@@ -342,26 +342,6 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 ;;     "Advise capture-finalize to close the frame"
 ;;     (if (equal "SA" (org-capture-get :key))
 ;; 	(do-applescript "tell application \"Skim\"\n    activate\nend tell")))
-;; (use-package anki-editor
-;;   :after org
-;;   :config
-;;   (anki-editor-mode)
-;;   :general
-;;   (local-leader
-;;     :keymaps 'org-mode-map
-;;     "kap" 'anki-editor-push-notes
-;;     "kai" 'anki-editor-insert-note))
-
-;; (use-package grip-mode
-;;   :hook ((markdown-mode org-mode) . grip-mode)
-;;   :init
-;;   :config
-;;   (setq grip-preview-use-webkit t
-;;         grip-github-user "smartepsh"
-;;         grip-github-password "dd5918431926fa3d62612aeb208e9d7f1e45b7aa"
-;;         grip-update-after-change nil))
-
-;; (use-package ox-gfm)
 
 (defun notify-osx (title message)
   (call-process "terminal-notifier"
