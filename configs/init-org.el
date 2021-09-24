@@ -301,9 +301,27 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 ;; 	calibre-root-dir (expand-file-name "~/onedrive/calibre")
 ;; 	calibre-db (concat calibre-root-dir "/metadata.db")))
 
-;; (use-package org-ref
+(setq bib-file (concat org-directory "references.bib"))
+
+(use-package org-ref
+  :after org
+  :init
+  (setq reftex-default-bibliography `(,bib-file)
+        org-ref-bibliography-notes (concat org-directory "ref-notes.org")
+        org-ref-default-bibliography `(,bib-file)
+        org-ref-pdf-directory "~/Qsync/Books/"
+        calibredb-ref-default-bibliography bib-file
+        org-ref-get-pdf-filename-function 'org-ref-get-mendeley-filename))
+        ;; org-ref-completion-library 'org-ref-ivy-cite-completion))
+
+;; (use-package ivy-bibtex
 ;;   :after org
 ;;   :init
+;;   (setq bibtex-completion-bibliography `(,bib-file)))
+
+;; (use-package org-roam-bibtex
+;;   :after org-roam)
+
 ;;   (setq org-capture-templates (quote (("SA" "Skim Annotation" entry
 ;; 				       (file+function "~/onedrive/kenton/emacs.org" my-org-move-point-to-capture-skim-annotation)
 ;; 				       "* %^{Logging for...} :skim_annotation:read:literature:
@@ -471,6 +489,27 @@ ${tags:20}")
         calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
         calibredb-library-alist '(("/Users/smartepsh/Qsync/Books")))
   (evil-set-initial-state 'calibredb-search-mode 'emacs)
-  (evil-set-initial-state 'calibredb-show-mode 'emacs))
+  (evil-set-initial-state 'calibredb-show-mode 'emacs)
+  :general
+  (general-define-key
+   :keymaps 'calibredb-search-mode-map
+   "C-s-n" 'skim-next-page
+   "C-s-p" 'skim-prev-page)
+  (general-define-key
+   :keymaps 'calibredb-show-mode-map
+   "C-s-n" 'skim-next-page
+   "C-s-p" 'skim-prev-page))
+
+(use-package org-media-note
+  :defer t
+  :commands (org-media-note-hydra/body)
+  :quelpa (org-media-note :fetcher github :repo "yuchen-lea/org-media-note")
+  :init
+  (require 'org-attach)
+  (setq org-media-note-use-org-ref t)
+  :hook (org-mode . org-media-note-mode)
+  :config
+  (setq org-media-note-screenshot-image-dir (concat org-directory "images/org-media/")
+        org-media-note-use-refcite-first t))
 
 (provide 'init-org)
