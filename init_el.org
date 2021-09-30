@@ -1,0 +1,23 @@
+:PROPERTIES:
+:ID:       52F81E86-D8C4-4A74-B8C4-EE0A32CA7100
+:header-args: :tangle "~/.emacs.d/init.el"
+:END:
+#+title: init.el
+
+* 背景
+  =spacemacs= 入坑，经过大约三四年的使用，终于可以算是摸到了门槛。之前一直使用 =evil= 来模拟 vim 模式，随着使用的时间越长，依赖的插件越多，evil 带来的弊端也逐渐显现出来：
+  - 每一个插件除非有支持，不然都需要自定义按键，配合双 leader 系统，任务繁重。。。
+  - 对于不同的 mode-map 可能有想同的按键映射，emasc 采用 =1 major + n minor= 模式，很容易产生按键冲突
+  - 过重
+
+  让我萌生了更换输入模式的想法。此时恰巧看到了[[https://emacs-china.org/t/meow/15679][猫态编辑：Meow - Emacs-general - Emacs China]] 这个模式，被描述吸引，决定尝试。
+
+  同时经过几年的使用，逐渐对原有在 =懵懂= 状态下进行的配置有了重构之心，故借此机会，同时使用 org-mode ，尽可能记录下配置生成的点点滴滴。
+
+* 使用 org mode 记录配置
+  很多人使用 emacs 都是因为 org mode 入的坑，可见其厉害之处。本篇记录使用 =org-tangle= 将包含的 source block 依序拼接(=tangle=)为一个文件。这里默认会导出为 org 文件的同名文件，需要设置。
+  #+begin_src emacs-lisp :tangle no
+    :PROPERTIES:
+    :header-args: :tangle "~/.emacs.d/init.el"
+    :END:
+  #+end_src
