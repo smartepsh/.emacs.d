@@ -17,7 +17,7 @@
         rime-posframe-style 'vertical
         rime-show-preedit 'inline
         rime-disable-predicates '(rime-predicate-hydra-p
-                                  rime-predicate-evil-mode-p
+                                  ;;rime-predicate-evil-mode-p
                                   rime-predicate-prog-in-code-p
                                   rime-predicate-punctuation-after-ascii-p))
   :config
