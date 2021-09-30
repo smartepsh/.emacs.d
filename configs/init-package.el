@@ -1,5 +1,5 @@
-(unless (or (version= "28" emacs-version) package--initialized)
-  (package-initialize))
+;; (unless (or (version= "28" emacs-version) package--initialized)
+;;   (package-initialize))
 
 (setq package-native-compile t
       use-package-expand-minimally t
@@ -12,9 +12,9 @@
       ;; package-archives '(("melpa-cn" . "https://elpa.emacs-china.org/melpa/")
       ;;                   ("org-cn"   . "https://elpa.emacs-china.org/org/")
       ;;                   ("gnu-cn"   . "https://elpa.emacs-china.org/gnu/"))
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+;; (unless (package-installed-p 'use-package)
+;;   (package-refresh-contents)
+;;   (package-install 'use-package))
 
 (eval-when-compile
   (require 'use-package))
@@ -41,11 +41,6 @@
 ;; (setq use-package-ensure-function 'quelpa)
 (quelpa-use-package-activate-advice)
 
-;; (use-package auto-package-update
-;;   :defer t
-;;   :config
-;;   (setq auto-package-update-delete-old-versions nil))
-
 ;; replaced by package-utils
 ;; (use-package use-package-ensure-system-package)
 
@@ -53,6 +48,7 @@
   :config
   (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
-(use-package package-utils)
+(use-package package-utils
+  :defer t)
 
 (provide 'init-package)

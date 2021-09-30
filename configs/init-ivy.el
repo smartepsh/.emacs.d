@@ -4,29 +4,33 @@
   :init
   (add-hook 'after-init-hook #'ivy-mode)
   (setq ivy-use-virtual-buffers t
-        enable-recursive-minibuffers t)
-  :config
-  (add-to-list 'evil-normal-state-modes 'ivy-occur-grep-mode)
-  :general
-  (general-define-key
-   :keymaps 'ivy-minibuffer-map
-   [escape] 'minibuffer-keyboard-quit
-   "C-<return>" 'ivy-immediate-done)
-  (clear-spc
-    :keymaps 'ivy-occur-grep-mode-map)
-  (local-leader
-    :keymaps 'ivy-occur-grep-mode-map
-    "w" 'ivy-wgrep-change-to-wgrep-mode)
-  (common-leader
-    "/" 'counsel-rg))
+        enable-recursive-minibuffers t))
+;;  :config
+;;  (add-to-list 'evil-normal-state-modes 'ivy-occur-grep-mode))
+;;  :general
+;;  (general-define-key
+;;   :keymaps 'ivy-minibuffer-map
+;;   [escape] 'minibuffer-keyboard-quit
+;;   "C-<return>" 'ivy-immediate-done)
+;;  (clear-spc
+;;    :keymaps 'ivy-occur-grep-mode-map)
+;;  (local-leader
+;;    :keymaps 'ivy-occur-grep-mode-map
+;;    "w" 'ivy-wgrep-change-to-wgrep-mode)
+;;  (common-leader
+;;    "/" 'counsel-rg))
 
 (use-package swiper
   :commands (swiper)
-  :general
+  :config
   (general-define-key
    "C-s" 'swiper
-   "s-f" 'swiper-isearch-thing-at-point
-   ))
+   "s-f" 'swiper-isearch-thing-at-point))
+
+;;  :general
+;;  (general-define-key
+;;   "C-s" 'swiper
+;;   "s-f" 'swiper-isearch-thing-at-point))
 
 (use-package counsel
   :after ivy
