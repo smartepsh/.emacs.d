@@ -26,6 +26,23 @@
    此处我们直接输出配置到 =~/.emacs.d/init.el= 文件，意味着需要手动更新输出，新配置才可能生效。当然也可以直接更改此文件，但在下次导出时，会被覆盖，所以请不要这么做。
 
 * 基础设置
+** 窗口最大化
+   #+begin_src emacs-lisp
+(global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
+(global-set-key (kbd "s-C-f") 'toggle-frame-fullscreen)
+(global-set-key (kbd "s-M-f") 'toggle-frame-maximized)
+   #+end_src
+** 加速启动时间的技巧
+   通过设置最大垃圾回收大小，在启动过程中避免垃圾回收；在启动之后，设置为 300mb 以减少垃圾回收启动频率。
+   #+begin_src emacs-lisp
+     (setq gc-cons-threshold most-positive-fixnum)
+     (add-hook 'after-init-hook '(lambda () (setq gc-cons-threshold 300000000)))
+   #+end_src
+** 增加从进程读取消息的大小
+   因为 lsp-mode 需要更改此大小。
+   #+begin_src emacs-lisp
+     (setq read-process-output-max (* 3 (* 1024 1024))) ;; 3mb
+   #+end_src
 ** 计算启动时间
  #+begin_src emacs-lisp
    (setq emacs-start-time (current-time))
@@ -68,13 +85,14 @@
   #+end_src
 ** 替换 yes no
    #+begin_src emacs-lisp
-     (fset #'yes-or-no-p #'y-or-n-p)
+     (fset 'yes-or-no-p 'y-or-n-p)
    #+end_src
 ** 编辑相关设置
    #+begin_src emacs-lisp
      (set-default-coding-systems 'utf-8-unix)
      (add-hook 'before-save-hook 'delete-trailing-whitespace)
      (setq tab-width 2
+           indent-tabs-mode nil
            auto-save-default nil
            make-backup-file nil
            create-lockfiles nil
@@ -92,7 +110,7 @@
        (interactive)
        (setq url-proxy-services nil))
    #+end_src
-** mac 修时键配置
+** mac 修饰键配置
    #+begin_src emacs-lisp
      (setq ns-command-modifier 'super
            ns-option-modifer 'meta
@@ -145,6 +163,17 @@
     (use-package exec-path-from-shell
       :config
       (exec-path-from-shell-initialize))
+  #+end_src
+* Server
+  #+begin_src emacs-lisp :tangle no
+    (use-package server
+  :defer t
+  :init
+  (setq server-name "kenton")
+  (add-hook 'after-init-hook
+	    (lambda ()
+	      (unless (server-running-p server-name)
+		(server-start)))))
   #+end_src
 * 输入方案
   #+begin_src emacs-lisp
@@ -250,22 +279,50 @@
       :config
       (meow-setup))
   #+end_src
+* 按键管理
+** 绑定
+  meow 提供了一些全局的绑定方法，但基本均基于 normal state 或者 leader key ，无法根据 keymap 设置按键，故引入 general 。
+  #+begin_src emacs-lisp
+    (use-package general
+      :config
+      (general-auto-unbind-keys))
+  #+end_src
+** 提示
+  keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提供。
+  #+begin_src emacs-lisp
+    (use-package which-key
+      :defer t
+      :init
+      (add-hook 'after-init-hook 'which-key-mode))
+  #+end_src
+
 * 外观
 ** modeline
    #+begin_src emacs-lisp
      (use-package doom-modeline
        :init
-       (doom-modeline-mode t)
+       (add-hook 'after-init-hook (lambda ()
+				    (doom-modeline-mode)
+				    (column-number-mode)
+				    (doom-modeline-def-modeline 'my-line
+				      '(bar modals buffer-info buffer-position)
+				      '(input-method major-mode parrot lsp))
+				    (defun setup-custom-doom-modeline ()
+				      (interactive)
+				      (doom-modeline-set-modeline 'my-line 'default))
+				    (setup-custom-doom-modeline)))
        :config
-       ;;disable git status
-       (setq doom-modeline-vcs-max-length 0))
+       (setq doom-modeline-buffer-modification-icon nil
+	     doom-modeline-buffer-state-icon nil
+	     doom-modeline-buffer-file-name-style 'file-name))
+
    #+end_src
 ** theme
    #+begin_src emacs-lisp
      (use-package doom-themes
        :init
        (setq doom-themes-enable-bold t
-             doom-themes-enable-italic t)
+	     doom-themes-enable-italic t)
        (load-theme 'doom-one t))
    #+end_src
 
@@ -275,6 +332,12 @@
      (tool-bar-mode -1)
    #+end_src
 
+** 小猫咪 nyan-mode
+#+begin_src emacs-lisp
+  (use-package nyan-mode
+    :init
+    (add-hook 'after-init-hook 'nyan-mode))
+#+end_src
 ** 彩色括号及高亮TODO
    #+begin_src emacs-lisp
      (use-package rainbow-delimiters
@@ -292,19 +355,13 @@
    #+begin_src emacs-lisp
      (setq inhibit-startup-screen t)
    #+end_src
-* 按键绑定
-   #+begin_src emacs-lisp
-     (use-package general
-       :config
-       (general-auto-unbind-keys))
-   #+end_src
 * 窗口管理
-   #+begin_src emacs-lisp
+  因为 centaur tabs 有点问题，所以先禁止掉。
+   #+begin_src emacs-lisp :tangle no
      (use-package centaur-tabs
+       :defer t
        :config
        (general-define-key
-        "s-d" 'switch-window-then-split-right
-        "s-w" 'switch-window-then-delete
         "s-1" 'centaur-tabs-select-visible-tab
         "s-2" 'centaur-tabs-select-visible-tab
         "s-3" 'centaur-tabs-select-visible-tab
@@ -313,8 +370,6 @@
         "s-6" 'centaur-tabs-select-visible-tab
         "s-7" 'centaur-tabs-select-visible-tab
         "s-t" 'centaur-tabs--create-new-tab)
-       ;;;(setq switch-window-input-style 'minibuffer)
-       ;;;(setq switch-window-minibuffer-shortcut ?m)
        (centaur-tabs-mode t)
        (setq centaur-tabs-height 20
              centaur-tabs-set-bar 'left
@@ -324,10 +379,13 @@
              centaur-tabs-set-modified-marker t
              ;;centaur-tabs-label-fixed-length 10
              centaur-tabs-set-icons t))
+   #+end_src
+
+   #+begin_src emacs-lisp
      (use-package eyebrowse
        :defer t
        :init
-       (add-hook 'after-init-hook #'eyebrowse-mode)
+       (add-hook 'after-init-hook 'eyebrowse-mode)
        (setq eyebrowse-keymap-prefix "")
        :config
        (general-define-key
@@ -342,66 +400,773 @@
         "H-9" 'eyebrowse-switch-to-window-config-9
         "H-`" 'eyebrowse-rename-window-config
         "H-q" 'eyebrowse-close-window-config))
+     (use-package switch-window
+       :config
+       (setq switch-window-auto-resize-window t
+             switch-window-minibuffer-shortcut ?z)
+       (general-define-key
+        "s-d" 'switch-window-then-split-right
+        "s-w" 'switch-window-then-delete
+        "s-t" 'switch-window))
    #+end_src
 * 字体及输入法（中文）
   #+begin_src emacs-lisp
-	(setq private/rime-directory (concat private/config-directory "rime/"))
-	(setq private/offical-rime-directory "/Library/Input Methods/Squirrel.app/Contents/SharedSupport")
+			    (setq private/rime-directory (concat private/config-directory "rime/"))
+			    (setq private/offical-rime-directory "/Library/Input Methods/Squirrel.app/Contents/SharedSupport")
 
-	(use-package cnfonts
-	  :defer t
-	  :init
-	  (add-hook 'after-init-hook #'cnfonts-enable)
-	  (setq cnfonts-use-face-font-rescale t))
+			    (use-package cnfonts
+			      :defer t
+			      :init
+			      (add-hook 'after-init-hook 'cnfonts-enable)
+			      (setq cnfonts-use-face-font-rescale t)
+			      :config
+			      (general-define-key
+			       "s-=" 'cnfonts-increase-fontsize
+			       "s--" 'cnfonts-decrease-fontsize))
 
-	(use-package rime
-	  :defer t
-	  :custom
-	  (default-input-method "rime")
-	  :init
-	  (setq rime-librime-root (concat private/rime-directory "dist/")
-		rime-show-candidate 'posframe
-		rime-posframe-style 'vertical
-		rime-show-preedit 'inline
-		rime-disable-predicates '(rime-predicate-hydra-p
-					  ;;rime-predicate-evil-mode-p
-					  rime-predicate-prog-in-code-p
-					  rime-predicate-punctuation-after-ascii-p
-					  meow-normal-mode-p))
-	  :config
-	  (global-set-key (kbd "M-s-SPC") 'rime-inline-ascii))
+			    (use-package rime
+			      :defer t
+			      :custom
+			      (default-input-method "rime")
+			      :init
+			      (setq rime-librime-root (concat private/rime-directory "dist/")
+				    rime-show-candidate 'posframe
+				    rime-posframe-style 'vertical
+				    rime-show-preedit 'inline
+				    rime-disable-predicates '(rime-predicate-hydra-p
+							      ;;rime-predicate-evil-mode-p
+							      rime-predicate-prog-in-code-p
+							      rime-predicate-punctuation-after-ascii-p
+							      meow-normal-mode-p))
+			      :config
+			      (global-set-key (kbd "M-s-SPC") 'rime-inline-ascii))
   #+end_src
 * Org Mode
+  算是重头戏了。。。我也是菜鸟，之前使用 evil 自定义按键，其实有些功能是很少用的。这次换为 =meow= 之后，使用原生快捷键看看效果。
+** org 根路径
+   真实路径在 icloud 中。
+  #+begin_src emacs-lisp
+    (setq org-directory  (file-truename "~/kenton-base/"))
+  #+end_src
+** Helpers
+*** tab 循环展开图片
+    #+begin_src emacs-lisp
+      ;;; Only display inline images under current subtree.
+      (defun org-display-subtree-inline-images (&optional state)
+	"Toggle the display of inline images under current subtree.
+      INCLUDE-LINKED is passed to `org-display-inline-images'."
+	(interactive)
+	(save-excursion
+	  (save-restriction
+	    (org-narrow-to-subtree)
+	    (let* ((beg (point-min))
+		   (end (point-max))
+		   (image-overlays (cl-intersection
+				    org-inline-image-overlays
+				    (overlays-in beg end)))
+		   (display-inline-images-local
+		    (lambda ()
+		      (org-display-inline-images t t beg end)
+		      (setq image-overlays (cl-intersection
+					    org-inline-image-overlays
+					    (overlays-in beg end)))
+		      (if (and (org-called-interactively-p) image-overlays)
+			  (message "%d images displayed inline"
+				   (length image-overlays)))))
+		   (hide-inline-images-local
+		    (lambda ()
+		      (org-remove-inline-images)
+		      (message "Inline image display turned off"))))
+	      (if state
+		  (pcase state
+		    ('subtree
+		     (funcall display-inline-images-local))
+		    ('folded
+		     (funcall hide-inline-images-local)))
+		(if image-overlays
+		    (funcall display-inline-images-local)
+		  (funcall hide-inline-images-local)))))))
+    #+end_src
+
+*** 循环展开 properties
+    #+begin_src emacs-lisp
+      (defun org-hide-properties ()
+	"Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
+	(interactive)
+	(save-excursion
+	  (goto-char (point-min))
+	  (while (re-search-forward
+		  "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
+	    (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
+	      (overlay-put ov_this 'display "")
+	      (overlay-put ov_this 'hidden-prop-drawer t))))
+	(put 'org-toggle-properties-hide-state 'state 'hidden))
+
+      (defun org-show-properties ()
+	"Show all org-mode property drawers hidden by org-hide-properties."
+	(interactive)
+	(remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
+	(put 'org-toggle-properties-hide-state 'state 'shown))
+
+      (defun org-toggle-properties ()
+	"Toggle visibility of property drawers."
+	(interactive)
+	(if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
+	    (org-show-properties)
+	  (org-hide-properties)))
+    #+end_src
+
+*** mac 通知
+依赖于终端软件 =terminal-notifier= 。
+#+begin_src emacs-lisp
+  (defun notify-osx (title message)
+  (call-process "terminal-notifier"
+                nil 0 nil
+                "-group" "Emacs"
+                "-title" title
+                "-sender" "org.gnu.Emacs"
+                "-mesage" message
+                "-activate" "org.gnu.Emacs"))
+#+end_src
+** 本体
+   #+begin_src emacs-lisp
+     (use-package org
+       :ensure org-plus-contrib
+       ;; :ensure-system-package terminal-notifier
+       :pin org
+       :defer t
+       :init
+       (org-babel-do-load-languages
+	'org-babel-load-languages
+	'((emacs-lisp . t)
+	  (elixir . t)
+	  (org . t)))
+       ;;(R . t)))
+       :config
+     ;;; auto display inline images on Org TAB cycle expand headlines.
+       ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
+       (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
+       (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
+	     ;; org-default-notes-file org-agenda-file
+	     org-archive-location (concat org-directory "Archived/" "%s_archive::")
+	     org-id-locations-file (concat org-directory ".org-id-locations")
+	     org-log-done nil
+	     ;; (nconc org-modules '(org-id))
+	     ;; org-refile-targets '((org-agenda-files :maxlevel . 2))
+	     org-refile-use-outline-path 'file
+	     org-outline-path-complete-in-steps nil
+	     org-refile-allow-creating-parent-nodes 'confirm
+	     org-refile-use-cache t
+	     org-startup-truncated nil
+	     org-confirm-babel-evaluate nil)
+       ;; refresh cache when emacs idle 5 mins
+       (run-with-idle-timer 300 t (lambda ()
+				    (org-refile-cache-clear)
+				    ;; (org-refile-get-targets)
+				    (org-roam-db-sync))))
+   #+end_src
+** 美观
+   #+begin_src emacs-lisp
+     (use-package org-bullets
+       :hook (org-mode . org-bullets-mode))
+   #+end_src
+** TODO Org-ref
+   #+begin_src emacs-lisp
+     (setq bib-file (concat org-directory "references.bib"))
+     (use-package org-ref
+       :after org
+       :init
+       (setq reftex-default-bibliography `(,bib-file)
+	     org-ref-bibliography-notes (concat org-directory "ref-notes.org")
+	     org-ref-default-bibliography `(,bib-file)
+	     org-ref-pdf-directory "~/Qsync/Books/"
+	     calibredb-ref-default-bibliography bib-file
+	     org-ref-get-pdf-filename-function 'org-ref-get-mendeley-filename))
+     ;; org-ref-completion-library 'org-ref-ivy-cite-completion))
+   #+end_src
+** Agenda
+   #+begin_src emacs-lisp
+     (defun org-refresh-agenda-files ()
+       (interactive)
+       (setq org-agenda-files (directory-files (concat org-directory "journal/") t ".org")))
+     (use-package org-agenda
+       :ensure org-plus-contrib
+       :commands (org-agenda-list
+		  org-agenda
+		  org-agenda-to-appt)
+       :init
+       (org-refresh-agenda-files))
+   #+end_src
+** Bookmark
+   使用 org 文件做了一个收藏夹。
+   #+begin_src emacs-lisp
+     (setq bookmark-file (concat org-directory "bookmarks.org"))
+     (defun open-bookmarks ()
+       (interactive)
+       (if (buffer-live-p "bookmarks.org")
+	   (pop-to-buffer "bookmarks.org")
+	 (find-file bookmark-file)))
+   #+end_src
+** Org-roam
+   #+begin_src emacs-lisp
+     (use-package org-roam
+       :init
+       (add-hook 'after-init-hook 'org-roam-setup)
+       (setq org-roam-v2-ack t
+	     org-roam-directory org-directory
+	     org-roam-db-gc-threshold most-positive-fixnum
+	     org-roam-db-location (concat org-directory "org-roam.db")
+	     org-roam-dailies-directory "journal/")
+
+       (require 'org-roam-protocol)
+       :config
+       (setq org-roam-node-display-template "${hierarchy:*}
+     ${tags:20}")
+       (setq org-roam-completion-everywhere t)
+       (setq org-roam-completion-system 'ivy)
+       (setq org-roam-capture-ref-templates
+	     '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))) ;;
+       (setq org-roam-dailies-capture-templates
+	     '(("d" "dailies" entry "* %<%R> %?" :target (file+head "%<%Y%m%d-%W>.org" "#+title: %<%Y-%m-%d>\n"))))
+       ;; must after use-package org-roam
+       (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
+	 "Return the file TITLE for the node."
+	 (org-roam-get-keyword "TITLE" (org-roam-node-file node)))
+       (cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
+	 "Return the hierarchy for the node."
+	 (let ((title (org-roam-node-title node))
+	       (olp (org-roam-node-olp node))
+	       (level (org-roam-node-level node))
+	       (filetitle (org-roam-node-filetitle node)))
+	   (concat
+	    (if (> level 0) (concat filetitle " > "))
+	    (if (> level 1) (concat (string-join olp " > ") " > "))
+	    title))
+	 ))
+   #+end_src
+** Org-capture
+   #+begin_src emacs-lisp
+     (use-package org-capture
+       :after org
+       :ensure org-plus-contrib)
+
+     (use-package org-mac-link
+       :defer t
+       :ensure org-plus-contrib
+       :commands (org-mac-skim-insert-page
+		  org-mac-chrome-insert-frontmost-url
+		  org-mac-finder-insert-selected))
+   #+end_src
+** Org-clock
+   #+begin_src emacs-lisp
+     (use-package org-clock
+  :after org
+  :ensure org-plus-contrib
+  :config
+  (setq org-clock-clocked-in-display nil
+        org-clock-mode-line-total 'current))
+   #+end_src
+** Org-babel
+*** elixir
+    #+begin_src emacs-lisp
+      (use-package ob-elixir :after org)
+    #+end_src
+** Org-pomodoro
+   番茄钟。但暂不使用。
+   #+begin_src emacs-lisp :tangle no
+     (use-package org-pomodoro
+       :commands org-pomodoro
+       :config
+       (add-hook 'org-pomodoro-finished-hook
+		 (lambda()
+		   (notify-osx "Pomodoro completed!" "Time for a break.")))
+       (add-hook 'org-pomodoro-break-finished-hook
+		 (lambda()
+		   (notify-osx "Pomodoro Short Break Finished!" "Ready for Another?")))
+       (add-hook 'org-pomodoro-long-break-finished-hook
+		 (lambda()
+		   (notify-osx "Pomodoro Long Break Finished!" "Ready for Another?")))
+       (add-hook 'org-pomodoro-killed-hook
+		 (lambda()
+		   (notify-osx "Pomodoro Killed!" "One does not simply kill a pomodoro!"))))
+   #+end_src
+** Org-protocol
+   #+begin_src emacs-lisp
+     (use-package org-protocol
+  :after org
+  :ensure org-plus-contrib)
+   #+end_src
+**
+** Org-download
+   #+begin_src emacs-lisp
+     (use-package org-download
+  :after org
+  :config
+  (setq org-download-method 'directory
+        org-image-actual-width nil
+        org-download-screenshot-method "screencapture -i %s"
+        org-download-display-inline-images 'posframe
+        ;; disable DOWNLOAD link
+        org-download-annotate-function (lambda (_link) "")
+        org-download-image-attr-list '("#+ATTR_HTML: :width 70% :align center"))
+  (setq-default org-download-image-dir (concat org-directory "images/"))
+  :general
+  (general-define-key
+   :keymaps 'org-mode-map
+   "C-s-4" 'org-download-screenshot))
+   #+end_src
 * Ivy
   #+begin_src emacs-lisp
 	(use-package ivy
 	  :defer t
 	  :init
-	  (add-hook 'after-init-hook #'ivy-mode)
+	  (add-hook 'after-init-hook 'ivy-mode)
 	  (setq ivy-use-virtual-buffers t
-		enable-recursive-minibuffers t))
+		enable-recursive-minibuffers t)
+	  :general
+	  (general-define-key
+	   :keymaps 'ivy-minibuffer-map
+	   [escape] 'minibuffer-keyboard-quit
+	   "C-<return>" 'ivy-immediate-done)
+	  :config
+	  (meow-leader-define-key
+	   '("/" . counsel-rg)))
 
-    (use-package swiper
-      :defer t
-      :commands (swiper)
-      :config
-      (general-define-key
-       "C-s" 'swiper))
+	(use-package swiper
+	  :defer t
+	  :commands (swiper)
+	  :init
+	  (general-define-key
+	   "C-s" 'counsel-grep-or-swiper))
 
-      (use-package counsel
-	:hook (ivy-mode . counsel-mode))
+	(use-package counsel
+	  :hook (ivy-mode . counsel-mode)
+	  :config
+	  (meow-leader-define-key
+	   '("ff" . counsel-find-file)
+	   '("fb" . counsel-switch-buffer)
+	   '("fr" . counsel-buffer-or-recentf)))
+
+	(use-package ivy-rich
+	  :hook (all-the-icons-ivy-rich-mode . ivy-rich-mode)
+	  :init
+	  (setq ivy-virtual-abbreviate 'full
+		ivy-rich-switch-buffer-align-virtual-buffer t)
+	  (add-hook 'ivy-rich-mode-hook (lambda ()
+					  ;; 因为文件在 project 中的路径较深，所以简化 counsel-projectile-find-file 的排版，仅显示图标、文件路径及文件大小
+					  (ivy-rich-set-columns
+					   'counsel-projectile-find-file
+					   '((all-the-icons-ivy-rich-file-icon)
+					     (counsel-projectile-find-file-transformer (:width 0.5))
+					     (all-the-icons-ivy-rich-project-file-size (:width 0.1 :face all-the-icons-ivy-rich-size-face))))
+					  ))
+	  :config
+	  (setcdr (assq t ivy-format-functions-alist) 'ivy-format-function-line))
+
+	(use-package all-the-icons-ivy-rich
+	  :after counsel-projectile
+	  :init
+	  (add-hook 'after-init-hook 'all-the-icons-ivy-rich-mode))
+
+	(use-package wgrep
+	  :after ivy
+	  :config
+	  (setq wgrep-auto-save-buffer t))
   #+end_src
 * Restart Emacs
-    #+begin_src emacs-lisp
+  由于暂时采用 server client 启动方式，故不再需要 restart emacs 。
+    #+begin_src emacs-lisp :tangle no
       (use-package restart-emacs
-	:defer t
-	:commands (restart-emacs))
+        :defer t
+        :commands (restart-emacs))
   #+end_src
-* 按键提示
-  keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提供。
+* calibredb
     #+begin_src emacs-lisp
-      (use-package which-key
-	:defer t
-	:init
-	(add-hook 'after-init-hook #'which-key-mode))
+      (use-package calibredb
+        :defer t
+        :commands (calibredb)
+        :config
+        (setq calibredb-size-show t
+              ;;calibredb-format-all-the-icons t
+              calibredb-id-width 4
+              calibredb-title-width 40
+              calibredb-date-width 0
+              calibredb-root-dir "/Users/smartepsh/Qsync/Books/"
+              calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
+              calibredb-library-alist '(("/Users/smartepsh/Qsync/Books/"))))
   #+end_src
+* 剪贴板
+  #+begin_src emacs-lisp
+    (use-package simpleclip
+      :init
+      (simpleclip-mode t))
+  #+end_src
+* 使用 Server Client 方式启动 emacs
+** 开机启动
+   新建 plist 文件如下，然后使用 =launchctl start gnu.emacs.daemon= 激活。
+   #+begin_src xml :tangle no
+     <!-- save in ~/Library/LaunchAgents/gnu.emacs.daemon.plist-->
+     <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+            "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+         <plist version="1.0">
+          <dict>
+            <key>Label</key>
+            <string>gnu.emacs.daemon</string>
+            <key>ProgramArguments</key>
+            <array>
+              <string>/usr/local/bin/emacs</string>
+              <string>--daemon=kenton</string>
+            </array>
+           <key>RunAtLoad</key>
+           <true/>
+           <key>ServiceDescription</key>
+           <string>Gnu Emacs Daemon</string>
+          </dict>
+        </plist>
+   #+end_src
+** 启动 frame
+   使用 alfred workflow ，通过执行脚本的方式启动 frame 。注意，这个 frame 并没有初始化的时间。
+   #+begin_src shell :tangle no
+     /usr/local/bin/emacsclient --socket-name=kenton --no-wait -c
+   #+end_src
+** 关闭 frame
+   这里有一个问题，默认的 =s-q= 快捷键是关闭 emacs ，这个行为会关闭 server ，影响我们这里的机制，所以需要重新定义。
+   #+begin_src emacs-lisp
+          (general-define-key
+           "s-q" 'delete-frame)
+   #+end_src
+* 自动补全
+  =smartparens= 暂时没有找到如何更改包裹，只找到另一个插件[[https://github.com/cute-jumper/embrace.el][embrace]] ，但暂时先不考虑。
+   #+begin_src emacs-lisp
+     (use-package company
+       :defer t
+       :init
+       (add-hook 'after-init-hook 'global-company-mode)
+       (setq company-idle-delay 0.3
+             company-require-match 'never
+             company-tooltip-align-annotations t
+             company-dabbrev-downcase nil
+             company-dabbrev-ignore-case nil
+             company-minimum-prefix-length 1)
+       (setq company-backend
+             '(company-keywords
+               company-files
+               company-capf
+               company-yasnippet
+               company-dabbrev-code
+               company-dabbrev))
+       :general
+       (general-define-key
+        :keymaps 'company-active-map
+        "<tab>" 'company-complete-selection
+        "<RET>" nil
+        "<return>" nil
+        "C-w" nil
+        "C-n" 'company-select-next
+        "C-p" 'company-select-previous))
+
+     (use-package smartparens
+       :hook (prog-mode . smartparens-mode)
+       :hook (org-mode . smartparens-mode)
+       :config
+       (meow-leader-define-key
+        '("ds" . sp-splice-sexp)
+        '("s{" . sp-wrap-curly)
+        '("s(" . sp-wrap-round)
+        '("s[" . sp-wrap-square)))
+
+     (use-package yasnippet
+       :defer t
+       :hook (prog-mode . yas-minor-mode)
+       :hook (org-mode . yas-minor-mode))
+
+     (use-package yasnippet-snippets
+       :defer t
+       :hook (yas-minor-mode . yas-reload-all))
+     #+end_src
+* prescient
+  #+begin_src emacs-lisp
+    (use-package prescient
+      :after (ivy company)
+      :config
+      (setq prescient-filter-method 'regexp))
+
+    (use-package ivy-prescient
+      :after (prescient counsel)
+      :hook (ivy-mode . ivy-prescient-mode)
+      :config
+      (setq ivy-prescient-retain-classic-highlighting t))
+
+    (use-package company-prescient
+      :after prescient
+      :hook (company-mode . company-prescient-mode))
+
+  #+end_src
+* navigation
+  #+begin_src emacs-lisp
+    (use-package avy
+      :commands (avy-goto-char-2 avy-goto-line)
+      :init
+      (meow-leader-define-key
+       '("fc" . avy-goto-char-2)
+       '("fl" . avy-goto-line))
+      :config
+      (setq avy-all-windows nil
+            avy-background t))
+  #+end_src
+* Projectile
+  #+begin_src emacs-lisp
+    (use-package projectile
+      :init
+      (add-hook 'after-init-hook 'projectile-mode)
+      (setq project-cache-file "~/.emacs.d/projectile.cache"
+	    project-know-projects-file "~/.emacs.d/projectile-bookmarks.eld"
+	    projectile-project-search-path '("~/kenton/")
+	    projectile-completion-system 'ivy)
+      :config
+      (projectile-discover-projects-in-search-path))
+    (use-package counsel-projectile
+      :init
+      (add-hook 'after-init-hook 'counsel-projectile-mode)
+      (meow-leader-define-key
+       '("pf" . counsel-projectile-find-file)
+       '("pl" . counsel-projectile-switch-project)))
+  #+end_src
+* Magit
+#+begin_src emacs-lisp
+	    (use-package magit
+	      :commands (magit-status magit-blame)
+	      :init
+	      (general-define-key
+	      "C-M-s" 'magit-status
+	      "C-M-b" 'magit-blame)
+	      :config
+	      (general-define-key
+	       :keymaps 'magit-mode-map
+	       "s-<return>" 'magit-diff-visit-file-other-window))
+#+end_src
+* Elixir
+  虽说是主力语言，但配置并不算多。
+  #+begin_src emacs-lisp
+    (use-package elixir-mode
+      :defer t
+      :config
+      (add-hook 'elixir-mode-hook
+		(lambda() (add-hook 'before-save-hook 'elixir-format nil t)))
+
+      (defun +reset-mixfmt-args ()
+	(let* ((formatter-directory (locate-dominating-file default-directory ".formatter.exs"))
+	       (formatter-file (concat formatter-directory ".formatter.exs")))
+	  (if formatter-directory
+	      (setq elixir-format-arguments (list "--dot-formatter" formatter-file))
+	    (setq elixir-format-arguments nil))))
+
+      (add-hook 'elixir-format-hook #'+reset-mixfmt-args))
+
+    (use-package exunit
+      :defer t
+      :after elixir-mode
+      :config
+      :commands (exunit-verify-all
+		 exunit-verify
+		 exunit-verify-all-in-umbrella
+		 exunit-verify-single
+		 exunit-rerun
+		 exunit-toggle-file-and-test)
+      :general
+      (general-define-key
+       :keymaps 'elixir-mode-map
+       :keymaps 'exunit-compilation-mode-map
+       "C-c C-t a" 'exunit-verify-all
+       "C-c C-t t" 'exunit-verify-single
+       "C-c C-t b" 'exunit-verify
+       "C-c C-t r" 'exunit-verify-return
+       "C-c C-t f" 'exunit-toggle-file-and-test
+       ))
+  #+end_src
+* LSP
+  尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
+  #+begin_src emacs-lisp
+    (use-package lsp-mode
+      :defer t
+      :init
+      (setq lsp-keymap-prefix "s-l")
+      (add-to-list 'exec-path (concat private/config-directory "elixir-ls"))
+      :hook (elixir-mode . lsp)
+      :hook (lsp-mode . lsp-enable-which-key-integration)
+      :config
+      (setq lsp-headerline-breadcrumb-enable nil
+	    lsp-file-watch-threshold 2000)
+      (meow-leader-define-key
+       '("." . lsp-find-definition)
+       '("," . xref-pop-marker-stack))
+      (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.elixir-ls\\'"))
+
+    (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+    ;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+  #+end_src
+* FlySpell 拼写错误检查
+  #+begin_src emacs-lisp
+    (use-package flyspell
+      :ensure-system-package hunspell
+      :hook (text-mode . flyspell-mode)
+      :hook (prog-mode . flyspell-prog-mode)
+      :init
+      (setenv "LANG" "en_US")
+      (setq flyspell-issue-welcome-flag nil)
+      :config
+      (setq ispell-program-name (executable-find "hunspell")
+	    ispell-dictionary "en_US"
+	    ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8))))
+
+    (use-package flyspell-correct-ivy
+      :after flyspell-correct)
+
+    (use-package flyspell-correct
+      :commands (flyspell-correct-wrapper)
+      :init
+      (setq flyspell-correct-interface 'flyspell-correct-ivy)
+      :general
+      (general-define-key
+       :keymaps 'flyspell-mode-map
+       "C-;" 'flyspell-correct-wrapper
+       "C-," nil))
+  #+end_src
+* Ebook Reader
+** epub
+   #+begin_src emacs-lisp
+     (use-package nov
+       :defer t
+       :mode ("\\.epub\\'" . nov-mode)
+       :init
+       (setq nov-save-place-file (concat org-directory "nov-places")))
+   #+end_src
+** pdf(skim)
+   #+begin_src emacs-lisp :tangle "~/.emacs.d/skim.el"
+     ;;; Public Domain by Stian Haklev 2014
+     ;;; heavily under construction, mostly built for my own use, but
+     ;;; feel free to improve and make more general
+     ;;; I keep all my academic PDFs in the same directory, and want special
+     ;;; handling for them - eventually I'll check if the PDF is in that dir
+     ;;; and if not, I'll insert the whole path in the org-link etc.
+
+     ;;; based on https://github.com/houshuang/skim-emacs/blob/master/skim.el
+
+     (require 'org-mac-link)
+
+     (defun skim-page (&optional offset)
+       (interactive)
+       (when (not offset) (setq offset 1))
+       (do-applescript (format "
+     tell document 1 of application \"Skim\" to set a to index of current page
+     tell document 1 of application \"Skim\" to go to page (a + %d)
+     a" offset)))
+
+     (defun skim-page-absolute (offset)
+       (interactive)
+       (do-applescript (format "
+     tell document 1 of application \"Skim\" to set a to index of current page
+     tell document 1 of application \"Skim\" to go to page %d
+     a" offset)))
+
+     (defun skim-goto (page)
+       (interactive "nPDF Page: ")
+       (skim-page-absolute page))
+     ;; (defun skim-get-highlights ()
+     ;;   (interactive)
+     ;;   (insert (do-applescript "
+     ;; tell application \"Skim\"
+     ;; 	set pageNotes to notes of page 3 of document 1
+     ;; 	set out to \"\"
+     ;; 	repeat with i in pageNotes
+     ;; 		set txt to get text of i
+     ;; 		set out to out & txt & \"\n\n\"
+     ;; 	end repeat
+     ;; end tell
+     ;; out")))
+
+     (defun skim-current-page ()
+       (interactive)
+       (skim-page 0))
+
+     (defun skim-current-file ()
+       (interactive)
+       (do-applescript "tell document 1 of application \"Skim\" to set a to name
+     a"))
+
+     (defun skim-next-page ()
+       (interactive)
+       (skim-page 1))
+
+     (defun skim-prev-page ()
+       (interactive)
+       (skim-page -1))
+
+     (defun skim-kill-other-windows ()
+       (interactive)
+       (do-applescript "
+     tell application \"Skim\"
+	     set mainID to id of front window
+	     -- insert your code
+	     close (every window whose id ≠ mainID)
+     end tell"))
+
+     (defun open-link-in-skim ()
+       (interactive)
+       (let ((link (org-element-context)))
+	 (if (string-equal (org-element-property :type link) "skim")
+	     (progn
+	       (org-mac-skim-open (org-element-property :path link))
+	       (skim-kill-other-windows)
+	       (sleep-for 0 100)
+	       (do-applescript "tell application \"Emacs\" to activate"))
+	   (message "It's not a skim link !!!"))))
+
+
+     (defun skim-insert-book-link ()
+       (interactive)
+       (insert (skim-book-link)))
+
+     (defun skim-insert-page-link ()
+       (interactive)
+       (insert (skim-page-link-without-book-name)))
+
+     (defun skim-book-link ()
+       "get book link into org with page 1 and description don't contain page number"
+       (let* ((link-and-descr (as-get-skim-page-link))
+	      (split-link (split-string link-and-descr "::split::"))
+	      (link (car split-link))
+	      (description (cadr split-link))
+	      (book-link (concat (link-to-book link) "::1"))
+	      (book-name (book-name description))
+	      (org-link))
+	 (when (not (string= link ""))
+	   (setq org-link (org-link-make-string book-link book-name)))
+	 (kill-new org-link)
+	 org-link))
+
+     (defun skim-page-link-without-book-name ()
+       "only get page link with page number as description (without book name)"
+       (let* ((link-and-descr (as-get-skim-page-link))
+	      (split-link (split-string link-and-descr "::split::"))
+	      (link (car split-link))
+	      (description (cadr split-link))
+	      (page-number (concat "p." (page-number description)))
+	      (org-link))
+	 (when (not (string= link ""))
+	   (setq org-link (org-link-make-string link page-number)))
+	 (kill-new org-link)
+	 org-link))
+
+     (defun link-to-book (link)
+       (s-join "" (reverse (cdr (reverse (split-string link "::"))))))
+
+     (defun page-number (description)
+       (car (reverse (split-string description ", p\\."))))
+
+     (defun book-name (description)
+       (s-join "" (reverse (cdr (reverse (split-string description ", p\\."))))))
+
+     (provide 'skim)
+   #+end_src
