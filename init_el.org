@@ -36,7 +36,7 @@
    通过设置最大垃圾回收大小，在启动过程中避免垃圾回收；在启动之后，设置为 300mb 以减少垃圾回收启动频率。
    #+begin_src emacs-lisp
      (setq gc-cons-threshold most-positive-fixnum)
-     (add-hook 'after-init-hook '(lambda () (setq gc-cons-threshold 300000000)))
+     (add-hook 'after-init-hook '(lambda () (setq gc-cons-threshold 5121024)))
    #+end_src
 ** 增加从进程读取消息的大小
    因为 lsp-mode 需要更改此大小。
