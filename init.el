@@ -499,11 +499,11 @@ ${tags:20}")
 	     org-mac-finder-insert-selected))
 
 (use-package org-clock
-:after org
-:ensure org-plus-contrib
-:config
-(setq org-clock-clocked-in-display nil
-      org-clock-mode-line-total 'current))
+  :after org
+  :ensure org-plus-contrib
+  :config
+  (setq org-clock-clocked-in-display nil
+	org-clock-mode-line-total 'current))
 
 (use-package ob-elixir :after org)
 
@@ -694,12 +694,15 @@ ${tags:20}")
   :commands (magit-status magit-blame)
   :init
   (general-define-key
-  "C-M-s" 'magit-status
-  "C-M-b" 'magit-blame)
+   "C-M-s" 'magit-status
+   "C-M-b" 'magit-blame)
   :config
   (general-define-key
    :keymaps 'magit-mode-map
-   "s-<return>" 'magit-diff-visit-file-other-window))
+   "s-<return>" 'magit-diff-visit-file-other-window)
+  (general-define-key
+   :keymaps 'magit-status-mode-map
+   "x" 'magit-discard))
 
 (use-package elixir-mode
   :defer t
