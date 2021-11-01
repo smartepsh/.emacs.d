@@ -7,7 +7,7 @@
 * 背景
   =spacemacs= 入坑，经过大约三四年的使用，终于可以算是摸到了门槛。之前一直使用 =evil= 来模拟 vim 模式，随着使用的时间越长，依赖的插件越多，evil 带来的弊端也逐渐显现出来：
   - 每一个插件除非有支持，不然都需要自定义按键，配合双 leader 系统，任务繁重。。。
-  - 对于不同的 mode-map 可能有想同的按键映射，emasc 采用 =1 major + n minor= 模式，很容易产生按键冲突
+  - 对于不同的 mode-map 可能有相同的按键映射，emasc 采用 =1 major + n minor= 模式，很容易产生按键冲突
   - 过重
 
   让我萌生了更换输入模式的想法。此时恰巧看到了[[https://emacs-china.org/t/meow/15679][猫态编辑：Meow - Emacs-general - Emacs China]] 这个模式，被描述吸引，决定尝试。
@@ -167,13 +167,13 @@
 * Server
   #+begin_src emacs-lisp :tangle no
     (use-package server
-  :defer t
-  :init
-  (setq server-name "kenton")
-  (add-hook 'after-init-hook
-	    (lambda ()
-	      (unless (server-running-p server-name)
-		(server-start)))))
+      :defer t
+      :init
+      (setq server-name "kenton")
+      (add-hook 'after-init-hook
+		(lambda ()
+		  (unless (server-running-p server-name)
+		    (server-start)))))
   #+end_src
 * 输入方案
   #+begin_src emacs-lisp
@@ -411,35 +411,35 @@
    #+end_src
 * 字体及输入法（中文）
   #+begin_src emacs-lisp
-			    (setq private/rime-directory (concat private/config-directory "rime/"))
-			    (setq private/offical-rime-directory "/Library/Input Methods/Squirrel.app/Contents/SharedSupport")
+    (setq private/rime-directory (concat private/config-directory "rime/"))
+    (setq private/offical-rime-directory "/Library/Input Methods/Squirrel.app/Contents/SharedSupport")
 
-			    (use-package cnfonts
-			      :defer t
-			      :init
-			      (add-hook 'after-init-hook 'cnfonts-enable)
-			      (setq cnfonts-use-face-font-rescale t)
-			      :config
-			      (general-define-key
-			       "s-=" 'cnfonts-increase-fontsize
-			       "s--" 'cnfonts-decrease-fontsize))
+    (use-package cnfonts
+      :defer t
+      :init
+      (add-hook 'after-init-hook 'cnfonts-enable)
+      (setq cnfonts-use-face-font-rescale t)
+      :config
+      (general-define-key
+       "s-=" 'cnfonts-increase-fontsize
+       "s--" 'cnfonts-decrease-fontsize))
 
-			    (use-package rime
-			      :defer t
-			      :custom
-			      (default-input-method "rime")
-			      :init
-			      (setq rime-librime-root (concat private/rime-directory "dist/")
-				    rime-show-candidate 'posframe
-				    rime-posframe-style 'vertical
-				    rime-show-preedit 'inline
-				    rime-disable-predicates '(rime-predicate-hydra-p
-							      ;;rime-predicate-evil-mode-p
-							      rime-predicate-prog-in-code-p
-							      rime-predicate-punctuation-after-ascii-p
-							      meow-normal-mode-p))
-			      :config
-			      (global-set-key (kbd "M-s-SPC") 'rime-inline-ascii))
+    (use-package rime
+      :defer t
+      :custom
+      (default-input-method "rime")
+      :init
+      (setq rime-librime-root (concat private/rime-directory "dist/")
+	    rime-show-candidate 'posframe
+	    rime-posframe-style 'vertical
+	    rime-show-preedit 'inline
+	    rime-disable-predicates '(rime-predicate-hydra-p
+				      ;;rime-predicate-evil-mode-p
+				      rime-predicate-prog-in-code-p
+				      rime-predicate-punctuation-after-ascii-p
+				      meow-normal-mode-p))
+      :config
+      (global-set-key (kbd "M-s-SPC") 'rime-inline-ascii))
   #+end_src
 * Org Mode
   算是重头戏了。。。我也是菜鸟，之前使用 evil 自定义按键，其实有些功能是很少用的。这次换为 =meow= 之后，使用原生快捷键看看效果。
@@ -660,11 +660,11 @@
 ** Org-clock
    #+begin_src emacs-lisp
      (use-package org-clock
-  :after org
-  :ensure org-plus-contrib
-  :config
-  (setq org-clock-clocked-in-display nil
-        org-clock-mode-line-total 'current))
+       :after org
+       :ensure org-plus-contrib
+       :config
+       (setq org-clock-clocked-in-display nil
+	     org-clock-mode-line-total 'current))
    #+end_src
 ** Org-babel
 *** elixir
@@ -833,8 +833,8 @@
 ** 关闭 frame
    这里有一个问题，默认的 =s-q= 快捷键是关闭 emacs ，这个行为会关闭 server ，影响我们这里的机制，所以需要重新定义。
    #+begin_src emacs-lisp
-          (general-define-key
-           "s-q" 'delete-frame)
+     (general-define-key
+      "s-q" 'delete-frame)
    #+end_src
 * 自动补全
   =smartparens= 暂时没有找到如何更改包裹，只找到另一个插件[[https://github.com/cute-jumper/embrace.el][embrace]] ，但暂时先不考虑。
@@ -934,18 +934,21 @@
        '("pl" . counsel-projectile-switch-project)))
   #+end_src
 * Magit
-#+begin_src emacs-lisp
-	    (use-package magit
-	      :commands (magit-status magit-blame)
-	      :init
-	      (general-define-key
-	      "C-M-s" 'magit-status
-	      "C-M-b" 'magit-blame)
-	      :config
-	      (general-define-key
-	       :keymaps 'magit-mode-map
-	       "s-<return>" 'magit-diff-visit-file-other-window))
-#+end_src
+  #+begin_src emacs-lisp
+    (use-package magit
+      :commands (magit-status magit-blame)
+      :init
+      (general-define-key
+       "C-M-s" 'magit-status
+       "C-M-b" 'magit-blame)
+      :config
+      (general-define-key
+       :keymaps 'magit-mode-map
+       "s-<return>" 'magit-diff-visit-file-other-window)
+      (general-define-key
+       :keymaps 'magit-status-mode-map
+       "x" 'magit-discard))
+  #+end_src
 * Elixir
   虽说是主力语言，但配置并不算多。
   #+begin_src emacs-lisp
