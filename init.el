@@ -3,7 +3,7 @@
 (global-set-key (kbd "s-M-f") 'toggle-frame-maximized)
 
 (setq gc-cons-threshold most-positive-fixnum)
-(add-hook 'after-init-hook '(lambda () (setq gc-cons-threshold 300000000)))
+(add-hook 'after-init-hook '(lambda () (setq gc-cons-threshold 5121024)))
 
 (setq read-process-output-max (* 3 (* 1024 1024))) ;; 3mb
 
@@ -190,13 +190,18 @@
    '("X" . meow-kmacro-lines)
    '("y" . meow-save)
    '("Y" . meow-sync-grab)
-   '("z" . meow-pop-selection)
+   '("z" . meow-pop)
    '("Z" . meow-pop-all-selection)
    '("&" . meow-query-replace)
    '("%" . meow-query-replace-regexp)
    '("'" . repeat)
    '("\\" . quoted-insert)
-   '("<escape>" . meow-last-buffer)))
+   '("<escape>" . meow-last-buffer)
+   ;; customize
+   '(">" . scroll-up)
+   '("<" . scroll-down)
+   '("C-r" . undo-redo)
+   '("S" . meow-replace-save)))
 
 (use-package meow
   :demand t
@@ -213,6 +218,10 @@
   :defer t
   :init
   (add-hook 'after-init-hook 'which-key-mode))
+
+(use-package command-log-mode
+  :defer t
+  :commands (command-log-mode))
 
 (use-package doom-modeline
   :init
@@ -273,14 +282,20 @@
    "H-9" 'eyebrowse-switch-to-window-config-9
    "H-`" 'eyebrowse-rename-window-config
    "H-q" 'eyebrowse-close-window-config))
+
 (use-package switch-window
   :config
   (setq switch-window-auto-resize-window t
-        switch-window-minibuffer-shortcut ?z)
+	switch-window-minibuffer-shortcut ?z)
   (general-define-key
    "s-d" 'switch-window-then-split-right
    "s-w" 'switch-window-then-delete
    "s-t" 'switch-window))
+
+(use-package autorevert
+  :defer t
+  :ensure nil
+  :hook (after-init . global-auto-revert-mode))
 
 (setq private/rime-directory (concat private/config-directory "rime/"))
 (setq private/offical-rime-directory "/Library/Input Methods/Squirrel.app/Contents/SharedSupport")
