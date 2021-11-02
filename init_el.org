@@ -264,13 +264,18 @@
        '("X" . meow-kmacro-lines)
        '("y" . meow-save)
        '("Y" . meow-sync-grab)
-       '("z" . meow-pop-selection)
+       '("z" . meow-pop)
        '("Z" . meow-pop-all-selection)
        '("&" . meow-query-replace)
        '("%" . meow-query-replace-regexp)
        '("'" . repeat)
        '("\\" . quoted-insert)
-       '("<escape>" . meow-last-buffer)))
+       '("<escape>" . meow-last-buffer)
+       ;; customize
+       '(">" . scroll-up)
+       '("<" . scroll-down)
+       '("C-r" . undo-redo)
+       '("S" . meow-replace-save)))
 
     (use-package meow
       :demand t
@@ -295,6 +300,13 @@
       :init
       (add-hook 'after-init-hook 'which-key-mode))
   #+end_src
+** 按键及方法显示
+   [[https://github.com/lewang/command-log-mode][lewang/command-log-mode: log commands to buffer]]
+   #+begin_src emacs-lisp
+     (use-package command-log-mode
+       :defer t
+       :commands (command-log-mode))
+   #+end_src
 
 * 外观
 ** modeline
@@ -389,26 +401,34 @@
        (setq eyebrowse-keymap-prefix "")
        :config
        (general-define-key
-        "H-1" 'eyebrowse-switch-to-window-config-1
-        "H-2" 'eyebrowse-switch-to-window-config-2
-        "H-3" 'eyebrowse-switch-to-window-config-3
-        "H-4" 'eyebrowse-switch-to-window-config-4
-        "H-5" 'eyebrowse-switch-to-window-config-5
-        "H-6" 'eyebrowse-switch-to-window-config-6
-        "H-7" 'eyebrowse-switch-to-window-config-7
-        "H-8" 'eyebrowse-switch-to-window-config-8
-        "H-9" 'eyebrowse-switch-to-window-config-9
-        "H-`" 'eyebrowse-rename-window-config
-        "H-q" 'eyebrowse-close-window-config))
+	"H-1" 'eyebrowse-switch-to-window-config-1
+	"H-2" 'eyebrowse-switch-to-window-config-2
+	"H-3" 'eyebrowse-switch-to-window-config-3
+	"H-4" 'eyebrowse-switch-to-window-config-4
+	"H-5" 'eyebrowse-switch-to-window-config-5
+	"H-6" 'eyebrowse-switch-to-window-config-6
+	"H-7" 'eyebrowse-switch-to-window-config-7
+	"H-8" 'eyebrowse-switch-to-window-config-8
+	"H-9" 'eyebrowse-switch-to-window-config-9
+	"H-`" 'eyebrowse-rename-window-config
+	"H-q" 'eyebrowse-close-window-config))
+
      (use-package switch-window
        :config
        (setq switch-window-auto-resize-window t
-             switch-window-minibuffer-shortcut ?z)
+	     switch-window-minibuffer-shortcut ?z)
        (general-define-key
-        "s-d" 'switch-window-then-split-right
-        "s-w" 'switch-window-then-delete
-        "s-t" 'switch-window))
+	"s-d" 'switch-window-then-split-right
+	"s-w" 'switch-window-then-delete
+	"s-t" 'switch-window))
    #+end_src
+* 自动 revert
+  #+begin_src emacs-lisp
+    (use-package autorevert
+      :defer t
+      :ensure nil
+      :hook (after-init . global-auto-revert-mode))
+  #+end_src
 * 字体及输入法（中文）
   #+begin_src emacs-lisp
     (setq private/rime-directory (concat private/config-directory "rime/"))
