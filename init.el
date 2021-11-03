@@ -42,7 +42,7 @@
 (setq tab-width 2
       indent-tabs-mode nil
       auto-save-default nil
-      make-backup-file nil
+      make-backup-files nil
       create-lockfiles nil
       x-select-enable-clipboard nil)
 
