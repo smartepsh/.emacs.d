@@ -281,7 +281,8 @@
    "H-8" 'eyebrowse-switch-to-window-config-8
    "H-9" 'eyebrowse-switch-to-window-config-9
    "H-`" 'eyebrowse-rename-window-config
-   "H-q" 'eyebrowse-close-window-config))
+   "H-q" 'eyebrowse-close-window-config
+   "s-t" 'eyebrowse-create-window-config))
 
 (use-package switch-window
   :config
@@ -289,8 +290,10 @@
 	switch-window-minibuffer-shortcut ?z)
   (general-define-key
    "s-d" 'switch-window-then-split-right
-   "s-w" 'switch-window-then-delete
-   "s-t" 'switch-window))
+   "s-[" 'windmove-left
+   "s-]" 'windmove-right
+   "s-w" 'delete-window
+   "H-t" 'switch-window))
 
 (use-package autorevert
   :defer t

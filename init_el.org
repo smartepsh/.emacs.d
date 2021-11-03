@@ -369,6 +369,7 @@
    #+end_src
 * 窗口管理
   因为 centaur tabs 有点问题，所以先禁止掉。
+  快捷键设置向 item 靠拢。
    #+begin_src emacs-lisp :tangle no
      (use-package centaur-tabs
        :defer t
@@ -411,7 +412,8 @@
 	"H-8" 'eyebrowse-switch-to-window-config-8
 	"H-9" 'eyebrowse-switch-to-window-config-9
 	"H-`" 'eyebrowse-rename-window-config
-	"H-q" 'eyebrowse-close-window-config))
+	"H-q" 'eyebrowse-close-window-config
+	"s-t" 'eyebrowse-create-window-config))
 
      (use-package switch-window
        :config
@@ -419,8 +421,10 @@
 	     switch-window-minibuffer-shortcut ?z)
        (general-define-key
 	"s-d" 'switch-window-then-split-right
-	"s-w" 'switch-window-then-delete
-	"s-t" 'switch-window))
+	"s-[" 'windmove-left
+	"s-]" 'windmove-right
+	"s-w" 'delete-window
+	"H-t" 'switch-window))
    #+end_src
 * 自动 revert
   #+begin_src emacs-lisp
