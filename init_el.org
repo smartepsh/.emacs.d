@@ -26,11 +26,19 @@
    此处我们直接输出配置到 =~/.emacs.d/init.el= 文件，意味着需要手动更新输出，新配置才可能生效。当然也可以直接更改此文件，但在下次导出时，会被覆盖，所以请不要这么做。
 
 * 基础设置
+
 ** 窗口最大化
    #+begin_src emacs-lisp
-(global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
-(global-set-key (kbd "s-C-f") 'toggle-frame-fullscreen)
-(global-set-key (kbd "s-M-f") 'toggle-frame-maximized)
+     (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
+     (global-set-key (kbd "s-C-f") 'toggle-frame-fullscreen)
+     (global-set-key (kbd "s-M-f") 'toggle-frame-maximized)
+   #+end_src
+
+** 设置方法快速进入此文件
+   #+begin_src emacs-lisp
+     (defun goto-configuration-org ()
+       (interactive)
+       (find-file "~/.emacs.d/init_el.org"))
    #+end_src
 ** 加速启动时间的技巧
    通过设置最大垃圾回收大小，在启动过程中避免垃圾回收；在启动之后，设置为 300mb 以减少垃圾回收启动频率。
@@ -179,6 +187,7 @@
   #+begin_src emacs-lisp
     (defun meow-setup ()
       (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+
       (meow-motion-overwrite-define-key
        '("j" . meow-next)
        '("k" . meow-prev))
@@ -248,7 +257,7 @@
        '("p" . meow-yank)
        '("P" . meow-yank-pop)
        '("q" . meow-quit)
-       '("Q" . meow-goto-line)
+       '(":" . meow-goto-line)
        '("r" . meow-replace)
        '("R" . meow-swap-grab)
        '("s" . meow-kill)
@@ -264,7 +273,7 @@
        '("X" . meow-kmacro-lines)
        '("y" . meow-save)
        '("Y" . meow-sync-grab)
-       '("z" . meow-pop)
+       '("z" . meow-pop-selection)
        '("Z" . meow-pop-all-selection)
        '("&" . meow-query-replace)
        '("%" . meow-query-replace-regexp)
@@ -282,7 +291,15 @@
       :init
       (meow-global-mode t)
       :config
-      (meow-setup))
+      (meow-setup)
+      (setq meow-selection-command-fallback
+	    '((meow-replace . meow-replace-char)
+	     (meow-change . meow-change-char)
+	     (meow-save . meow-save-char)
+	     (meow-kill . meow-C-k)
+	     (meow-delete . meow-C-d)
+	     (meow-cancel-selection . meow-keyboard-quit)
+	     (meow-pop-selection . meow-pop-grab))))
   #+end_src
 * 按键管理
 ** 绑定
