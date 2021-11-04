@@ -2,6 +2,10 @@
 (global-set-key (kbd "s-C-f") 'toggle-frame-fullscreen)
 (global-set-key (kbd "s-M-f") 'toggle-frame-maximized)
 
+(defun goto-configuration-org ()
+  (interactive)
+  (find-file "~/.emacs.d/init_el.org"))
+
 (setq gc-cons-threshold most-positive-fixnum)
 (add-hook 'after-init-hook '(lambda () (setq gc-cons-threshold 5121024)))
 
@@ -238,8 +242,8 @@
 			       (doom-modeline-mode)
 			       (column-number-mode)
 			       (doom-modeline-def-modeline 'my-line
-				 '(bar modals buffer-info buffer-position)
-				 '(input-method major-mode parrot lsp))
+				 '(bar workspace-name modals buffer-info buffer-position)
+				 '(input-method checker major-mode parrot lsp))
 			       (defun setup-custom-doom-modeline ()
 				 (interactive)
 				 (doom-modeline-set-modeline 'my-line 'default))
@@ -446,9 +450,6 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 			       ;; (org-refile-get-targets)
 			       (org-roam-db-sync))))
 
-(use-package org-bullets
-  :hook (org-mode . org-bullets-mode))
-
 (setq bib-file (concat org-directory "references.bib"))
 (use-package org-ref
   :after org
@@ -554,6 +555,39 @@ ${tags:20}")
  :keymaps 'org-mode-map
  "C-s-4" 'org-download-screenshot))
 
+(general-define-key
+ :keymaps 'org-mode-map
+ "C-c C-r" nil
+ "C-c r" 'org-reveal)
+
+(general-define-key
+ :prefix "C-c C-r"
+ "C-d" '(:ignore t :which-key "org-dailies")
+ "C-d t" 'org-roam-dailies-goto-today
+ "C-d d" 'org-roam-dailies-goto-date
+ "C-d p" 'org-roam-dailies-goto-previous-note
+ "C-d n" 'org-roam-dailies-goto-next-note
+ "f" 'org-roam-node-find)
+
+(general-define-key
+ :keymaps 'org-mode-map
+ :prefix "C-c C-r"
+ "r" 'org-roam-buffer-toggle
+ "C-i" 'org-roam-node-insert
+ "g" 'org-roam-graph
+ "i" '(:ignore t :which-key "add property")
+ "i a" 'org-roam-alias-add
+ "i r" 'org-roam-ref-add
+ "i t" 'org-roam-tag-add
+ "d" '(:ignore t :which-key "remove property")
+ "d a" 'org-roam-alias-remove
+ "d r" 'org-roam-ref-remove
+ "d t" 'org-roam-tag-remove)
+
+(general-define-key
+ :keymaps 'org-roam-mode-map
+ [mouse-1] 'org-roam-visit-thing)
+
 (use-package ivy
   :defer t
   :init
@@ -584,26 +618,8 @@ ${tags:20}")
    '("fb" . counsel-switch-buffer)
    '("fr" . counsel-buffer-or-recentf)))
 
-(use-package ivy-rich
-  :hook (all-the-icons-ivy-rich-mode . ivy-rich-mode)
-  :init
-  (setq ivy-virtual-abbreviate 'full
-	ivy-rich-switch-buffer-align-virtual-buffer t)
-  (add-hook 'ivy-rich-mode-hook (lambda ()
-				  ;; 因为文件在 project 中的路径较深，所以简化 counsel-projectile-find-file 的排版，仅显示图标、文件路径及文件大小
-				  (ivy-rich-set-columns
-				   'counsel-projectile-find-file
-				   '((all-the-icons-ivy-rich-file-icon)
-				     (counsel-projectile-find-file-transformer (:width 0.5))
-				     (all-the-icons-ivy-rich-project-file-size (:width 0.1 :face all-the-icons-ivy-rich-size-face))))
-				  ))
-  :config
-  (setcdr (assq t ivy-format-functions-alist) 'ivy-format-function-line))
-
-(use-package all-the-icons-ivy-rich
-  :after counsel-projectile
-  :init
-  (add-hook 'after-init-hook 'all-the-icons-ivy-rich-mode))
+(use-package all-the-icons-ivy
+  :init (add-hook 'after-init-hook 'all-the-icons-ivy-setup))
 
 (use-package wgrep
   :after ivy
@@ -635,18 +651,19 @@ ${tags:20}")
   :init
   (add-hook 'after-init-hook 'global-company-mode)
   (setq company-idle-delay 0.3
-        company-require-match 'never
-        company-tooltip-align-annotations t
-        company-dabbrev-downcase nil
-        company-dabbrev-ignore-case nil
-        company-minimum-prefix-length 1)
+	company-require-match 'never
+	company-tooltip-align-annotations t
+	company-dabbrev-downcase nil
+	company-dabbrev-ignore-case nil
+	company-minimum-prefix-length 1)
   (setq company-backend
-        '(company-keywords
-          company-files
-          company-capf
-          company-yasnippet
-          company-dabbrev-code
-          company-dabbrev))
+	'(company-keywords
+	  company-elisp
+	  company-files
+	  company-capf
+	  company-yasnippet
+	  company-dabbrev-code
+	  company-dabbrev))
   :general
   (general-define-key
    :keymaps 'company-active-map
@@ -815,3 +832,17 @@ ${tags:20}")
   :mode ("\\.epub\\'" . nov-mode)
   :init
   (setq nov-save-place-file (concat org-directory "nov-places")))
+
+(use-package dired
+  :ensure nil
+  :ensure-system-package (gls . coreutils)
+  :commands (dired-jump dired-jump-other-window)
+  :init
+  (setq dired-dwim-target t
+	dired-listing-switches "-alh"
+	insert-directory-program "gls"
+	dired-use-ls-dired t)
+  :config
+  (meow-leader-define-key
+   '("fd" . dired-jump)
+   '("fD" . dired-jump-other-window)))
