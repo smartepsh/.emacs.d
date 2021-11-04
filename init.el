@@ -105,6 +105,7 @@
 
 (defun meow-setup ()
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+
   (meow-motion-overwrite-define-key
    '("j" . meow-next)
    '("k" . meow-prev))
@@ -174,7 +175,7 @@
    '("p" . meow-yank)
    '("P" . meow-yank-pop)
    '("q" . meow-quit)
-   '("Q" . meow-goto-line)
+   '(":" . meow-goto-line)
    '("r" . meow-replace)
    '("R" . meow-swap-grab)
    '("s" . meow-kill)
@@ -190,7 +191,7 @@
    '("X" . meow-kmacro-lines)
    '("y" . meow-save)
    '("Y" . meow-sync-grab)
-   '("z" . meow-pop)
+   '("z" . meow-pop-selection)
    '("Z" . meow-pop-all-selection)
    '("&" . meow-query-replace)
    '("%" . meow-query-replace-regexp)
@@ -208,7 +209,15 @@
   :init
   (meow-global-mode t)
   :config
-  (meow-setup))
+  (meow-setup)
+  (setq meow-selection-command-fallback
+	'((meow-replace . meow-replace-char)
+	 (meow-change . meow-change-char)
+	 (meow-save . meow-save-char)
+	 (meow-kill . meow-C-k)
+	 (meow-delete . meow-C-d)
+	 (meow-cancel-selection . meow-keyboard-quit)
+	 (meow-pop-selection . meow-pop-grab))))
 
 (use-package general
   :config
