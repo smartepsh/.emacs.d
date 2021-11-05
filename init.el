@@ -797,7 +797,7 @@ ${tags:20}")
   (meow-leader-define-key
    '("." . lsp-find-definition)
    '("," . xref-pop-marker-stack))
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.elixir-ls\\'"))
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.elixir_ls\\'"))
 
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 ;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
@@ -812,7 +812,22 @@ ${tags:20}")
   :config
   (setq ispell-program-name (executable-find "hunspell")
 	ispell-dictionary "en_US"
-	ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8))))
+	ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)))
+  (global-set-key (kbd "C-c s") 'flyspell-learn-word-at-point)
+
+  (defun flyspell-learn-word-at-point ()
+    "Takes the highlighted word at point -- nominally a misspelling -- and inserts it into the personal/private dictionary, such that it is known and recognized as a valid word in the future."
+    (interactive)
+    (let ((current-location (point))
+	  (word (flyspell-get-word)))
+      (when (consp word)
+	(flyspell-do-correct
+	 'save nil
+	 (car word)
+	 current-location
+	 (cadr word)
+	 (caddr word)
+	 current-location)))))
 
 (use-package flyspell-correct-ivy
   :after flyspell-correct)
@@ -825,7 +840,8 @@ ${tags:20}")
   (general-define-key
    :keymaps 'flyspell-mode-map
    "C-;" 'flyspell-correct-wrapper
-   "C-," nil))
+   "C-," nil
+   "C-'" 'flyspell-learn-word-at-point))
 
 (use-package nov
   :defer t
@@ -846,3 +862,12 @@ ${tags:20}")
   (meow-leader-define-key
    '("fd" . dired-jump)
    '("fD" . dired-jump-other-window)))
+
+(use-package flycheck
+  :defer t
+  :init
+  (add-hook 'after-init-hook 'global-flycheck-mode)
+  (add-hook 'flycheck-mode-hook 'flycheck-posframe-mode))
+
+(use-package flycheck-posframe
+  :after flycheck)
