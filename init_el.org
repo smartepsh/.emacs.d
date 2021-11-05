@@ -560,40 +560,41 @@
 #+end_src
 ** 本体
    #+begin_src emacs-lisp
-     (use-package org
-       :ensure org-plus-contrib
-       ;; :ensure-system-package terminal-notifier
-       :pin org
-       :defer t
-       :init
-       (org-babel-do-load-languages
-	'org-babel-load-languages
-	'((emacs-lisp . t)
-	  (elixir . t)
-	  (org . t)))
-       ;;(R . t)))
-       :config
-     ;;; auto display inline images on Org TAB cycle expand headlines.
-       ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
-       (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
-       (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
-	     ;; org-default-notes-file org-agenda-file
-	     org-archive-location (concat org-directory "Archived/" "%s_archive::")
-	     org-id-locations-file (concat org-directory ".org-id-locations")
-	     org-log-done nil
-	     ;; (nconc org-modules '(org-id))
-	     ;; org-refile-targets '((org-agenda-files :maxlevel . 2))
-	     org-refile-use-outline-path 'file
-	     org-outline-path-complete-in-steps nil
-	     org-refile-allow-creating-parent-nodes 'confirm
-	     org-refile-use-cache t
-	     org-startup-truncated nil
-	     org-confirm-babel-evaluate nil)
-       ;; refresh cache when emacs idle 5 mins
-       (run-with-idle-timer 300 t (lambda ()
-				    (org-refile-cache-clear)
-				    ;; (org-refile-get-targets)
-				    (org-roam-db-sync))))
+	  (use-package org
+	    :ensure org-plus-contrib
+	    ;; :ensure-system-package terminal-notifier
+	    :pin org
+	    :defer t
+	    :init
+	    (org-babel-do-load-languages
+	     'org-babel-load-languages
+	     '((emacs-lisp . t)
+	       (elixir . t)
+	       (org . t)
+	       (haskell . t)))
+	    ;;(R . t)))
+	    :config
+	  ;;; auto display inline images on Org TAB cycle expand headlines.
+	    ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
+	    (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
+	    (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
+		  ;; org-default-notes-file org-agenda-file
+		  org-archive-location (concat org-directory "Archived/" "%s_archive::")
+		  org-id-locations-file (concat org-directory ".org-id-locations")
+		  org-log-done nil
+		  ;; (nconc org-modules '(org-id))
+		  ;; org-refile-targets '((org-agenda-files :maxlevel . 2))
+		  org-refile-use-outline-path 'file
+		  org-outline-path-complete-in-steps nil
+		  org-refile-allow-creating-parent-nodes 'confirm
+		  org-refile-use-cache t
+		  org-startup-truncated nil
+		  org-confirm-babel-evaluate nil)
+	    ;; refresh cache when emacs idle 5 mins
+	    (run-with-idle-timer 300 t (lambda ()
+					 (org-refile-cache-clear)
+					 ;; (org-refile-get-targets)
+					 (org-roam-db-sync))))
    #+end_src
 ** 美观
    有时候反而觉得原始状态挺好看。。。而且这个插件极度影响性能。。。所以先禁止掉。
@@ -631,12 +632,12 @@
 ** Bookmark
    使用 org 文件做了一个收藏夹。
    #+begin_src emacs-lisp
-     (setq bookmark-file (concat org-directory "bookmarks.org"))
+     (setq private/bookmark-file (concat org-directory "bookmarks.org"))
      (defun open-bookmarks ()
        (interactive)
        (if (buffer-live-p "bookmarks.org")
 	   (pop-to-buffer "bookmarks.org")
-	 (find-file bookmark-file)))
+	 (find-file private/bookmark-file)))
    #+end_src
 ** Org-roam
    #+begin_src emacs-lisp
@@ -1292,4 +1293,17 @@
 
     (use-package flycheck-posframe
       :after flycheck)
+  #+end_src
+* Haskell
+  感觉函数式编程绕不开 Haskell ，所以尝试下。
+  #+begin_src emacs-lisp
+    (use-package haskell-mode
+      :defer t
+      :init
+      (add-hook 'haskell-mode-hook 'lsp)
+      (add-hook 'haskell-literate-mode-hook 'lsp)
+      :config
+      (setq haskell-process-type 'stack-ghci))
+    (use-package lsp-haskell
+      :defer t)
   #+end_src
