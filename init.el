@@ -425,7 +425,8 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
    'org-babel-load-languages
    '((emacs-lisp . t)
      (elixir . t)
-     (org . t)))
+     (org . t)
+     (haskell . t)))
   ;;(R . t)))
   :config
 ;;; auto display inline images on Org TAB cycle expand headlines.
@@ -473,12 +474,12 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
   :init
   (org-refresh-agenda-files))
 
-(setq bookmark-file (concat org-directory "bookmarks.org"))
+(setq private/bookmark-file (concat org-directory "bookmarks.org"))
 (defun open-bookmarks ()
   (interactive)
   (if (buffer-live-p "bookmarks.org")
       (pop-to-buffer "bookmarks.org")
-    (find-file bookmark-file)))
+    (find-file private/bookmark-file)))
 
 (use-package org-roam
   :init
@@ -871,3 +872,13 @@ ${tags:20}")
 
 (use-package flycheck-posframe
   :after flycheck)
+
+(use-package haskell-mode
+  :defer t
+  :init
+  (add-hook 'haskell-mode-hook 'lsp)
+  (add-hook 'haskell-literate-mode-hook 'lsp)
+  :config
+  (setq haskell-process-type 'stack-ghci))
+(use-package lsp-haskell
+  :defer t)
