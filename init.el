@@ -589,6 +589,10 @@ ${tags:20}")
  :keymaps 'org-roam-mode-map
  [mouse-1] 'org-roam-visit-thing)
 
+(use-package toc-org
+  :init
+  (add-hook 'org-mode-hook 'toc-org-mode))
+
 (use-package ivy
   :defer t
   :init
@@ -636,9 +640,9 @@ ${tags:20}")
         calibredb-id-width 4
         calibredb-title-width 40
         calibredb-date-width 0
-        calibredb-root-dir "/Users/smartepsh/Qsync/Books/"
+        calibredb-root-dir "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/Books/"
         calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
-        calibredb-library-alist '(("/Users/smartepsh/Qsync/Books/"))))
+        calibredb-library-alist '(("/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/Books/"))))
 
 (use-package simpleclip
   :init
@@ -880,5 +884,6 @@ ${tags:20}")
   (add-hook 'haskell-literate-mode-hook 'lsp)
   :config
   (setq haskell-process-type 'stack-ghci))
+
 (use-package lsp-haskell
   :defer t)
