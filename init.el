@@ -159,7 +159,7 @@
    '("E" . meow-next-symbol)
    '("f" . meow-find)
    '("F" . meow-find-expand)
-   '("g" . meow-cancel)
+   '("<escape>" . meow-cancel)
    '("G" . meow-grab)
    '("h" . meow-left)
    '("H" . meow-left-expand)
@@ -201,7 +201,7 @@
    '("%" . meow-query-replace-regexp)
    '("'" . repeat)
    '("\\" . quoted-insert)
-   '("<escape>" . meow-last-buffer)
+   '("g" . meow-last-buffer)
    ;; customize
    '(">" . scroll-up)
    '("<" . scroll-down)
@@ -215,8 +215,7 @@
   :config
   (meow-setup)
   (setq meow-selection-command-fallback
-	'((meow-replace . meow-replace-char)
-	 (meow-change . meow-change-char)
+	'((meow-replace . meow-replace-char)   (meow-change . meow-change-char)
 	 (meow-save . meow-save-char)
 	 (meow-kill . meow-C-k)
 	 (meow-delete . meow-C-d)
@@ -341,7 +340,7 @@
 				  rime-predicate-punctuation-after-ascii-p
 				  meow-normal-mode-p))
   :config
-  (global-set-key (kbd "M-s-SPC") 'rime-inline-ascii))
+  (global-set-key (kbd "C-SPC") 'rime-inline-ascii))
 
 (setq org-directory  (file-truename "~/kenton-base/"))
 
@@ -444,7 +443,8 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 	org-refile-allow-creating-parent-nodes 'confirm
 	org-refile-use-cache t
 	org-startup-truncated nil
-	org-confirm-babel-evaluate nil)
+	org-confirm-babel-evaluate nil
+	org-M-RET-may-split-line '((headline . nil) (item . nil) (default . t)))
   ;; refresh cache when emacs idle 5 mins
   (run-with-idle-timer 300 t (lambda ()
 			       (org-refile-cache-clear)
@@ -785,7 +785,7 @@ ${tags:20}")
    "C-c C-t a" 'exunit-verify-all
    "C-c C-t t" 'exunit-verify-single
    "C-c C-t b" 'exunit-verify
-   "C-c C-t r" 'exunit-verify-return
+   "C-c C-t r" 'exunit-rerun
    "C-c C-t f" 'exunit-toggle-file-and-test
    ))
 
@@ -802,7 +802,8 @@ ${tags:20}")
   (meow-leader-define-key
    '("." . lsp-find-definition)
    '("," . xref-pop-marker-stack))
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.elixir_ls\\'"))
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.elixir_ls\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\deps\\'"))
 
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 ;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
@@ -887,3 +888,10 @@ ${tags:20}")
 
 (use-package lsp-haskell
   :defer t)
+
+(use-package evil-nerd-commenter
+  :defer t
+  :commands (evilnc-comment-or-uncomment-lines)
+  :config
+  (general-define-key
+   "C-M-c" 'evilnc-comment-or-uncomment-lines))

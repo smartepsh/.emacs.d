@@ -226,7 +226,7 @@
        '("E" . meow-next-symbol)
        '("f" . meow-find)
        '("F" . meow-find-expand)
-       '("g" . meow-cancel)
+       '("<escape>" . meow-cancel)
        '("G" . meow-grab)
        '("h" . meow-left)
        '("H" . meow-left-expand)
@@ -268,7 +268,7 @@
        '("%" . meow-query-replace-regexp)
        '("'" . repeat)
        '("\\" . quoted-insert)
-       '("<escape>" . meow-last-buffer)
+       '("g" . meow-last-buffer)
        ;; customize
        '(">" . scroll-up)
        '("<" . scroll-down)
@@ -282,8 +282,7 @@
       :config
       (meow-setup)
       (setq meow-selection-command-fallback
-	    '((meow-replace . meow-replace-char)
-	     (meow-change . meow-change-char)
+	    '((meow-replace . meow-replace-char)   (meow-change . meow-change-char)
 	     (meow-save . meow-save-char)
 	     (meow-kill . meow-C-k)
 	     (meow-delete . meow-C-d)
@@ -469,7 +468,7 @@
 				      rime-predicate-punctuation-after-ascii-p
 				      meow-normal-mode-p))
       :config
-      (global-set-key (kbd "M-s-SPC") 'rime-inline-ascii))
+      (global-set-key (kbd "C-SPC") 'rime-inline-ascii))
   #+end_src
 * Org Mode
   算是重头戏了。。。我也是菜鸟，之前使用 evil 自定义按键，其实有些功能是很少用的。这次换为 =meow= 之后，使用原生快捷键看看效果。
@@ -560,41 +559,42 @@
 #+end_src
 ** 本体
    #+begin_src emacs-lisp
-	  (use-package org
-	    :ensure org-plus-contrib
-	    ;; :ensure-system-package terminal-notifier
-	    :pin org
-	    :defer t
-	    :init
-	    (org-babel-do-load-languages
-	     'org-babel-load-languages
-	     '((emacs-lisp . t)
-	       (elixir . t)
-	       (org . t)
-	       (haskell . t)))
-	    ;;(R . t)))
-	    :config
-	  ;;; auto display inline images on Org TAB cycle expand headlines.
-	    ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
-	    (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
-	    (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
-		  ;; org-default-notes-file org-agenda-file
-		  org-archive-location (concat org-directory "Archived/" "%s_archive::")
-		  org-id-locations-file (concat org-directory ".org-id-locations")
-		  org-log-done nil
-		  ;; (nconc org-modules '(org-id))
-		  ;; org-refile-targets '((org-agenda-files :maxlevel . 2))
-		  org-refile-use-outline-path 'file
-		  org-outline-path-complete-in-steps nil
-		  org-refile-allow-creating-parent-nodes 'confirm
-		  org-refile-use-cache t
-		  org-startup-truncated nil
-		  org-confirm-babel-evaluate nil)
-	    ;; refresh cache when emacs idle 5 mins
-	    (run-with-idle-timer 300 t (lambda ()
-					 (org-refile-cache-clear)
-					 ;; (org-refile-get-targets)
-					 (org-roam-db-sync))))
+	       (use-package org
+		 :ensure org-plus-contrib
+		 ;; :ensure-system-package terminal-notifier
+		 :pin org
+		 :defer t
+		 :init
+		 (org-babel-do-load-languages
+		  'org-babel-load-languages
+		  '((emacs-lisp . t)
+		    (elixir . t)
+		    (org . t)
+		    (haskell . t)))
+		 ;;(R . t)))
+		 :config
+	       ;;; auto display inline images on Org TAB cycle expand headlines.
+		 ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
+		 (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
+		 (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
+		       ;; org-default-notes-file org-agenda-file
+		       org-archive-location (concat org-directory "Archived/" "%s_archive::")
+		       org-id-locations-file (concat org-directory ".org-id-locations")
+		       org-log-done nil
+		       ;; (nconc org-modules '(org-id))
+		       ;; org-refile-targets '((org-agenda-files :maxlevel . 2))
+		       org-refile-use-outline-path 'file
+		       org-outline-path-complete-in-steps nil
+		       org-refile-allow-creating-parent-nodes 'confirm
+		       org-refile-use-cache t
+		       org-startup-truncated nil
+		       org-confirm-babel-evaluate nil
+		       org-M-RET-may-split-line '((headline . nil) (item . nil) (default . t)))
+		 ;; refresh cache when emacs idle 5 mins
+		 (run-with-idle-timer 300 t (lambda ()
+					      (org-refile-cache-clear)
+					      ;; (org-refile-get-targets)
+					      (org-roam-db-sync))))
    #+end_src
 ** 美观
    有时候反而觉得原始状态挺好看。。。而且这个插件极度影响性能。。。所以先禁止掉。
@@ -1065,30 +1065,31 @@
        "C-c C-t a" 'exunit-verify-all
        "C-c C-t t" 'exunit-verify-single
        "C-c C-t b" 'exunit-verify
-       "C-c C-t r" 'exunit-verify-return
+       "C-c C-t r" 'exunit-rerun
        "C-c C-t f" 'exunit-toggle-file-and-test
        ))
   #+end_src
 * LSP
   尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
   #+begin_src emacs-lisp
-    (use-package lsp-mode
-      :defer t
-      :init
-      (setq lsp-keymap-prefix "s-l")
-      (add-to-list 'exec-path (concat private/config-directory "elixir-ls"))
-      :hook (elixir-mode . lsp)
-      :hook (lsp-mode . lsp-enable-which-key-integration)
-      :config
-      (setq lsp-headerline-breadcrumb-enable nil
-	    lsp-file-watch-threshold 2000)
-      (meow-leader-define-key
-       '("." . lsp-find-definition)
-       '("," . xref-pop-marker-stack))
-      (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.elixir_ls\\'"))
+	(use-package lsp-mode
+	  :defer t
+	  :init
+	  (setq lsp-keymap-prefix "s-l")
+	  (add-to-list 'exec-path (concat private/config-directory "elixir-ls"))
+	  :hook (elixir-mode . lsp)
+	  :hook (lsp-mode . lsp-enable-which-key-integration)
+	  :config
+	  (setq lsp-headerline-breadcrumb-enable nil
+		lsp-file-watch-threshold 2000)
+	  (meow-leader-define-key
+	   '("." . lsp-find-definition)
+	   '("," . xref-pop-marker-stack))
+	  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.elixir_ls\\'")
+	  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\deps\\'"))
 
-    (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-    ;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+	(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+	;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
   #+end_src
 * FlySpell 拼写错误检查
   在 [[https://www.emacswiki.org/emacs/FlySpell][我的Wiki： Fly Spell]] 找到了自建词典的使用方法，见 =flyspell-learn-work-at-point= 方法。该方法会将收录的新词保存在 =~/.hunspell_en_US= 文件内，我会将该文件链接到 =.emacs.d= 项目中，方便同步。
@@ -1313,4 +1314,13 @@
 
     (use-package lsp-haskell
       :defer t)
+  #+end_src
+* 注释
+  #+begin_src emacs-lisp
+	(use-package evil-nerd-commenter
+	  :defer t
+	  :commands (evilnc-comment-or-uncomment-lines)
+	  :config
+	  (general-define-key
+	   "C-M-c" 'evilnc-comment-or-uncomment-lines))
   #+end_src
