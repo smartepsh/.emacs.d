@@ -284,8 +284,9 @@
       (meow-global-mode t)
       :config
       (meow-setup)
-      (setq meow-expand-exclude-mode-list '())
-      (setq meow-selection-command-fallback
+      (add-to-list 'meow-mode-state-list '(sly-mrepl-mode . normal))
+      (setq meow-expand-exclude-mode-list '()
+	    meow-selection-command-fallback
 	    '((meow-replace . meow-replace-char)
 	      (meow-change . meow-change-char)
 	      (meow-save . meow-save-char)
@@ -564,42 +565,43 @@
 #+end_src
 ** 本体
    #+begin_src emacs-lisp
-	       (use-package org
-		 :ensure org-plus-contrib
-		 ;; :ensure-system-package terminal-notifier
-		 :pin org
-		 :defer t
-		 :init
-		 (org-babel-do-load-languages
-		  'org-babel-load-languages
-		  '((emacs-lisp . t)
-		    (elixir . t)
-		    (org . t)
-		    (haskell . t)))
-		 ;;(R . t)))
-		 :config
-	       ;;; auto display inline images on Org TAB cycle expand headlines.
-		 ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
-		 (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
-		 (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
-		       ;; org-default-notes-file org-agenda-file
-		       org-archive-location (concat org-directory "Archived/" "%s_archive::")
-		       org-id-locations-file (concat org-directory ".org-id-locations")
-		       org-log-done nil
-		       ;; (nconc org-modules '(org-id))
-		       ;; org-refile-targets '((org-agenda-files :maxlevel . 2))
-		       org-refile-use-outline-path 'file
-		       org-outline-path-complete-in-steps nil
-		       org-refile-allow-creating-parent-nodes 'confirm
-		       org-refile-use-cache t
-		       org-startup-truncated nil
-		       org-confirm-babel-evaluate nil
-		       org-M-RET-may-split-line '((headline . nil) (item . nil) (default . t)))
-		 ;; refresh cache when emacs idle 5 mins
-		 (run-with-idle-timer 300 t (lambda ()
-					      (org-refile-cache-clear)
-					      ;; (org-refile-get-targets)
-					      (org-roam-db-sync))))
+     (use-package org
+       :ensure org-plus-contrib
+       ;; :ensure-system-package terminal-notifier
+       :pin org
+       :defer t
+       :init
+       (org-babel-do-load-languages
+	'org-babel-load-languages
+	'((emacs-lisp . t)
+	  (elixir . t)
+	  (org . t)
+	  (haskell . t)
+	  (lisp . t)))
+       ;;(R . t)))
+       :config
+     ;;; auto display inline images on Org TAB cycle expand headlines.
+       ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
+       (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
+       (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
+	     ;; org-default-notes-file org-agenda-file
+	     org-archive-location (concat org-directory "Archived/" "%s_archive::")
+	     org-id-locations-file (concat org-directory ".org-id-locations")
+	     org-log-done nil
+	     ;; (nconc org-modules '(org-id))
+	     ;; org-refile-targets '((org-agenda-files :maxlevel . 2))
+	     org-refile-use-outline-path 'file
+	     org-outline-path-complete-in-steps nil
+	     org-refile-allow-creating-parent-nodes 'confirm
+	     org-refile-use-cache t
+	     org-startup-truncated nil
+	     org-confirm-babel-evaluate nil
+	     org-M-RET-may-split-line '((headline . nil) (item . nil) (default . t)))
+       ;; refresh cache when emacs idle 5 mins
+       (run-with-idle-timer 300 t (lambda ()
+				    (org-refile-cache-clear)
+				    ;; (org-refile-get-targets)
+				    (org-roam-db-sync))))
    #+end_src
 ** 美观
    有时候反而觉得原始状态挺好看。。。而且这个插件极度影响性能。。。所以先禁止掉。
@@ -1096,7 +1098,10 @@
 ** Common Lisp
    #+begin_src emacs-lisp
      (use-package sly
-       :defer t)
+       :defer t
+       :init
+       (setq inferior-lisp-program "/Users/smartepsh/.asdf/shims/sbcl"
+	     org-babel-lisp-eval-fn 'sly-eval))
    #+end_src
 * LSP
   尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。

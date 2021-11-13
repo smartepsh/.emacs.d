@@ -217,8 +217,9 @@
   (meow-global-mode t)
   :config
   (meow-setup)
-  (setq meow-expand-exclude-mode-list '())
-  (setq meow-selection-command-fallback
+  (add-to-list 'meow-mode-state-list '(sly-mrepl-mode . normal))
+  (setq meow-expand-exclude-mode-list '()
+	meow-selection-command-fallback
 	'((meow-replace . meow-replace-char)
 	  (meow-change . meow-change-char)
 	  (meow-save . meow-save-char)
@@ -430,7 +431,8 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
    '((emacs-lisp . t)
      (elixir . t)
      (org . t)
-     (haskell . t)))
+     (haskell . t)
+     (lisp . t)))
   ;;(R . t)))
   :config
 ;;; auto display inline images on Org TAB cycle expand headlines.
@@ -809,7 +811,10 @@ ${tags:20}")
   :defer t)
 
 (use-package sly
-  :defer t)
+  :defer t
+  :init
+  (setq inferior-lisp-program "/Users/smartepsh/.asdf/shims/sbcl"
+	org-babel-lisp-eval-fn 'sly-eval))
 
 (use-package lsp-mode
   :defer t
