@@ -70,10 +70,11 @@
  #+end_src
 ** 系统及文件夹路径设置
  #+begin_src emacs-lisp
-   (setq private/cache-directory "~/.emacs.d/.cache/"
-         private/system-is-mac (eq system-type 'darwin)
-         private/config-directory "~/.emacs.d/"
-         custom-file "~/.emacs.d/custom.el")
+      (setq private/cache-directory "~/.emacs.d/.cache/"
+	    private/system-is-mac (eq system-type 'darwin)
+	    private/config-directory "~/.emacs.d/"
+	    custom-file "~/.emacs.d/custom.el"
+	    private/book-directory "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/Books/")
  #+end_src
 ** 自定义文件及载入设置
  #+begin_src emacs-lisp
@@ -278,16 +279,20 @@
     (use-package meow
       :demand t
       :init
+      (setq meow-use-cursor-position-hack t
+	    meow-use-enhanced-selection-effect t)
       (meow-global-mode t)
       :config
       (meow-setup)
+      (setq meow-expand-exclude-mode-list '())
       (setq meow-selection-command-fallback
-	    '((meow-replace . meow-replace-char)   (meow-change . meow-change-char)
-	     (meow-save . meow-save-char)
-	     (meow-kill . meow-C-k)
-	     (meow-delete . meow-C-d)
-	     (meow-cancel-selection . meow-keyboard-quit)
-	     (meow-pop-selection . meow-pop-grab))))
+	    '((meow-replace . meow-replace-char)
+	      (meow-change . meow-change-char)
+	      (meow-save . meow-save-char)
+	      (meow-kill . meow-C-k)
+	      (meow-delete . meow-C-d)
+	      (meow-cancel-selection . meow-keyboard-quit)
+	      (meow-pop-selection . meow-pop-grab))))
   #+end_src
 * 按键管理
 ** 绑定
@@ -611,7 +616,7 @@
        (setq reftex-default-bibliography `(,bib-file)
 	     org-ref-bibliography-notes (concat org-directory "ref-notes.org")
 	     org-ref-default-bibliography `(,bib-file)
-	     org-ref-pdf-directory "~/Qsync/Books/"
+	     org-ref-pdf-directory private/book-directory
 	     calibredb-ref-default-bibliography bib-file
 	     org-ref-get-pdf-filename-function 'org-ref-get-mendeley-filename))
      ;; org-ref-completion-library 'org-ref-ivy-cite-completion))
@@ -863,17 +868,18 @@
 * calibredb
     #+begin_src emacs-lisp
       (use-package calibredb
-        :defer t
-        :commands (calibredb)
-        :config
-        (setq calibredb-size-show t
-              ;;calibredb-format-all-the-icons t
-              calibredb-id-width 4
-              calibredb-title-width 40
-              calibredb-date-width 0
-              calibredb-root-dir "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/Books/"
-              calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
-              calibredb-library-alist '(("/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/Books/"))))
+	:defer t
+	:quelpa (calibredb :fetcher github :repo "chenyanming/calibredb.el" :branch "develop")
+	:commands (calibredb)
+	:config
+	(setq calibredb-size-show t
+	      ;;calibredb-format-all-the-icons t
+	      calibredb-id-width 4
+	      calibredb-title-width 40
+	      calibredb-date-width 0
+	      calibredb-root-dir private/book-directory
+	      calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
+	      calibredb-library-alist '(private/book-directory)))
   #+end_src
 * 剪贴板
   #+begin_src emacs-lisp
@@ -918,54 +924,58 @@
    #+end_src
 * 自动补全
   =smartparens= 暂时没有找到如何更改包裹，只找到另一个插件[[https://github.com/cute-jumper/embrace.el][embrace]] ，但暂时先不考虑。
-   #+begin_src emacs-lisp
-     (use-package company
-       :defer t
-       :init
-       (add-hook 'after-init-hook 'global-company-mode)
-       (setq company-idle-delay 0.3
-	     company-require-match 'never
-	     company-tooltip-align-annotations t
-	     company-dabbrev-downcase nil
-	     company-dabbrev-ignore-case nil
-	     company-minimum-prefix-length 1)
-       (setq company-backend
-	     '(company-keywords
-	       company-elisp
-	       company-files
-	       company-capf
-	       company-yasnippet
-	       company-dabbrev-code
-	       company-dabbrev))
-       :general
-       (general-define-key
-	:keymaps 'company-active-map
-	"<tab>" 'company-complete-selection
-	"<RET>" nil
-	"<return>" nil
-	"C-w" nil
-	"C-n" 'company-select-next
-	"C-p" 'company-select-previous))
+  可以开始考虑 embrace 了。。。
+  #+begin_src emacs-lisp
+    (use-package company
+      :defer t
+      :init
+      (add-hook 'after-init-hook 'global-company-mode)
+      (setq company-idle-delay 0.3
+	    company-require-match 'never
+	    company-tooltip-align-annotations t
+	    company-dabbrev-downcase nil
+	    company-dabbrev-ignore-case nil
+	    company-minimum-prefix-length 1)
+      (setq company-backend
+	    '(company-keywords
+	      company-elisp
+	      company-files
+	      company-capf
+	      company-yasnippet
+	      company-dabbrev-code
+	      company-dabbrev))
+      :general
+      (general-define-key
+       :keymaps 'company-active-map
+       "<tab>" 'company-complete-selection
+       "<RET>" nil
+       "<return>" nil
+       "C-w" nil
+       "C-n" 'company-select-next
+       "C-p" 'company-select-previous))
 
-     (use-package smartparens
-       :hook (prog-mode . smartparens-mode)
-       :hook (org-mode . smartparens-mode)
-       :config
-       (meow-leader-define-key
-	'("ds" . sp-splice-sexp)
-	'("s{" . sp-wrap-curly)
-	'("s(" . sp-wrap-round)
-	'("s[" . sp-wrap-square)))
+    (use-package smartparens
+      :hook (prog-mode . smartparens-mode)
+      :hook (org-mode . smartparens-mode))
 
-     (use-package yasnippet
-       :defer t
-       :hook (prog-mode . yas-minor-mode)
-       :hook (org-mode . yas-minor-mode))
+    (use-package embrace
+      :defer t
+      :commands (embrace-add embrace-delete embrace-change embrace-commander)
+      :config
+      (meow-leader-define-key
+       '("sc" . embrace-change)
+       '("sd" . embrace-delete)
+       '("ss" . embrace-add)))
 
-     (use-package yasnippet-snippets
-       :defer t
-       :hook (yas-minor-mode . yas-reload-all))
-     #+end_src
+    (use-package yasnippet
+      :defer t
+      :hook (prog-mode . yas-minor-mode)
+      :hook (org-mode . yas-minor-mode))
+
+    (use-package yasnippet-snippets
+      :defer t
+      :hook (yas-minor-mode . yas-reload-all))
+  #+end_src
 * prescient
   #+begin_src emacs-lisp
     (use-package prescient
@@ -1016,59 +1026,78 @@
   #+end_src
 * Magit
   #+begin_src emacs-lisp
-    (use-package magit
-      :commands (magit-status magit-blame)
-      :init
-      (general-define-key
-       "C-M-s" 'magit-status
-       "C-M-b" 'magit-blame)
-      :config
-      (general-define-key
-       :keymaps 'magit-mode-map
-       "s-<return>" 'magit-diff-visit-file-other-window)
-      (general-define-key
-       :keymaps 'magit-status-mode-map
-       "x" 'magit-discard))
+	    (use-package magit
+	      :commands (magit-status magit-blame)
+	      :init
+	      (general-define-key
+	       "C-M-s" 'magit-status
+	       "C-M-b" 'magit-blame)
+	      :config
+	      (general-define-key
+	       :keymaps 'magit-mode-map
+	       "s-<return>" 'magit-diff-visit-file-other-window
+	       "C-c C-k" 'magit-discard
+	       "x" 'meow-line))
   #+end_src
-* Elixir
-  虽说是主力语言，但配置并不算多。
-  #+begin_src emacs-lisp
-    (use-package elixir-mode
-      :defer t
-      :config
-      (add-hook 'elixir-mode-hook
-		(lambda() (add-hook 'before-save-hook 'elixir-format nil t)))
+* Programming Language
+** Elixir
+   虽说是主力语言，但配置并不算多。
+   #+begin_src emacs-lisp
+     (use-package elixir-mode
+       :defer t
+       :config
+       (add-hook 'elixir-mode-hook
+		 (lambda() (add-hook 'before-save-hook 'elixir-format nil t)))
 
-      (defun +reset-mixfmt-args ()
-	(let* ((formatter-directory (locate-dominating-file default-directory ".formatter.exs"))
-	       (formatter-file (concat formatter-directory ".formatter.exs")))
-	  (if formatter-directory
-	      (setq elixir-format-arguments (list "--dot-formatter" formatter-file))
-	    (setq elixir-format-arguments nil))))
+       (defun +reset-mixfmt-args ()
+	 (let* ((formatter-directory (locate-dominating-file default-directory ".formatter.exs"))
+		(formatter-file (concat formatter-directory ".formatter.exs")))
+	   (if formatter-directory
+	       (setq elixir-format-arguments (list "--dot-formatter" formatter-file))
+	     (setq elixir-format-arguments nil))))
 
-      (add-hook 'elixir-format-hook #'+reset-mixfmt-args))
+       (add-hook 'elixir-format-hook #'+reset-mixfmt-args))
 
-    (use-package exunit
-      :defer t
-      :after elixir-mode
-      :config
-      :commands (exunit-verify-all
-		 exunit-verify
-		 exunit-verify-all-in-umbrella
-		 exunit-verify-single
-		 exunit-rerun
-		 exunit-toggle-file-and-test)
-      :general
-      (general-define-key
-       :keymaps 'elixir-mode-map
-       :keymaps 'exunit-compilation-mode-map
-       "C-c C-t a" 'exunit-verify-all
-       "C-c C-t t" 'exunit-verify-single
-       "C-c C-t b" 'exunit-verify
-       "C-c C-t r" 'exunit-rerun
-       "C-c C-t f" 'exunit-toggle-file-and-test
-       ))
-  #+end_src
+     (use-package exunit
+       :defer t
+       :after elixir-mode
+       :config
+       :commands (exunit-verify-all
+		  exunit-verify
+		  exunit-verify-all-in-umbrella
+		  exunit-verify-single
+		  exunit-rerun
+		  exunit-toggle-file-and-test)
+       :general
+       (general-define-key
+	:keymaps 'elixir-mode-map
+	:keymaps 'exunit-compilation-mode-map
+	"C-c C-t a" 'exunit-verify-all
+	"C-c C-t t" 'exunit-verify-single
+	"C-c C-t b" 'exunit-verify
+	"C-c C-t r" 'exunit-rerun
+	"C-c C-t f" 'exunit-toggle-file-and-test
+	))
+   #+end_src
+** Haskell
+   感觉函数式编程绕不开 Haskell ，所以尝试下。
+   #+begin_src emacs-lisp
+     (use-package haskell-mode
+       :defer t
+       :init
+       (add-hook 'haskell-mode-hook 'lsp)
+       (add-hook 'haskell-literate-mode-hook 'lsp)
+       :config
+       (setq haskell-process-type 'stack-ghci))
+
+     (use-package lsp-haskell
+       :defer t)
+   #+end_src
+** Common Lisp
+   #+begin_src emacs-lisp
+     (use-package sly
+       :defer t)
+   #+end_src
 * LSP
   尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
   #+begin_src emacs-lisp
@@ -1301,26 +1330,12 @@
     (use-package flycheck-posframe
       :after flycheck)
   #+end_src
-* Haskell
-  感觉函数式编程绕不开 Haskell ，所以尝试下。
-  #+begin_src emacs-lisp
-    (use-package haskell-mode
-      :defer t
-      :init
-      (add-hook 'haskell-mode-hook 'lsp)
-      (add-hook 'haskell-literate-mode-hook 'lsp)
-      :config
-      (setq haskell-process-type 'stack-ghci))
-
-    (use-package lsp-haskell
-      :defer t)
-  #+end_src
 * 注释
   #+begin_src emacs-lisp
-	(use-package evil-nerd-commenter
-	  :defer t
-	  :commands (evilnc-comment-or-uncomment-lines)
-	  :config
-	  (general-define-key
-	   "C-M-c" 'evilnc-comment-or-uncomment-lines))
+    (use-package evil-nerd-commenter
+      :defer t
+      :commands (evilnc-comment-or-uncomment-lines)
+      :config
+      (general-define-key
+       "C-M-c" 'evilnc-comment-or-uncomment-lines))
   #+end_src
