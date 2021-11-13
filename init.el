@@ -27,7 +27,8 @@
 (setq private/cache-directory "~/.emacs.d/.cache/"
       private/system-is-mac (eq system-type 'darwin)
       private/config-directory "~/.emacs.d/"
-      custom-file "~/.emacs.d/custom.el")
+      custom-file "~/.emacs.d/custom.el"
+      private/book-directory "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/Books/")
 
 (setq custom-file "~/.emacs.d/custom.el")
 (if (file-exists-p custom-file)
@@ -211,16 +212,20 @@
 (use-package meow
   :demand t
   :init
+  (setq meow-use-cursor-position-hack t
+	meow-use-enhanced-selection-effect t)
   (meow-global-mode t)
   :config
   (meow-setup)
+  (setq meow-expand-exclude-mode-list '())
   (setq meow-selection-command-fallback
-	'((meow-replace . meow-replace-char)   (meow-change . meow-change-char)
-	 (meow-save . meow-save-char)
-	 (meow-kill . meow-C-k)
-	 (meow-delete . meow-C-d)
-	 (meow-cancel-selection . meow-keyboard-quit)
-	 (meow-pop-selection . meow-pop-grab))))
+	'((meow-replace . meow-replace-char)
+	  (meow-change . meow-change-char)
+	  (meow-save . meow-save-char)
+	  (meow-kill . meow-C-k)
+	  (meow-delete . meow-C-d)
+	  (meow-cancel-selection . meow-keyboard-quit)
+	  (meow-pop-selection . meow-pop-grab))))
 
 (use-package general
   :config
@@ -458,7 +463,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
   (setq reftex-default-bibliography `(,bib-file)
 	org-ref-bibliography-notes (concat org-directory "ref-notes.org")
 	org-ref-default-bibliography `(,bib-file)
-	org-ref-pdf-directory "~/Qsync/Books/"
+	org-ref-pdf-directory private/book-directory
 	calibredb-ref-default-bibliography bib-file
 	org-ref-get-pdf-filename-function 'org-ref-get-mendeley-filename))
 ;; org-ref-completion-library 'org-ref-ivy-cite-completion))
@@ -633,16 +638,17 @@ ${tags:20}")
 
 (use-package calibredb
   :defer t
+  :quelpa (calibredb :fetcher github :repo "chenyanming/calibredb.el" :branch "develop")
   :commands (calibredb)
   :config
   (setq calibredb-size-show t
-        ;;calibredb-format-all-the-icons t
-        calibredb-id-width 4
-        calibredb-title-width 40
-        calibredb-date-width 0
-        calibredb-root-dir "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/Books/"
-        calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
-        calibredb-library-alist '(("/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/Books/"))))
+	;;calibredb-format-all-the-icons t
+	calibredb-id-width 4
+	calibredb-title-width 40
+	calibredb-date-width 0
+	calibredb-root-dir private/book-directory
+	calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
+	calibredb-library-alist '(private/book-directory)))
 
 (use-package simpleclip
   :init
@@ -681,13 +687,16 @@ ${tags:20}")
 
 (use-package smartparens
   :hook (prog-mode . smartparens-mode)
-  :hook (org-mode . smartparens-mode)
+  :hook (org-mode . smartparens-mode))
+
+(use-package embrace
+  :defer t
+  :commands (embrace-add embrace-delete embrace-change embrace-commander)
   :config
   (meow-leader-define-key
-   '("ds" . sp-splice-sexp)
-   '("s{" . sp-wrap-curly)
-   '("s(" . sp-wrap-round)
-   '("s[" . sp-wrap-square)))
+   '("sc" . embrace-change)
+   '("sd" . embrace-delete)
+   '("ss" . embrace-add)))
 
 (use-package yasnippet
   :defer t
@@ -748,10 +757,9 @@ ${tags:20}")
   :config
   (general-define-key
    :keymaps 'magit-mode-map
-   "s-<return>" 'magit-diff-visit-file-other-window)
-  (general-define-key
-   :keymaps 'magit-status-mode-map
-   "x" 'magit-discard))
+   "s-<return>" 'magit-diff-visit-file-other-window
+   "C-c C-k" 'magit-discard
+   "x" 'meow-line))
 
 (use-package elixir-mode
   :defer t
@@ -788,6 +796,20 @@ ${tags:20}")
    "C-c C-t r" 'exunit-rerun
    "C-c C-t f" 'exunit-toggle-file-and-test
    ))
+
+(use-package haskell-mode
+  :defer t
+  :init
+  (add-hook 'haskell-mode-hook 'lsp)
+  (add-hook 'haskell-literate-mode-hook 'lsp)
+  :config
+  (setq haskell-process-type 'stack-ghci))
+
+(use-package lsp-haskell
+  :defer t)
+
+(use-package sly
+  :defer t)
 
 (use-package lsp-mode
   :defer t
@@ -877,17 +899,6 @@ ${tags:20}")
 
 (use-package flycheck-posframe
   :after flycheck)
-
-(use-package haskell-mode
-  :defer t
-  :init
-  (add-hook 'haskell-mode-hook 'lsp)
-  (add-hook 'haskell-literate-mode-hook 'lsp)
-  :config
-  (setq haskell-process-type 'stack-ghci))
-
-(use-package lsp-haskell
-  :defer t)
 
 (use-package evil-nerd-commenter
   :defer t
