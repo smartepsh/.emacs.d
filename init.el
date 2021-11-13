@@ -341,7 +341,6 @@
 	rime-posframe-style 'vertical
 	rime-show-preedit 'inline
 	rime-disable-predicates '(rime-predicate-hydra-p
-				  ;;rime-predicate-evil-mode-p
 				  rime-predicate-prog-in-code-p
 				  rime-predicate-punctuation-after-ascii-p
 				  meow-normal-mode-p))
@@ -880,7 +879,12 @@ ${tags:20}")
   :defer t
   :mode ("\\.epub\\'" . nov-mode)
   :init
-  (setq nov-save-place-file (concat org-directory "nov-places")))
+  (setq nov-save-place-file (concat org-directory "nov-places"))
+  :config
+  (general-define-key
+   :keymaps 'nov-mode-map
+   "J" 'nov-scroll-up
+   "K" 'nov-scroll-down))
 
 (use-package dired
   :ensure nil
