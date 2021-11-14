@@ -27,8 +27,8 @@
 (setq private/cache-directory "~/.emacs.d/.cache/"
       private/system-is-mac (eq system-type 'darwin)
       private/config-directory "~/.emacs.d/"
-      custom-file "~/.emacs.d/custom.el"
       private/book-directory "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/Books/")
+(add-to-list 'load-path (concat private/config-directory "helpers/"))
 
 (setq custom-file "~/.emacs.d/custom.el")
 (if (file-exists-p custom-file)
@@ -349,6 +349,53 @@
 
 (setq org-directory  (file-truename "~/kenton-base/"))
 
+(use-package nov
+  :defer t
+  :mode ("\\.epub\\'" . nov-mode)
+  :init
+  (setq nov-save-place-file (concat org-directory "nov-places")))
+
+(require 'skim)
+
+(defun nov-buffer-in-current ()
+  (cl-find-if
+   (lambda (window)
+     (with-current-buffer (window-buffer window) (eq major-mode 'nov-mode)))
+   (window-list)))
+
+(defun reader/scroll-up (arg)
+  (interactive "P")
+  (let ((nov-window (nov-buffer-in-current))
+	(current-window (get-buffer-window)))
+    (if nov-window
+	(progn
+	  (select-window nov-window)
+	  (nov-scroll-up arg)
+	  (select-window current-window))
+      (skim-next-page))))
+
+(defun reader/scroll-down (arg)
+  (interactive "P")
+  (let ((nov-window (nov-buffer-in-current))
+	(current-window (get-buffer-window)))
+    (if nov-window
+	(progn
+	  (select-window nov-window)
+	  (nov-scroll-down arg)
+	  (select-window current-window))
+      (skim-previous-page))))
+
+(defun reader/goto-pdf-first-page-or-nov-toc ()
+  (interactive)
+  (let ((nov-window (nov-buffer-in-current))
+	(current-window (get-buffer-window)))
+    (if nov-window
+	(progn
+	  (select-window nov-window)
+	  (nov-goto-toc)
+	  (select-window current-window))
+      (skim-goto 1))))
+
 ;;; Only display inline images under current subtree.
 (defun org-display-subtree-inline-images (&optional state)
   "Toggle the display of inline images under current subtree.
@@ -457,18 +504,6 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 			       ;; (org-refile-get-targets)
 			       (org-roam-db-sync))))
 
-(setq bib-file (concat org-directory "references.bib"))
-(use-package org-ref
-  :after org
-  :init
-  (setq reftex-default-bibliography `(,bib-file)
-	org-ref-bibliography-notes (concat org-directory "ref-notes.org")
-	org-ref-default-bibliography `(,bib-file)
-	org-ref-pdf-directory private/book-directory
-	calibredb-ref-default-bibliography bib-file
-	org-ref-get-pdf-filename-function 'org-ref-get-mendeley-filename))
-;; org-ref-completion-library 'org-ref-ivy-cite-completion))
-
 (defun org-refresh-agenda-files ()
   (interactive)
   (setq org-agenda-files (directory-files (concat org-directory "journal/") t ".org")))
@@ -530,7 +565,7 @@ ${tags:20}")
   :defer t
   :ensure org-plus-contrib
   :commands (org-mac-skim-insert-page
-	     org-mac-chrome-insert-frontmost-url
+	     org-mac-safari-insert-frontmost-url
 	     org-mac-finder-insert-selected))
 
 (use-package org-clock
@@ -547,25 +582,34 @@ ${tags:20}")
 :ensure org-plus-contrib)
 
 (use-package org-download
-:after org
-:config
-(setq org-download-method 'directory
-      org-image-actual-width nil
-      org-download-screenshot-method "screencapture -i %s"
-      org-download-display-inline-images 'posframe
-      ;; disable DOWNLOAD link
-      org-download-annotate-function (lambda (_link) "")
-      org-download-image-attr-list '("#+ATTR_HTML: :width 70% :align center"))
-(setq-default org-download-image-dir (concat org-directory "images/"))
-:general
-(general-define-key
- :keymaps 'org-mode-map
- "C-s-4" 'org-download-screenshot))
+  :after org
+  :config
+  (setq org-download-method 'directory
+	org-image-actual-width nil
+	org-download-screenshot-method "screencapture -i %s"
+	org-download-display-inline-images 'posframe
+	;; disable DOWNLOAD link
+	org-download-annotate-function (lambda (_link) "")
+	org-download-image-attr-list '("#+ATTR_HTML: :width 70% :align center"))
+  (setq-default org-download-image-dir (concat org-directory "images/")))
+
+(use-package toc-org
+  :init
+  (add-hook 'org-mode-hook 'toc-org-mode))
+
+(use-package org-media-note
+  :hook (org-mode .  org-media-note-mode)
+  :quelpa (org-media-note :fetcher github :repo "yuchen-lea/org-media-note" :branch "master")
+  :config
+  (require 'org-attach)
+  (setq org-media-note-screenshot-image-dir (concat org-directory "images/org-media/")))
 
 (general-define-key
  :keymaps 'org-mode-map
  "C-c C-r" nil
- "C-c r" 'org-reveal)
+ "C-c r" 'org-reveal
+ "C-s-4" 'org-download-screenshot
+ "H-v" 'org-media-note-hydra/body)
 
 (general-define-key
  :prefix "C-c C-r"
@@ -575,6 +619,25 @@ ${tags:20}")
  "C-d p" 'org-roam-dailies-goto-previous-note
  "C-d n" 'org-roam-dailies-goto-next-note
  "f" 'org-roam-node-find)
+
+(general-define-key
+ :prefix "H-i"
+ :keymaps 'org-mode-map
+ "r" 'org-mac-skim-insert-page ;; skim
+ "s"  'org-mac-safari-insert-frontmost-url ;; internet
+ "f"  'org-mac-finder-insert-selected ;; finder
+ "i" 'org-store-link)
+
+(general-define-key
+ :keymaps 'org-mode-map
+ "M-o" 'reader/goto-pdf-first-page-or-nov-toc
+ "M-n" 'reader/scroll-up
+ "M-p" 'reader/scroll-down)
+
+(general-define-key
+ :keymaps 'nov-mode-map
+ "M-n" 'nov-scroll-up
+ "M-p" 'nov-scroll-down)
 
 (general-define-key
  :keymaps 'org-mode-map
@@ -594,10 +657,6 @@ ${tags:20}")
 (general-define-key
  :keymaps 'org-roam-mode-map
  [mouse-1] 'org-roam-visit-thing)
-
-(use-package toc-org
-  :init
-  (add-hook 'org-mode-hook 'toc-org-mode))
 
 (use-package ivy
   :defer t
@@ -875,17 +934,6 @@ ${tags:20}")
    "C-," nil
    "C-'" 'flyspell-learn-word-at-point))
 
-(use-package nov
-  :defer t
-  :mode ("\\.epub\\'" . nov-mode)
-  :init
-  (setq nov-save-place-file (concat org-directory "nov-places"))
-  :config
-  (general-define-key
-   :keymaps 'nov-mode-map
-   "J" 'nov-scroll-up
-   "K" 'nov-scroll-down))
-
 (use-package dired
   :ensure nil
   :ensure-system-package (gls . coreutils)
@@ -903,7 +951,7 @@ ${tags:20}")
 (use-package flycheck
   :defer t
   :init
-  (add-hook 'after-init-hook 'global-flycheck-mode)
+  (add-hook 'prog-mode-hook 'flycheck-mode)
   (add-hook 'flycheck-mode-hook 'flycheck-posframe-mode))
 
 (use-package flycheck-posframe
