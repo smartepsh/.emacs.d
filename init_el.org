@@ -70,11 +70,11 @@
  #+end_src
 ** 系统及文件夹路径设置
  #+begin_src emacs-lisp
-      (setq private/cache-directory "~/.emacs.d/.cache/"
-	    private/system-is-mac (eq system-type 'darwin)
-	    private/config-directory "~/.emacs.d/"
-	    custom-file "~/.emacs.d/custom.el"
-	    private/book-directory "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/Books/")
+   (setq private/cache-directory "~/.emacs.d/.cache/"
+	 private/system-is-mac (eq system-type 'darwin)
+	 private/config-directory "~/.emacs.d/"
+	 private/book-directory "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/Books/")
+   (add-to-list 'load-path (concat private/config-directory "helpers/"))
  #+end_src
 ** 自定义文件及载入设置
  #+begin_src emacs-lisp
@@ -482,6 +482,190 @@
   #+begin_src emacs-lisp
     (setq org-directory  (file-truename "~/kenton-base/"))
   #+end_src
+** Ebook Reader
+   org-mode 用来干嘛呢？对吧？
+*** epub
+    #+begin_src emacs-lisp
+      (use-package nov
+	:defer t
+	:mode ("\\.epub\\'" . nov-mode)
+	:init
+	(setq nov-save-place-file (concat org-directory "nov-places")))
+    #+end_src
+*** pdf(skim)
+    #+begin_src emacs-lisp :tangle "~/.emacs.d/helpers/skim.el"
+      ;;; Public Domain by Stian Haklev 2014
+      ;;; heavily under construction, mostly built for my own use, but
+      ;;; feel free to improve and make more general
+      ;;; I keep all my academic PDFs in the same directory, and want special
+      ;;; handling for them - eventually I'll check if the PDF is in that dir
+      ;;; and if not, I'll insert the whole path in the org-link etc.
+
+      ;;; based on https://github.com/houshuang/skim-emacs/blob/master/skim.el
+
+      (require 'org-mac-link)
+
+      (defun skim-page (&optional offset)
+	(interactive)
+	(when (not offset) (setq offset 1))
+	(do-applescript (format "
+      tell document 1 of application \"Skim\" to set a to index of current page
+      tell document 1 of application \"Skim\" to go to page (a + %d)
+      a" offset)))
+
+      (defun skim-page-absolute (offset)
+	(interactive)
+	(do-applescript (format "
+      tell document 1 of application \"Skim\" to set a to index of current page
+      tell document 1 of application \"Skim\" to go to page %d
+      a" offset)))
+
+      (defun skim-goto (page)
+	(interactive "nPDF Page: ")
+	(skim-page-absolute page))
+      ;; (defun skim-get-highlights ()
+      ;;   (interactive)
+      ;;   (insert (do-applescript "
+      ;; tell application \"Skim\"
+      ;; 	set pageNotes to notes of page 3 of document 1
+      ;; 	set out to \"\"
+      ;; 	repeat with i in pageNotes
+      ;; 		set txt to get text of i
+      ;; 		set out to out & txt & \"\n\n\"
+      ;; 	end repeat
+      ;; end tell
+      ;; out")))
+
+      (defun skim-current-page ()
+	(interactive)
+	(skim-page 0))
+
+      (defun skim-current-file ()
+	(interactive)
+	(do-applescript "tell document 1 of application \"Skim\" to set a to name
+      a"))
+
+      (defun skim-next-page ()
+	(interactive)
+	(skim-page 1))
+
+      (defun skim-prev-page ()
+	(interactive)
+	(skim-page -1))
+
+      (defun skim-kill-other-windows ()
+	(interactive)
+	(do-applescript "
+      tell application \"Skim\"
+	      set mainID to id of front window
+	      -- insert your code
+	      close (every window whose id ≠ mainID)
+      end tell"))
+
+      (defun open-link-in-skim ()
+	(interactive)
+	(let ((link (org-element-context)))
+	  (if (string-equal (org-element-property :type link) "skim")
+	      (progn
+		(org-mac-skim-open (org-element-property :path link))
+		(skim-kill-other-windows)
+		(sleep-for 0 100)
+		(do-applescript "tell application \"Emacs\" to activate"))
+	    (message "It's not a skim link !!!"))))
+
+
+      (defun skim-insert-book-link ()
+	(interactive)
+	(insert (skim-book-link)))
+
+      (defun skim-insert-page-link ()
+	(interactive)
+	(insert (skim-page-link-without-book-name)))
+
+      (defun skim-book-link ()
+	"get book link into org with page 1 and description don't contain page number"
+	(let* ((link-and-descr (as-get-skim-page-link))
+	       (split-link (split-string link-and-descr "::split::"))
+	       (link (car split-link))
+	       (description (cadr split-link))
+	       (book-link (concat (link-to-book link) "::1"))
+	       (book-name (book-name description))
+	       (org-link))
+	  (when (not (string= link ""))
+	    (setq org-link (org-link-make-string book-link book-name)))
+	  (kill-new org-link)
+	  org-link))
+
+      (defun skim-page-link-without-book-name ()
+	"only get page link with page number as description (without book name)"
+	(let* ((link-and-descr (as-get-skim-page-link))
+	       (split-link (split-string link-and-descr "::split::"))
+	       (link (car split-link))
+	       (description (cadr split-link))
+	       (page-number (concat "p." (page-number description)))
+	       (org-link))
+	  (when (not (string= link ""))
+	    (setq org-link (org-link-make-string link page-number)))
+	  (kill-new org-link)
+	  org-link))
+
+      (defun link-to-book (link)
+	(s-join "" (reverse (cdr (reverse (split-string link "::"))))))
+
+      (defun page-number (description)
+	(car (reverse (split-string description ", p\\."))))
+
+      (defun book-name (description)
+	(s-join "" (reverse (cdr (reverse (split-string description ", p\\."))))))
+
+      (provide 'skim)
+    #+end_src
+*** DONE 设置翻页快捷键
+    - State "DONE"       from "TODO"       [2021-11-14 Sun 21:55]
+    检测当前是否有 nov buffer ，如果有，则执行 nov 翻页，否则执行 skim 翻页。
+    #+begin_src emacs-lisp
+      (require 'skim)
+
+      (defun nov-buffer-in-current ()
+	(cl-find-if
+	 (lambda (window)
+	   (with-current-buffer (window-buffer window) (eq major-mode 'nov-mode)))
+	 (window-list)))
+
+      (defun reader/scroll-up (arg)
+	(interactive "P")
+	(let ((nov-window (nov-buffer-in-current))
+	      (current-window (get-buffer-window)))
+	  (if nov-window
+	      (progn
+		(select-window nov-window)
+		(nov-scroll-up arg)
+		(select-window current-window))
+	    (skim-next-page))))
+
+      (defun reader/scroll-down (arg)
+	(interactive "P")
+	(let ((nov-window (nov-buffer-in-current))
+	      (current-window (get-buffer-window)))
+	  (if nov-window
+	      (progn
+		(select-window nov-window)
+		(nov-scroll-down arg)
+		(select-window current-window))
+	    (skim-prev-page))))
+
+      (defun reader/goto-pdf-first-page-or-nov-toc ()
+	(interactive)
+	(let ((nov-window (nov-buffer-in-current))
+	      (current-window (get-buffer-window)))
+	  (if nov-window
+	      (progn
+		(select-window nov-window)
+		(nov-goto-toc)
+		(select-window current-window))
+	    (skim-goto 1))))
+
+    #+end_src
 ** Helpers
 *** tab 循环展开图片
     #+begin_src emacs-lisp
@@ -608,8 +792,10 @@
      (use-package org-bullets
        :hook (org-mode . org-bullets-mode))
    #+end_src
-** TODO Org-ref
-   #+begin_src emacs-lisp
+** DONE Org-ref
+   - State "DONE"       from "TODO"       [2021-11-14 日 19:42]
+     查阅相关资料后，对于我这种没有知识整理，文档输出的人废物来说，无用。。。
+   #+begin_src emacs-lisp :tangle no
      (setq bib-file (concat org-directory "references.bib"))
      (use-package org-ref
        :after org
@@ -621,6 +807,10 @@
 	     calibredb-ref-default-bibliography bib-file
 	     org-ref-get-pdf-filename-function 'org-ref-get-mendeley-filename))
      ;; org-ref-completion-library 'org-ref-ivy-cite-completion))
+     (use-package ivy-bibtex
+       :defer t
+       :init
+       (setq bibtex-completion-bibliography `(,bib-file)))
    #+end_src
 ** Agenda
    #+begin_src emacs-lisp
@@ -692,7 +882,7 @@
        :defer t
        :ensure org-plus-contrib
        :commands (org-mac-skim-insert-page
-		  org-mac-chrome-insert-frontmost-url
+		  org-mac-safari-insert-frontmost-url
 		  org-mac-finder-insert-selected))
    #+end_src
 ** Org-clock
@@ -738,20 +928,31 @@
 ** Org-download
    #+begin_src emacs-lisp
      (use-package org-download
-  :after org
-  :config
-  (setq org-download-method 'directory
-        org-image-actual-width nil
-        org-download-screenshot-method "screencapture -i %s"
-        org-download-display-inline-images 'posframe
-        ;; disable DOWNLOAD link
-        org-download-annotate-function (lambda (_link) "")
-        org-download-image-attr-list '("#+ATTR_HTML: :width 70% :align center"))
-  (setq-default org-download-image-dir (concat org-directory "images/"))
-  :general
-  (general-define-key
-   :keymaps 'org-mode-map
-   "C-s-4" 'org-download-screenshot))
+       :after org
+       :config
+       (setq org-download-method 'directory
+	     org-image-actual-width nil
+	     org-download-screenshot-method "screencapture -i %s"
+	     org-download-display-inline-images 'posframe
+	     ;; disable DOWNLOAD link
+	     org-download-annotate-function (lambda (_link) "")
+	     org-download-image-attr-list '("#+ATTR_HTML: :width 70% :align center"))
+       (setq-default org-download-image-dir (concat org-directory "images/")))
+   #+end_src
+** Toc-org
+   #+begin_src emacs-lisp
+     (use-package toc-org
+       :init
+       (add-hook 'org-mode-hook 'toc-org-mode))
+   #+end_src
+** Org-media-note
+   #+begin_src emacs-lisp
+     (use-package org-media-note
+       :hook (org-mode .  org-media-note-mode)
+       :quelpa (org-media-note :fetcher github :repo "yuchen-lea/org-media-note" :branch "master")
+       :config
+       (require 'org-attach)
+       (setq org-media-note-screenshot-image-dir (concat org-directory "images/org-media/")))
    #+end_src
 ** KeyBindings
    整体规划 org-mode 的按键。涉及到默认按键更改、全局按键、org-mode 按键。
@@ -759,7 +960,9 @@
      (general-define-key
       :keymaps 'org-mode-map
       "C-c C-r" nil
-      "C-c r" 'org-reveal)
+      "C-c r" 'org-reveal
+      "C-s-4" 'org-download-screenshot
+      "H-v" 'org-media-note-hydra/body)
 
      (general-define-key
       :prefix "C-c C-r"
@@ -769,6 +972,25 @@
       "C-d p" 'org-roam-dailies-goto-previous-note
       "C-d n" 'org-roam-dailies-goto-next-note
       "f" 'org-roam-node-find)
+
+     (general-define-key
+      :prefix "H-i"
+      :keymaps 'org-mode-map
+      "r" 'org-mac-skim-insert-page ;; skim
+      "s"  'org-mac-safari-insert-frontmost-url ;; internet
+      "f"  'org-mac-finder-insert-selected ;; finder
+      "i" 'org-store-link)
+
+     (general-define-key
+      :keymaps 'org-mode-map
+      "M-o" 'reader/goto-pdf-first-page-or-nov-toc
+      "M-n" 'reader/scroll-up
+      "M-p" 'reader/scroll-down)
+
+     (general-define-key
+      :keymaps 'nov-mode-map
+      "M-n" 'nov-scroll-up
+      "M-p" 'nov-scroll-down)
 
      (general-define-key
       :keymaps 'org-mode-map
@@ -788,12 +1010,6 @@
      (general-define-key
       :keymaps 'org-roam-mode-map
       [mouse-1] 'org-roam-visit-thing)
-   #+end_src
-** Toc-org
-   #+begin_src emacs-lisp
-     (use-package toc-org
-       :init
-       (add-hook 'org-mode-hook 'toc-org-mode))
    #+end_src
 * Ivy
   =ivy-rich= 经过几天试用，发现并不太方便，暂时关闭。
@@ -1127,189 +1343,47 @@
 * FlySpell 拼写错误检查
   在 [[https://www.emacswiki.org/emacs/FlySpell][我的Wiki： Fly Spell]] 找到了自建词典的使用方法，见 =flyspell-learn-work-at-point= 方法。该方法会将收录的新词保存在 =~/.hunspell_en_US= 文件内，我会将该文件链接到 =.emacs.d= 项目中，方便同步。
   #+begin_src emacs-lisp
-	(use-package flyspell
-	  :ensure-system-package hunspell
-	  :hook (text-mode . flyspell-mode)
-	  :hook (prog-mode . flyspell-prog-mode)
-	  :init
-	  (setenv "LANG" "en_US")
-	  (setq flyspell-issue-welcome-flag nil)
-	  :config
-	  (setq ispell-program-name (executable-find "hunspell")
-		ispell-dictionary "en_US"
-		ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)))
-	  (global-set-key (kbd "C-c s") 'flyspell-learn-word-at-point)
+    (use-package flyspell
+      :ensure-system-package hunspell
+      :hook (text-mode . flyspell-mode)
+      :hook (prog-mode . flyspell-prog-mode)
+      :init
+      (setenv "LANG" "en_US")
+      (setq flyspell-issue-welcome-flag nil)
+      :config
+      (setq ispell-program-name (executable-find "hunspell")
+	    ispell-dictionary "en_US"
+	    ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)))
+      (global-set-key (kbd "C-c s") 'flyspell-learn-word-at-point)
 
-	  (defun flyspell-learn-word-at-point ()
-	    "Takes the highlighted word at point -- nominally a misspelling -- and inserts it into the personal/private dictionary, such that it is known and recognized as a valid word in the future."
-	    (interactive)
-	    (let ((current-location (point))
-		  (word (flyspell-get-word)))
-	      (when (consp word)
-		(flyspell-do-correct
-		 'save nil
-		 (car word)
-		 current-location
-		 (cadr word)
-		 (caddr word)
-		 current-location)))))
+      (defun flyspell-learn-word-at-point ()
+	"Takes the highlighted word at point -- nominally a misspelling -- and inserts it into the personal/private dictionary, such that it is known and recognized as a valid word in the future."
+	(interactive)
+	(let ((current-location (point))
+	      (word (flyspell-get-word)))
+	  (when (consp word)
+	    (flyspell-do-correct
+	     'save nil
+	     (car word)
+	     current-location
+	     (cadr word)
+	     (caddr word)
+	     current-location)))))
 
-	(use-package flyspell-correct-ivy
-	  :after flyspell-correct)
+    (use-package flyspell-correct-ivy
+      :after flyspell-correct)
 
-	(use-package flyspell-correct
-	  :commands (flyspell-correct-wrapper)
-	  :init
-	  (setq flyspell-correct-interface 'flyspell-correct-ivy)
-	  :general
-	  (general-define-key
-	   :keymaps 'flyspell-mode-map
-	   "C-;" 'flyspell-correct-wrapper
-	   "C-," nil
-	   "C-'" 'flyspell-learn-word-at-point))
+    (use-package flyspell-correct
+      :commands (flyspell-correct-wrapper)
+      :init
+      (setq flyspell-correct-interface 'flyspell-correct-ivy)
+      :general
+      (general-define-key
+       :keymaps 'flyspell-mode-map
+       "C-;" 'flyspell-correct-wrapper
+       "C-," nil
+       "C-'" 'flyspell-learn-word-at-point))
   #+end_src
-* Ebook Reader
-** epub
-   #+begin_src emacs-lisp
-     (use-package nov
-       :defer t
-       :mode ("\\.epub\\'" . nov-mode)
-       :init
-       (setq nov-save-place-file (concat org-directory "nov-places"))
-       :config
-       (general-define-key
-	:keymaps 'nov-mode-map
-	"J" 'nov-scroll-up
-	"K" 'nov-scroll-down))
-   #+end_src
-** pdf(skim)
-   #+begin_src emacs-lisp :tangle "~/.emacs.d/skim.el"
-     ;;; Public Domain by Stian Haklev 2014
-     ;;; heavily under construction, mostly built for my own use, but
-     ;;; feel free to improve and make more general
-     ;;; I keep all my academic PDFs in the same directory, and want special
-     ;;; handling for them - eventually I'll check if the PDF is in that dir
-     ;;; and if not, I'll insert the whole path in the org-link etc.
-
-     ;;; based on https://github.com/houshuang/skim-emacs/blob/master/skim.el
-
-     (require 'org-mac-link)
-
-     (defun skim-page (&optional offset)
-       (interactive)
-       (when (not offset) (setq offset 1))
-       (do-applescript (format "
-     tell document 1 of application \"Skim\" to set a to index of current page
-     tell document 1 of application \"Skim\" to go to page (a + %d)
-     a" offset)))
-
-     (defun skim-page-absolute (offset)
-       (interactive)
-       (do-applescript (format "
-     tell document 1 of application \"Skim\" to set a to index of current page
-     tell document 1 of application \"Skim\" to go to page %d
-     a" offset)))
-
-     (defun skim-goto (page)
-       (interactive "nPDF Page: ")
-       (skim-page-absolute page))
-     ;; (defun skim-get-highlights ()
-     ;;   (interactive)
-     ;;   (insert (do-applescript "
-     ;; tell application \"Skim\"
-     ;; 	set pageNotes to notes of page 3 of document 1
-     ;; 	set out to \"\"
-     ;; 	repeat with i in pageNotes
-     ;; 		set txt to get text of i
-     ;; 		set out to out & txt & \"\n\n\"
-     ;; 	end repeat
-     ;; end tell
-     ;; out")))
-
-     (defun skim-current-page ()
-       (interactive)
-       (skim-page 0))
-
-     (defun skim-current-file ()
-       (interactive)
-       (do-applescript "tell document 1 of application \"Skim\" to set a to name
-     a"))
-
-     (defun skim-next-page ()
-       (interactive)
-       (skim-page 1))
-
-     (defun skim-prev-page ()
-       (interactive)
-       (skim-page -1))
-
-     (defun skim-kill-other-windows ()
-       (interactive)
-       (do-applescript "
-     tell application \"Skim\"
-	     set mainID to id of front window
-	     -- insert your code
-	     close (every window whose id ≠ mainID)
-     end tell"))
-
-     (defun open-link-in-skim ()
-       (interactive)
-       (let ((link (org-element-context)))
-	 (if (string-equal (org-element-property :type link) "skim")
-	     (progn
-	       (org-mac-skim-open (org-element-property :path link))
-	       (skim-kill-other-windows)
-	       (sleep-for 0 100)
-	       (do-applescript "tell application \"Emacs\" to activate"))
-	   (message "It's not a skim link !!!"))))
-
-
-     (defun skim-insert-book-link ()
-       (interactive)
-       (insert (skim-book-link)))
-
-     (defun skim-insert-page-link ()
-       (interactive)
-       (insert (skim-page-link-without-book-name)))
-
-     (defun skim-book-link ()
-       "get book link into org with page 1 and description don't contain page number"
-       (let* ((link-and-descr (as-get-skim-page-link))
-	      (split-link (split-string link-and-descr "::split::"))
-	      (link (car split-link))
-	      (description (cadr split-link))
-	      (book-link (concat (link-to-book link) "::1"))
-	      (book-name (book-name description))
-	      (org-link))
-	 (when (not (string= link ""))
-	   (setq org-link (org-link-make-string book-link book-name)))
-	 (kill-new org-link)
-	 org-link))
-
-     (defun skim-page-link-without-book-name ()
-       "only get page link with page number as description (without book name)"
-       (let* ((link-and-descr (as-get-skim-page-link))
-	      (split-link (split-string link-and-descr "::split::"))
-	      (link (car split-link))
-	      (description (cadr split-link))
-	      (page-number (concat "p." (page-number description)))
-	      (org-link))
-	 (when (not (string= link ""))
-	   (setq org-link (org-link-make-string link page-number)))
-	 (kill-new org-link)
-	 org-link))
-
-     (defun link-to-book (link)
-       (s-join "" (reverse (cdr (reverse (split-string link "::"))))))
-
-     (defun page-number (description)
-       (car (reverse (split-string description ", p\\."))))
-
-     (defun book-name (description)
-       (s-join "" (reverse (cdr (reverse (split-string description ", p\\."))))))
-
-     (provide 'skim)
-   #+end_src
 * 资源管理器
   使用默认的 dired 足矣。
   #+begin_src emacs-lisp
@@ -1333,7 +1407,7 @@
     (use-package flycheck
       :defer t
       :init
-      (add-hook 'after-init-hook 'global-flycheck-mode)
+      (add-hook 'prog-mode-hook 'flycheck-mode)
       (add-hook 'flycheck-mode-hook 'flycheck-posframe-mode))
 
     (use-package flycheck-posframe
