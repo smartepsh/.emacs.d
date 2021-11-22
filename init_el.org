@@ -135,7 +135,7 @@
 	use-package-always-ensure t
 	package-enable-at-startup nil
 	package-archives '(("melpa" . "https://melpa.org/packages/")
-			   ("org"   . "https://orgmode.org/elpa/")
+			   ("nongnu"   . "https://elpa.nongnu.org/nongnu/")
 			   ("gnu"   . "https://elpa.gnu.org/packages/")))
   ;; This is only needed once, near the top of the file
   (eval-when-compile
@@ -431,7 +431,7 @@
 	"s-t" 'eyebrowse-create-window-config))
 
      (use-package switch-window
-       :config
+       :init
        (setq switch-window-auto-resize-window t
 	     switch-window-minibuffer-shortcut ?z)
        (general-define-key
@@ -685,7 +685,7 @@
 				    rime-predicate-punctuation-after-ascii-p
 				    meow-normal-mode-p))
     :config
-    (global-set-key (kbd "C-SPC") 'rime-inline-ascii))
+    (global-set-key (kbd "s-SPC") 'rime-inline-ascii))
 #+end_src
 * Org Mode
   算是重头戏了。。。我也是菜鸟，之前使用 evil 自定义按键，其实有些功能是很少用的。这次换为 =meow= 之后，使用原生快捷键看看效果。
@@ -983,7 +983,7 @@
      (use-package org
        :ensure org-plus-contrib
        :ensure-system-package terminal-notifier
-       :pin org
+       :pin nongnu
        :defer t
        :init
        (org-babel-do-load-languages

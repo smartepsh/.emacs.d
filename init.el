@@ -71,7 +71,7 @@
       use-package-always-ensure t
       package-enable-at-startup nil
       package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("org"   . "https://orgmode.org/elpa/")
+			 ("nongnu"   . "https://elpa.nongnu.org/nongnu/")
 			 ("gnu"   . "https://elpa.gnu.org/packages/")))
 ;; This is only needed once, near the top of the file
 (eval-when-compile
@@ -306,7 +306,7 @@
    "s-t" 'eyebrowse-create-window-config))
 
 (use-package switch-window
-  :config
+  :init
   (setq switch-window-auto-resize-window t
 	switch-window-minibuffer-shortcut ?z)
   (general-define-key
@@ -348,7 +348,7 @@
 				  rime-predicate-punctuation-after-ascii-p
 				  meow-normal-mode-p))
   :config
-  (global-set-key (kbd "C-SPC") 'rime-inline-ascii))
+  (global-set-key (kbd "s-SPC") 'rime-inline-ascii))
 
 (setq base-directory  (file-truename "~/KentonBase/")
       private/book-directory (concat base-directory "publications/")
@@ -487,7 +487,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 (use-package org
   :ensure org-plus-contrib
   :ensure-system-package terminal-notifier
-  :pin org
+  :pin nongnu
   :defer t
   :init
   (org-babel-do-load-languages
