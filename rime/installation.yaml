@@ -2,6 +2,6 @@ distribution_code_name: "emacs-rime"
 distribution_name: Rime
 distribution_version: 1.0.1
 installation_id: "emacs-rime"
-rime_version: 1.7.2
+rime_version: 1.7.1
 sync_dir: "/Users/smartepsh/Qsync/rimesync"
-update_time: "Fri Nov 12 22:11:06 2021"
+update_time: "Mon Nov 22 11:53:26 2021"

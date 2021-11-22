@@ -25,10 +25,10 @@
       native-comp-async-report-warnings-errors nil)
 
 (setq private/cache-directory "~/.emacs.d/.cache/"
-      private/system-is-mac (eq system-type 'darwin)
-      private/config-directory "~/.emacs.d/"
-      private/book-directory "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/Books/")
-(add-to-list 'load-path (concat private/config-directory "helpers/"))
+	 private/system-is-mac (eq system-type 'darwin)
+	 private/config-directory "~/.emacs.d/"
+)
+   (add-to-list 'load-path (concat private/config-directory "helpers/"))
 
 (setq custom-file "~/.emacs.d/custom.el")
 (if (file-exists-p custom-file)
@@ -71,11 +71,14 @@
       use-package-always-ensure t
       package-enable-at-startup nil
       package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("org"   . "https://orgmode.org/elpa/")
-                         ("gnu"   . "https://elpa.gnu.org/packages/")))
+			 ("org"   . "https://orgmode.org/elpa/")
+			 ("gnu"   . "https://elpa.gnu.org/packages/")))
 ;; This is only needed once, near the top of the file
 (eval-when-compile
   (require 'use-package))
+
+(use-package use-package-ensure-system-package
+  :ensure t)
 
 ;; disable update during quelpa initialized
 (setq quelpa-update-melpa-p nil
@@ -97,9 +100,9 @@
 (require 'quelpa-use-package)
 (quelpa-use-package-activate-advice)
 
-(use-package benchmark-init
-  :config
-  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+;;(use-package benchmark-init
+;;  :config
+;;  (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
 (use-package package-utils
   :defer t)
@@ -318,8 +321,8 @@
   :ensure nil
   :hook (after-init . global-auto-revert-mode))
 
-(setq private/rime-directory (concat private/config-directory "rime/"))
-(setq private/offical-rime-directory "/Library/Input Methods/Squirrel.app/Contents/SharedSupport")
+(setq private/rime-directory (concat private/config-directory "rime/")
+      rime-emacs-module-header-root (concat private/config-directory "helpers/"))
 
 (use-package cnfonts
   :defer t
@@ -347,7 +350,20 @@
   :config
   (global-set-key (kbd "C-SPC") 'rime-inline-ascii))
 
-(setq org-directory  (file-truename "~/kenton-base/"))
+(setq base-directory  (file-truename "~/KentonBase/")
+      private/book-directory (concat base-directory "publications/")
+      org-directory (concat base-directory "orgs/"))
+
+(use-package org-capture
+  :after org
+  :ensure org-plus-contrib)
+
+(use-package org-mac-link
+  :defer t
+  :ensure org-plus-contrib
+  :commands (org-mac-skim-insert-page
+	     org-mac-safari-insert-frontmost-url
+	     org-mac-finder-insert-selected))
 
 (use-package nov
   :defer t
@@ -383,7 +399,7 @@
 	  (select-window nov-window)
 	  (nov-scroll-down arg)
 	  (select-window current-window))
-      (skim-previous-page))))
+      (skim-prev-page))))
 
 (defun reader/goto-pdf-first-page-or-nov-toc ()
   (interactive)
@@ -466,9 +482,11 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
               "-mesage" message
               "-activate" "org.gnu.Emacs"))
 
+(use-package ob-elixir :after org)
+
 (use-package org
   :ensure org-plus-contrib
-  ;; :ensure-system-package terminal-notifier
+  :ensure-system-package terminal-notifier
   :pin org
   :defer t
   :init
@@ -484,6 +502,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 ;;; auto display inline images on Org TAB cycle expand headlines.
   ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
   (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
+  (add-to-list 'org-export-backends 'md)
   (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
 	;; org-default-notes-file org-agenda-file
 	org-archive-location (concat org-directory "Archived/" "%s_archive::")
@@ -503,6 +522,51 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 			       (org-refile-cache-clear)
 			       ;; (org-refile-get-targets)
 			       (org-roam-db-sync))))
+
+(setq publication-bib (concat base-directory "publication_catelog.bib")
+      collections-bib (concat base-directory "collections.bib"))
+
+(use-package ivy-bibtex
+  :defer t
+  :init
+  (setq bibtex-completion-bibliography `(,publication-bib)
+	bibtex-completion-pdf-field "file"
+	bibtex-completion-notes-path org-directory
+	bibtex-completion-library-path (concat base-directory "collections/")
+	bibtex-completion-display-formats '((article . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${journal:40}")
+					    (inbook . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} Chapter ${chapter:32}")
+					    (incollection . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${booktitle:40}")
+					    (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${booktitle:40}")
+					    (t . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*}"))
+	bibtex-completion-pdf-extension '(".pdf" ".djvu")))
+(use-package org-ref
+  :after org
+  :init
+  (setq reftex-default-bibliography `(,publication-bib ,collections-bib)
+	;;org-ref-bibliography-notes (concat org-directory "ref-notes.org")
+	org-ref-default-bibliography `(,publication-bib ,collections-bib)
+	;;org-ref-pdf-directory private/book-directory
+	calibredb-ref-default-bibliography publication-bib
+	org-ref-get-pdf-filename-function 'org-ref-get-mendeley-filename)
+  (require 'bibtex)
+
+  (setq bibtex-autokey-year-length 4
+	bibtex-autokey-name-year-separator "-"
+	bibtex-autokey-year-title-separator "-"
+	bibtex-autokey-titleword-separator "-"
+	bibtex-autokey-titlewords 2
+	bibtex-autokey-titlewords-stretch 1
+	bibtex-autokey-titleword-length 5
+	org-ref-bibtex-hydra-key-binding (kbd "H-b"))
+
+  (require 'org-ref-ivy)
+
+  (setq org-ref-insert-link-function 'org-ref-insert-link-hydra/body
+	org-ref-insert-cite-function 'org-ref-cite-insert-ivy
+	org-ref-insert-label-function 'org-ref-insert-label-link
+	org-ref-insert-ref-function 'org-ref-insert-ref-link
+	org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body))))
+;; org-ref-completion-library 'org-ref-ivy-cite-completion))
 
 (defun org-refresh-agenda-files ()
   (interactive)
@@ -557,16 +621,8 @@ ${tags:20}")
        title))
     ))
 
-(use-package org-capture
-  :after org
-  :ensure org-plus-contrib)
-
-(use-package org-mac-link
-  :defer t
-  :ensure org-plus-contrib
-  :commands (org-mac-skim-insert-page
-	     org-mac-safari-insert-frontmost-url
-	     org-mac-finder-insert-selected))
+(use-package org-roam-bibtex
+  :after org-roam)
 
 (use-package org-clock
   :after org
@@ -574,8 +630,6 @@ ${tags:20}")
   :config
   (setq org-clock-clocked-in-display nil
 	org-clock-mode-line-total 'current))
-
-(use-package ob-elixir :after org)
 
 (use-package org-protocol
 :after org
@@ -609,7 +663,8 @@ ${tags:20}")
  "C-c C-r" nil
  "C-c r" 'org-reveal
  "C-s-4" 'org-download-screenshot
- "H-v" 'org-media-note-hydra/body)
+ "H-v" 'org-media-note-hydra/body
+ "C-c ]" 'org-ref-insert-link)
 
 (general-define-key
  :prefix "C-c C-r"
@@ -653,6 +708,10 @@ ${tags:20}")
  "d a" 'org-roam-alias-remove
  "d r" 'org-roam-ref-remove
  "d t" 'org-roam-tag-remove)
+(general-define-key
+ :keymaps 'bibtex-mode-map
+ "H-b" 'org-ref-bibtex-hydra/body)
+
 
 (general-define-key
  :keymaps 'org-roam-mode-map
@@ -752,7 +811,7 @@ ${tags:20}")
 (use-package embrace
   :defer t
   :commands (embrace-add embrace-delete embrace-change embrace-commander)
-  :config
+  :init
   (meow-leader-define-key
    '("sc" . embrace-change)
    '("sd" . embrace-delete)
@@ -960,6 +1019,6 @@ ${tags:20}")
 (use-package evil-nerd-commenter
   :defer t
   :commands (evilnc-comment-or-uncomment-lines)
-  :config
+  :init
   (general-define-key
    "C-M-c" 'evilnc-comment-or-uncomment-lines))
