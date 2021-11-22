@@ -1179,7 +1179,7 @@
     (use-package embrace
       :defer t
       :commands (embrace-add embrace-delete embrace-change embrace-commander)
-      :config
+      :init
       (meow-leader-define-key
        '("sc" . embrace-change)
        '("sd" . embrace-delete)
@@ -1419,7 +1419,7 @@
     (use-package evil-nerd-commenter
       :defer t
       :commands (evilnc-comment-or-uncomment-lines)
-      :config
+      :init
       (general-define-key
        "C-M-c" 'evilnc-comment-or-uncomment-lines))
   #+end_src
