@@ -19,10 +19,9 @@ transient/
 bms
 .lsp-session*
 /pyim/dcache/
-!/rime/default.custom.yaml
-!/rime/liberime.so
-/rime
 /cnfonts
 /magithub
 /tramp
 eln-cache/
+rime/
+!rime/*.yaml
