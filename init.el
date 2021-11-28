@@ -347,8 +347,10 @@
 				  rime-predicate-prog-in-code-p
 				  rime-predicate-punctuation-after-ascii-p
 				  meow-normal-mode-p))
-  :config
-  (global-set-key (kbd "s-SPC") 'rime-inline-ascii))
+  (global-set-key (kbd "s-SPC") 'toggle-input-method)
+  (general-define-key
+   :keymaps 'rime-active-mode-map
+   "M-j" 'rime-inline-ascii))
 
 (setq base-directory  (file-truename "~/KentonBase/")
       private/book-directory (concat base-directory "publications/")
@@ -516,7 +518,8 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 	org-refile-use-cache t
 	org-startup-truncated nil
 	org-confirm-babel-evaluate nil
-	org-M-RET-may-split-line '((headline . nil) (item . nil) (default . t)))
+	org-M-RET-may-split-line '((headline . nil) (item . nil) (default . t))
+	org-html-validation-link nil)
   ;; refresh cache when emacs idle 5 mins
   (run-with-idle-timer 300 t (lambda ()
 			       (org-refile-cache-clear)
