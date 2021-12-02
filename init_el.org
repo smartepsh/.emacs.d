@@ -1483,23 +1483,38 @@
             avy-background t))
   #+end_src
 * Projectile
-  #+begin_src emacs-lisp
-    (use-package projectile
-      :init
-      (add-hook 'after-init-hook 'projectile-mode)
-      (setq project-cache-file "~/.emacs.d/projectile.cache"
-	    project-know-projects-file "~/.emacs.d/projectile-bookmarks.eld"
-	    projectile-project-search-path '("~/kenton/")
-	    projectile-completion-system 'ivy)
-      :config
-      (projectile-discover-projects-in-search-path))
-    (use-package counsel-projectile
-      :init
-      (add-hook 'after-init-hook 'counsel-projectile-mode)
-      (meow-leader-define-key
-       '("pf" . counsel-projectile-find-file)
-       '("pl" . counsel-projectile-switch-project)))
-  #+end_src
+默认 projectile 是对大小写敏感的，但 MacOS 默认并不敏感，所以可能会出现 projectile 里有两条一个大写一个小写的两条记录指向同一个项目，好难受。。。从 github 发现一个方法可以清理一下，注意，需要先 clear 所有记录才可以。
+#+begin_src emacs-lisp
+  (defun projectile-relevant-known-projects ()
+    "Return a list of known projects except the current one (if present)."
+    (if (projectile-project-p)
+
+	(->> projectile-known-projects
+	     (--reduce-from
+	      (if (-contains? (-map 's-downcase acc) (s-downcase it)) acc (cons it acc))
+	      (list (abbreviate-file-name (projectile-project-root))))
+	     (-sort 'string-lessp))
+
+      projectile-known-projects))
+
+  (use-package projectile
+    :init
+    (add-hook 'after-init-hook 'projectile-mode)
+    (setq project-cache-file "~/.emacs.d/projectile.cache"
+	  project-know-projects-file "~/.emacs.d/projectile-bookmarks.eld"
+	  projectile-project-search-path '("~/Kenton/")
+	  projectile-completion-system 'ivy)
+    :config
+    (projectile-discover-projects-in-search-path)
+    (projectile-relevant-known-projects))
+
+  (use-package counsel-projectile
+    :init
+    (add-hook 'after-init-hook 'counsel-projectile-mode)
+    (meow-leader-define-key
+     '("pf" . counsel-projectile-find-file)
+     '("pl" . counsel-projectile-switch-project)))
+#+end_src
 * Magit
   #+begin_src emacs-lisp
 	    (use-package magit

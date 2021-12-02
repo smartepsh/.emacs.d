@@ -854,15 +854,29 @@ ${tags:20}")
   (setq avy-all-windows nil
         avy-background t))
 
+(defun projectile-relevant-known-projects ()
+  "Return a list of known projects except the current one (if present)."
+  (if (projectile-project-p)
+
+      (->> projectile-known-projects
+	   (--reduce-from
+	    (if (-contains? (-map 's-downcase acc) (s-downcase it)) acc (cons it acc))
+	    (list (abbreviate-file-name (projectile-project-root))))
+	   (-sort 'string-lessp))
+
+    projectile-known-projects))
+
 (use-package projectile
   :init
   (add-hook 'after-init-hook 'projectile-mode)
   (setq project-cache-file "~/.emacs.d/projectile.cache"
 	project-know-projects-file "~/.emacs.d/projectile-bookmarks.eld"
-	projectile-project-search-path '("~/kenton/")
+	projectile-project-search-path '("~/Kenton/")
 	projectile-completion-system 'ivy)
   :config
-  (projectile-discover-projects-in-search-path))
+  (projectile-discover-projects-in-search-path)
+  (projectile-relevant-known-projects))
+
 (use-package counsel-projectile
   :init
   (add-hook 'after-init-hook 'counsel-projectile-mode)
