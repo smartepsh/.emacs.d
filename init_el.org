@@ -345,13 +345,18 @@
 
    #+end_src
 ** theme
-   #+begin_src emacs-lisp
-     (use-package doom-themes
-       :init
-       (setq doom-themes-enable-bold t
-	     doom-themes-enable-italic t)
-       (load-theme 'doom-one t))
-   #+end_src
+#+begin_src emacs-lisp
+  (use-package doom-themes
+    :init
+    (setq doom-themes-enable-bold t
+	  doom-themes-enable-italic t)
+    (defun load-doom-theme (frame)
+      (select-frame frame)
+      (load-theme 'doom-one t))
+    (if (daemonp)
+	(add-hook 'after-make-frame-functions 'load-doom-theme)
+      (load-theme 'doom-one t)))
+#+end_src
 
 ** 关闭滚动条和工具条
    #+begin_src emacs-lisp
