@@ -265,7 +265,12 @@
   :init
   (setq doom-themes-enable-bold t
 	doom-themes-enable-italic t)
-  (load-theme 'doom-one t))
+  (defun load-doom-theme (frame)
+    (select-frame frame)
+    (load-theme 'doom-one t))
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions 'load-doom-theme)
+    (load-theme 'doom-one t)))
 
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
