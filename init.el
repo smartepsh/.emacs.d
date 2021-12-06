@@ -244,22 +244,30 @@
   :defer t
   :commands (command-log-mode))
 
-(use-package doom-modeline
-  :init
-  (add-hook 'after-init-hook (lambda ()
-			       (doom-modeline-mode)
-			       (column-number-mode)
-			       (doom-modeline-def-modeline 'my-line
-				 '(bar workspace-name modals buffer-info buffer-position)
-				 '(input-method checker major-mode parrot lsp))
-			       (defun setup-custom-doom-modeline ()
-				 (interactive)
-				 (doom-modeline-set-modeline 'my-line 'default))
-			       (setup-custom-doom-modeline)))
-  :config
-  (setq doom-modeline-buffer-modification-icon nil
-	doom-modeline-buffer-state-icon nil
-	doom-modeline-buffer-file-name-style 'file-name))
+(defun my-doom-modeline--font-height ()
+  "Calculate the actual char height of the mode-line."
+  (+ (frame-char-height) 2))
+
+  (use-package doom-modeline
+    :init
+    (add-hook 'after-init-hook (lambda ()
+				 (doom-modeline-mode)
+				 (column-number-mode)
+				 (doom-modeline-def-modeline 'my-line
+				   '(bar workspace-name modals buffer-info buffer-position)
+				   '(input-method checker major-mode parrot lsp))
+				 (defun setup-custom-doom-modeline ()
+				   (interactive)
+				   (doom-modeline-set-modeline 'my-line 'default))
+				 (setup-custom-doom-modeline)))
+    :config
+
+(advice-add 'doom-modeline--font-height :override 'my-doom-modeline--font-height)
+(set-face-attribute 'mode-line nil :height 100)
+     (set-face-attribute 'mode-line-inactive nil :height 100)
+    (setq doom-modeline-buffer-modification-icon nil
+	  doom-modeline-buffer-state-icon nil
+	  doom-modeline-buffer-file-name-style 'file-name))
 
 (use-package doom-themes
   :init
@@ -330,15 +338,17 @@
       rime-emacs-module-header-root (concat private/config-directory "helpers/"))
 
 (use-package cnfonts
-  :defer t
+  :ensure t
+  :after all-the-icons
   :init
+  (add-hook 'cnfonts-set-font-finish-hook '(lambda (fontsizes-list)
+					     (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)))
   (add-hook 'after-init-hook 'cnfonts-enable)
   (setq cnfonts-use-face-font-rescale t)
   :config
   (general-define-key
    "s-=" 'cnfonts-increase-fontsize
    "s--" 'cnfonts-decrease-fontsize))
-
 (use-package rime
   :defer t
   :custom
@@ -492,9 +502,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 (use-package ob-elixir :after org)
 
 (use-package org
-  :ensure org-plus-contrib
   :ensure-system-package terminal-notifier
-  :pin nongnu
   :defer t
   :init
   (org-babel-do-load-languages
