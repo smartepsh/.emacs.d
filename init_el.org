@@ -325,25 +325,32 @@
 
 * 外观
 ** modeline
-   #+begin_src emacs-lisp
-     (use-package doom-modeline
-       :init
-       (add-hook 'after-init-hook (lambda ()
-				    (doom-modeline-mode)
-				    (column-number-mode)
-				    (doom-modeline-def-modeline 'my-line
-				      '(bar workspace-name modals buffer-info buffer-position)
-				      '(input-method checker major-mode parrot lsp))
-				    (defun setup-custom-doom-modeline ()
-				      (interactive)
-				      (doom-modeline-set-modeline 'my-line 'default))
-				    (setup-custom-doom-modeline)))
-       :config
-       (setq doom-modeline-buffer-modification-icon nil
-	     doom-modeline-buffer-state-icon nil
-	     doom-modeline-buffer-file-name-style 'file-name))
+#+begin_src emacs-lisp
+  (defun my-doom-modeline--font-height ()
+  "Calculate the actual char height of the mode-line."
+  (+ (frame-char-height) 2))
 
-   #+end_src
+  (use-package doom-modeline
+    :init
+    (add-hook 'after-init-hook (lambda ()
+				 (doom-modeline-mode)
+				 (column-number-mode)
+				 (doom-modeline-def-modeline 'my-line
+				   '(bar workspace-name modals buffer-info buffer-position)
+				   '(input-method checker major-mode parrot lsp))
+				 (defun setup-custom-doom-modeline ()
+				   (interactive)
+				   (doom-modeline-set-modeline 'my-line 'default))
+				 (setup-custom-doom-modeline)))
+    :config
+
+(advice-add 'doom-modeline--font-height :override 'my-doom-modeline--font-height)
+(set-face-attribute 'mode-line nil :height 100)
+     (set-face-attribute 'mode-line-inactive nil :height 100)
+    (setq doom-modeline-buffer-modification-icon nil
+	  doom-modeline-buffer-state-icon nil
+	  doom-modeline-buffer-file-name-style 'file-name))
+#+end_src
 ** theme
 #+begin_src emacs-lisp
   (use-package doom-themes
@@ -667,15 +674,17 @@
 	rime-emacs-module-header-root (concat private/config-directory "helpers/"))
 
   (use-package cnfonts
-    :defer t
+    :ensure t
+    :after all-the-icons
     :init
+    (add-hook 'cnfonts-set-font-finish-hook '(lambda (fontsizes-list)
+					       (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)))
     (add-hook 'after-init-hook 'cnfonts-enable)
     (setq cnfonts-use-face-font-rescale t)
     :config
     (general-define-key
      "s-=" 'cnfonts-increase-fontsize
      "s--" 'cnfonts-decrease-fontsize))
-
   (use-package rime
     :defer t
     :custom
@@ -986,47 +995,45 @@
       (use-package ob-elixir :after org)
     #+end_src
 ** 本体
-   #+begin_src emacs-lisp
-	  (use-package org
-	    :ensure org-plus-contrib
-	    :ensure-system-package terminal-notifier
-	    :pin nongnu
-	    :defer t
-	    :init
-	    (org-babel-do-load-languages
-	     'org-babel-load-languages
-	     '((emacs-lisp . t)
-	       (elixir . t)
-	       (org . t)
-	       (haskell . t)
-	       (lisp . t)))
-	    ;;(R . t)))
-	    :config
-	  ;;; auto display inline images on Org TAB cycle expand headlines.
-	    ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
-	    (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
-	    (add-to-list 'org-export-backends 'md)
-	    (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
-		  ;; org-default-notes-file org-agenda-file
-		  org-archive-location (concat org-directory "Archived/" "%s_archive::")
-		  org-id-locations-file (concat org-directory ".org-id-locations")
-		  org-log-done nil
-		  ;; (nconc org-modules '(org-id))
-		  ;; org-refile-targets '((org-agenda-files :maxlevel . 2))
-		  org-refile-use-outline-path 'file
-		  org-outline-path-complete-in-steps nil
-		  org-refile-allow-creating-parent-nodes 'confirm
-		  org-refile-use-cache t
-		  org-startup-truncated nil
-		  org-confirm-babel-evaluate nil
-		  org-M-RET-may-split-line '((headline . nil) (item . nil) (default . t))
-		  org-html-validation-link nil)
-	    ;; refresh cache when emacs idle 5 mins
-	    (run-with-idle-timer 300 t (lambda ()
-					 (org-refile-cache-clear)
-					 ;; (org-refile-get-targets)
-					 (org-roam-db-sync))))
-   #+end_src
+#+begin_src emacs-lisp
+  (use-package org
+    :ensure-system-package terminal-notifier
+    :defer t
+    :init
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t)
+       (elixir . t)
+       (org . t)
+       (haskell . t)
+       (lisp . t)))
+    ;;(R . t)))
+    :config
+  ;;; auto display inline images on Org TAB cycle expand headlines.
+    ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
+    (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
+    (add-to-list 'org-export-backends 'md)
+    (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
+	  ;; org-default-notes-file org-agenda-file
+	  org-archive-location (concat org-directory "Archived/" "%s_archive::")
+	  org-id-locations-file (concat org-directory ".org-id-locations")
+	  org-log-done nil
+	  ;; (nconc org-modules '(org-id))
+	  ;; org-refile-targets '((org-agenda-files :maxlevel . 2))
+	  org-refile-use-outline-path 'file
+	  org-outline-path-complete-in-steps nil
+	  org-refile-allow-creating-parent-nodes 'confirm
+	  org-refile-use-cache t
+	  org-startup-truncated nil
+	  org-confirm-babel-evaluate nil
+	  org-M-RET-may-split-line '((headline . nil) (item . nil) (default . t))
+	  org-html-validation-link nil)
+    ;; refresh cache when emacs idle 5 mins
+    (run-with-idle-timer 300 t (lambda ()
+				 (org-refile-cache-clear)
+				 ;; (org-refile-get-targets)
+				 (org-roam-db-sync))))
+#+end_src
 ** 美观
    有时候反而觉得原始状态挺好看。。。而且这个插件极度影响性能。。。所以先禁止掉。
    #+begin_src emacs-lisp :tangle no
