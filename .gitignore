@@ -25,3 +25,4 @@ bms
 eln-cache/
 rime/
 !rime/*.yaml
+.DS_Store
