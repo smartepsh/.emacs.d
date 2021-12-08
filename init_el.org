@@ -178,127 +178,130 @@
       (exec-path-from-shell-initialize))
   #+end_src
 * 输入方案
-  #+begin_src emacs-lisp
-    (defun meow-setup ()
-      (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+#+begin_src emacs-lisp
+  (defun meow-setup ()
+    (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+    (meow-motion-overwrite-define-key
+     '("j" . meow-next)
+     '("k" . meow-prev))
+    (meow-leader-define-key
+     ;; SPC j/k will run the original command in MOTION state.
+     '("j" . "H-j")
+     '("k" . "H-k")
+     ;; Use SPC (0-9) for digit arguments.
+     '("1" . meow-digit-argument)
+     '("2" . meow-digit-argument)
+     '("3" . meow-digit-argument)
+     '("4" . meow-digit-argument)
+     '("5" . meow-digit-argument)
+     '("6" . meow-digit-argument)
+     '("7" . meow-digit-argument)
+     '("8" . meow-digit-argument)
+     '("9" . meow-digit-argument)
+     '("0" . meow-digit-argument)
+     ;; '("/" . meow-keypad-describe-key)
+     '("?" . meow-cheatsheet))
+    (meow-normal-define-key
+     '("0" . meow-expand-0)
+     '("9" . meow-expand-9)
+     '("8" . meow-expand-8)
+     '("7" . meow-expand-7)
+     '("6" . meow-expand-6)
+     '("5" . meow-expand-5)
+     '("4" . meow-expand-4)
+     '("3" . meow-expand-3)
+     '("2" . meow-expand-2)
+     '("1" . meow-expand-1)
+     '("-" . negative-argument)
+     '(";" . meow-reverse)
+     '("," . meow-inner-of-thing)
+     '("." . meow-bounds-of-thing)
+     '("[" . meow-beginning-of-thing)
+     '("]" . meow-end-of-thing)
+     '("a" . meow-append)
+     '("A" . meow-open-below)
+     '("b" . meow-back-word)
+     '("B" . meow-back-symbol)
+     '("c" . meow-change)
+     '("d" . meow-delete)
+     '("D" . meow-backward-delete)
+     '("e" . meow-next-word)
+     '("E" . meow-next-symbol)
+     '("f" . meow-find)
+     '("G" . meow-grab)
+     '("h" . meow-left)
+     '("H" . meow-left-expand)
+     '("i" . meow-insert)
+     '("I" . meow-open-above)
+     '("j" . meow-next)
+     '("J" . meow-next-expand)
+     '("k" . meow-prev)
+     '("K" . meow-prev-expand)
+     '("l" . meow-right)
+     '("L" . meow-right-expand)
+     '("m" . meow-join)
+     '("n" . meow-search)
+     '("o" . meow-block)
+     '("O" . meow-to-block)
+     '("p" . meow-yank)
+     '("q" . meow-quit)
+     '("Q" . meow-goto-line)
+     '("r" . meow-replace)
+     '("R" . meow-swap-grab)
+     '("s" . meow-kill)
+     '("t" . meow-till)
+     '("u" . meow-undo)
+     '("U" . meow-undo-in-selection)
+     '("v" . meow-visit)
+     '("w" . meow-mark-word)
+     '("W" . meow-mark-symbol)
+     '("x" . meow-line)
+     '("y" . meow-save)
+     '("Y" . meow-sync-grab)
+     '("z" . meow-pop-selection)
+     '("<escape>" . meow-cancel-selection)
+     '("g" . mode-line-other-buffer)
+     ;; customize
+     '("P" . meow-yank-pop)
+     '("}" . scroll-up)
+     '("{" . scroll-down)
+     '(":" . meow-goto-line)
+     '("C-r" . undo-redo)
+     '("'" . meow-start-kmacro-or-insert-counter)
+     '("%" . meow-query-replace-regexp)
+     '("\"" . meow-end-or-call-kmacro)))
+  ;; '("C" . meow--save)
+  ;; '("F" . meow-find-expand)
+  ;; '("N" . meow-pop-search)
+  ;; '("T" . meow-till-expand)
+  ;; '("V" . meow-kmacro-psave)
+  ;; '("X" . meow-kmacro-lines)
+  ;; '("Z" . meow-pop-all-selection)
+  ;; '("&" . meow-query-replace)
+  ;; '("'" . repeat)
+  ;; '("\\" . quotesaved-insert)
+  ;; '("g" . meow-last-savesave)
+  ;; '("S" . meow-repaaaaaaaaaaaaaaaaceaaaa-save)))
 
-      (meow-motion-overwrite-define-key
-       '("j" . meow-next)
-       '("k" . meow-prev))
-      (meow-leader-define-key
-       ;; SPC j/k will run the original command in MOTION sitch-tate.
-       '("j" . meow-motion-origin-command)
-       '("k" . meow-motion-origin-command)
-       ;; Use SPC (0-9) for digit arguments.
-       '("1" . meow-digit-argument)
-       '("2" . meow-digit-argument)
-       '("3" . meow-digit-argument)
-       '("4" . meow-digit-argument)
-       '("5" . meow-digit-argument)
-       '("6" . meow-digit-argument)
-       '("7" . meow-digit-argument)
-       '("8" . meow-digit-argument)
-       '("9" . meow-digit-argument)
-       '("0" . meow-digit-argument)
-       '("/" . meow-keypad-describe-key)
-       '("?" . meow-cheatsheet))
-      (meow-normal-define-key
-       '("0" . meow-expand-0)
-       '("9" . meow-expand-9)
-       '("8" . meow-expand-8)
-       '("7" . meow-expand-7)
-       '("6" . meow-expand-6)
-       '("5" . meow-expand-5)
-       '("4" . meow-expand-4)
-       '("3" . meow-expand-3)
-       '("2" . meow-expand-2)
-       '("1" . meow-expand-1)
-       '("-" . negative-argument)
-       '(";" . meow-reverse)
-       '("," . meow-inner-of-thing)
-       '("." . meow-bounds-of-thing)
-       '("[" . meow-beginning-of-thing)
-       '("]" . meow-end-of-thing)
-       '("a" . meow-append)
-       '("A" . meow-open-below)
-       '("b" . meow-back-word)
-       '("B" . meow-back-symbol)
-       '("c" . meow-change)
-       '("C" . meow-change-save)
-       '("d" . meow-C-d)
-       '("D" . meow-backward-delete)
-       '("e" . meow-next-word)
-       '("E" . meow-next-symbol)
-       '("f" . meow-find)
-       '("F" . meow-find-expand)
-       '("<escape>" . meow-cancel)
-       '("G" . meow-grab)
-       '("h" . meow-left)
-       '("H" . meow-left-expand)
-       '("i" . meow-insert)
-       '("I" . meow-open-above)
-       '("j" . meow-next)
-       '("J" . meow-next-expand)
-       '("k" . meow-prev)
-       '("K" . meow-prev-expand)
-       '("l" . meow-right)
-       '("L" . meow-right-expand)
-       '("m" . meow-join)
-       '("n" . meow-search)
-       '("N" . meow-pop-search)
-       '("o" . meow-block)
-       '("O" . meow-block-expand)
-       '("p" . meow-yank)
-       '("P" . meow-yank-pop)
-       '("q" . meow-quit)
-       '(":" . meow-goto-line)
-       '("r" . meow-replace)
-       '("R" . meow-swap-grab)
-       '("s" . meow-kill)
-       '("t" . meow-till)
-       '("T" . meow-till-expand)
-       '("u" . meow-undo)
-       '("U" . meow-undo-in-selection)
-       '("v" . meow-visit)
-       '("V" . meow-kmacro-matches)
-       '("w" . meow-mark-word)
-       '("W" . meow-mark-symbol)
-       '("x" . meow-line)
-       '("X" . meow-kmacro-lines)
-       '("y" . meow-save)
-       '("Y" . meow-sync-grab)
-       '("z" . meow-pop-selection)
-       '("Z" . meow-pop-all-selection)
-       '("&" . meow-query-replace)
-       '("%" . meow-query-replace-regexp)
-       '("'" . repeat)
-       '("\\" . quoted-insert)
-       '("g" . meow-last-buffer)
-       ;; customize
-       '(">" . scroll-up)
-       '("<" . scroll-down)
-       '("C-r" . undo-redo)
-       '("S" . meow-replace-save)))
-
-    (use-package meow
-      :demand t
-      :init
-      (setq meow-use-cursor-position-hack t
-	    meow-use-enhanced-selection-effect t)
-      (meow-global-mode t)
-      :config
-      (meow-setup)
-      (add-to-list 'meow-mode-state-list '(sly-mrepl-mode . normal))
-      (setq meow-expand-exclude-mode-list '()
-	    meow-selection-command-fallback
-	    '((meow-replace . meow-replace-char)
-	      (meow-change . meow-change-char)
-	      (meow-save . meow-save-char)
-	      (meow-kill . meow-C-k)
-	      (meow-delete . meow-C-d)
-	      (meow-cancel-selection . meow-keyboard-quit)
-	      (meow-pop-selection . meow-pop-grab))))
-  #+end_src
+  (use-package meow
+    :demand t
+    :init
+    (setq meow-use-cursor-position-hack t
+	  meow-use-enhanced-selection-effect t)
+    (meow-global-mode t)
+    :config
+    (meow-setup)
+    (add-to-list 'meow-mode-state-list '(sly-mrepl-mode . normal))
+    (setq meow-expand-exclude-mode-list '()
+	  meow-selection-command-fallback
+	  '((meow-change . meow-change-char)
+	    (meow-replace . meow-replace-char)
+	    (meow-save . meow-save-char)
+	    (meow-kill . meow-C-k)
+	    (meow-cancel-selection . meow-keyboard-quit)
+	    (meow-pop-selection . meow-pop-grab)
+	    (meow-beacon-change . meow-beacon-change-char))))
+#+end_src
 * 按键管理
 ** 绑定
   meow 提供了一些全局的绑定方法，但基本均基于 normal state 或者 leader key ，无法根据 keymap 设置按键，故引入 general 。
@@ -1205,82 +1208,87 @@
        (setq-default org-download-image-dir (concat org-directory "images/")))
    #+end_src
 ** Toc-org
-   #+begin_src emacs-lisp
-     (use-package toc-org
-       :init
-       (add-hook 'org-mode-hook 'toc-org-mode))
-   #+end_src
+#+begin_src emacs-lisp
+  (use-package toc-org
+    :init
+    (add-hook 'org-mode-hook 'toc-org-mode))
+#+end_src
+** ox-hugo
+#+begin_src emacs-lisp
+  (use-package ox-hugo
+    :after ox)
+#+end_src
 ** Org-media-note
-   #+begin_src emacs-lisp
-     (use-package org-media-note
-       :hook (org-mode .  org-media-note-mode)
-       :quelpa (org-media-note :fetcher github :repo "yuchen-lea/org-media-note" :branch "master")
-       :config
-       (require 'org-attach)
-       (setq org-media-note-screenshot-image-dir (concat org-directory "images/org-media/")))
-   #+end_src
+#+begin_src emacs-lisp
+  (use-package org-media-note
+    :hook (org-mode .  org-media-note-mode)
+    :quelpa (org-media-note :fetcher github :repo "yuchen-lea/org-media-note" :branch "master")
+    :config
+    (require 'org-attach)
+    (setq org-media-note-screenshot-image-dir (concat org-directory "images/org-media/")))
+#+end_src
 ** KeyBindings
    整体规划 org-mode 的按键。涉及到默认按键更改、全局按键、org-mode 按键。
-   #+begin_src emacs-lisp
-     (general-define-key
-      :keymaps 'org-mode-map
-      "C-c C-r" nil
-      "C-c r" 'org-reveal
-      "C-s-4" 'org-download-screenshot
-      "H-v" 'org-media-note-hydra/body
-      "C-c ]" 'org-ref-insert-link)
+#+begin_src emacs-lisp
+  (general-define-key
+   :keymaps 'org-mode-map
+   "C-c C-r" nil
+   "C-c r" 'org-reveal
+   "C-s-4" 'org-download-screenshot
+   "H-v" 'org-media-note-hydra/body
+   "C-c ]" 'org-ref-insert-link)
 
-     (general-define-key
-      :prefix "C-c C-r"
-      "C-d" '(:ignore t :which-key "org-dailies")
-      "C-d t" 'org-roam-dailies-goto-today
-      "C-d d" 'org-roam-dailies-goto-date
-      "C-d p" 'org-roam-dailies-goto-previous-note
-      "C-d n" 'org-roam-dailies-goto-next-note
-      "f" 'org-roam-node-find)
+  (general-define-key
+   :prefix "C-c C-r"
+   "C-d" '(:ignore t :which-key "org-dailies")
+   "C-d t" 'org-roam-dailies-goto-today
+   "C-d d" 'org-roam-dailies-goto-date
+   "C-d p" 'org-roam-dailies-goto-previous-note
+   "C-d n" 'org-roam-dailies-goto-next-note
+   "f" 'org-roam-node-find)
 
-     (general-define-key
-      :prefix "H-i"
-      :keymaps 'org-mode-map
-      "r" 'org-mac-skim-insert-page ;; skim
-      "s"  'org-mac-safari-insert-frontmost-url ;; internet
-      "f"  'org-mac-finder-insert-selected ;; finder
-      "i" 'org-store-link)
+  (general-define-key
+   :prefix "H-i"
+   :keymaps 'org-mode-map
+   "r" 'org-mac-skim-insert-page ;; skim
+   "s"  'org-mac-safari-insert-frontmost-url ;; internet
+   "f"  'org-mac-finder-insert-selected ;; finder
+   "i" 'org-store-link)
 
-     (general-define-key
-      :keymaps 'org-mode-map
-      "M-o" 'reader/goto-pdf-first-page-or-nov-toc
-      "M-n" 'reader/scroll-up
-      "M-p" 'reader/scroll-down)
+  (general-define-key
+   :keymaps 'org-mode-map
+   "M-o" 'reader/goto-pdf-first-page-or-nov-toc
+   "M-n" 'reader/scroll-up
+   "M-p" 'reader/scroll-down)
 
-     (general-define-key
-      :keymaps 'nov-mode-map
-      "M-n" 'nov-scroll-up
-      "M-p" 'nov-scroll-down)
+  (general-define-key
+   :keymaps 'nov-mode-map
+   "M-n" 'nov-scroll-up
+   "M-p" 'nov-scroll-down)
 
-     (general-define-key
-      :keymaps 'org-mode-map
-      :prefix "C-c C-r"
-      "r" 'org-roam-buffer-toggle
-      "C-i" 'org-roam-node-insert
-      "g" 'org-roam-graph
-      "i" '(:ignore t :which-key "add property")
-      "i a" 'org-roam-alias-add
-      "i r" 'org-roam-ref-add
-      "i t" 'org-roam-tag-add
-      "d" '(:ignore t :which-key "remove property")
-      "d a" 'org-roam-alias-remove
-      "d r" 'org-roam-ref-remove
-      "d t" 'org-roam-tag-remove)
-     (general-define-key
-      :keymaps 'bibtex-mode-map
-      "H-b" 'org-ref-bibtex-hydra/body)
+  (general-define-key
+   :keymaps 'org-mode-map
+   :prefix "C-c C-r"
+   "r" 'org-roam-buffer-toggle
+   "C-i" 'org-roam-node-insert
+   "g" 'org-roam-graph
+   "i" '(:ignore t :which-key "add property")
+   "i a" 'org-roam-alias-add
+   "i r" 'org-roam-ref-add
+   "i t" 'org-roam-tag-add
+   "d" '(:ignore t :which-key "remove property")
+   "d a" 'org-roam-alias-remove
+   "d r" 'org-roam-ref-remove
+   "d t" 'org-roam-tag-remove)
+  (general-define-key
+   :keymaps 'bibtex-mode-map
+   "H-b" 'org-ref-bibtex-hydra/body)
 
 
-     (general-define-key
-      :keymaps 'org-roam-mode-map
-      [mouse-1] 'org-roam-visit-thing)
-   #+end_src
+  (general-define-key
+   :keymaps 'org-roam-mode-map
+   [mouse-1] 'org-roam-visit-thing)
+#+end_src
 * Ivy
   =ivy-rich= 经过几天试用，发现并不太方便，暂时关闭。
   注意，需要在安装完成后，手动调用 =all-the-icons-install= 。
@@ -1528,60 +1536,60 @@
      '("pl" . counsel-projectile-switch-project)))
 #+end_src
 * Magit
-  #+begin_src emacs-lisp
-	    (use-package magit
-	      :commands (magit-status magit-blame)
-	      :init
-	      (general-define-key
-	       "C-M-s" 'magit-status
-	       "C-M-b" 'magit-blame)
-	      :config
-	      (general-define-key
-	       :keymaps 'magit-mode-map
-	       "s-<return>" 'magit-diff-visit-file-other-window
-	       "C-c C-k" 'magit-discard
-	       "x" 'meow-line))
-  #+end_src
+#+begin_src emacs-lisp
+  (use-package magit
+    :commands (magit-status magit-blame)
+    :init
+    (general-define-key
+     "C-M-s" 'magit-status
+     "C-M-b" 'magit-blame)
+    :config
+    (general-define-key
+     :keymaps 'magit-mode-map
+     "s-<return>" 'magit-diff-visit-file-other-window
+     "C-c C-k" 'magit-discard
+     "x" 'meow-line))
+#+end_src
 * Programming Language
 ** Elixir
    虽说是主力语言，但配置并不算多。
-   #+begin_src emacs-lisp
-     (use-package elixir-mode
-       :defer t
-       :config
-       (add-hook 'elixir-mode-hook
-		 (lambda() (add-hook 'before-save-hook 'elixir-format nil t)))
+#+begin_src emacs-lisp
+  (use-package elixir-mode
+    :defer t
+    :config
+    (add-hook 'elixir-mode-hook
+	      (lambda() (add-hook 'before-save-hook 'elixir-format nil t)))
 
-       (defun +reset-mixfmt-args ()
-	 (let* ((formatter-directory (locate-dominating-file default-directory ".formatter.exs"))
-		(formatter-file (concat formatter-directory ".formatter.exs")))
-	   (if formatter-directory
-	       (setq elixir-format-arguments (list "--dot-formatter" formatter-file))
-	     (setq elixir-format-arguments nil))))
+    (defun +reset-mixfmt-args ()
+      (let* ((formatter-directory (locate-dominating-file default-directory ".formatter.exs"))
+	     (formatter-file (concat formatter-directory ".formatter.exs")))
+	(if formatter-directory
+	    (setq elixir-format-arguments (list "--dot-formatter" formatter-file))
+	  (setq elixir-format-arguments nil))))
 
-       (add-hook 'elixir-format-hook #'+reset-mixfmt-args))
+    (add-hook 'elixir-format-hook #'+reset-mixfmt-args))
 
-     (use-package exunit
-       :defer t
-       :after elixir-mode
-       :config
-       :commands (exunit-verify-all
-		  exunit-verify
-		  exunit-verify-all-in-umbrella
-		  exunit-verify-single
-		  exunit-rerun
-		  exunit-toggle-file-and-test)
-       :general
-       (general-define-key
-	:keymaps 'elixir-mode-map
-	:keymaps 'exunit-compilation-mode-map
-	"C-c C-t a" 'exunit-verify-all
-	"C-c C-t t" 'exunit-verify-single
-	"C-c C-t b" 'exunit-verify
-	"C-c C-t r" 'exunit-rerun
-	"C-c C-t f" 'exunit-toggle-file-and-test
-	))
-   #+end_src
+  (use-package exunit
+    :defer t
+    :after elixir-mode
+    :config
+    :commands (exunit-verify-all
+	       exunit-verify
+	       exunit-verify-all-in-umbrella
+	       exunit-verify-single
+	       exunit-rerun
+	       exunit-toggle-file-and-test)
+    :general
+    (general-define-key
+     :keymaps 'elixir-mode-map
+     :keymaps 'exunit-compilation-mode-map
+     "C-c C-t a" 'exunit-verify-all
+     "C-c C-t t" 'exunit-verify-single
+     "C-c C-t b" 'exunit-verify
+     "C-c C-t r" 'exunit-rerun
+     "C-c C-t f" 'exunit-toggle-file-and-test
+     ))
+#+end_src
 ** Haskell
    感觉函数式编程绕不开 Haskell ，所以尝试下。
    #+begin_src emacs-lisp
