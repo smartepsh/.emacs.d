@@ -126,6 +126,10 @@
            ns-right-option-modifier 'hyper
            ns-right-command-modifier 'hyper)
    #+end_src
+** 退出时不询问是否关闭进程
+#+begin_src emacs-lisp
+  (setq confirm-kill-processes nil)
+#+end_src
 * 包管理
   我们使用 [[https://github.com/jwiegley/use-package][jwiegley/use-package]] 进行 melpa 包管理，同时配合 [[https://github.com/quelpa/quelpa][quelpa/quelpa]] 进行源码包管理（含 github），并使用 [[https://github.com/Silex/package-utils][Silex/package-utils]] 提供 helper 方便使用。
 
@@ -255,6 +259,7 @@
      '("v" . meow-visit)
      '("w" . meow-mark-word)
      '("W" . meow-mark-symbol)
+     '("X" . counsel-M-x)
      '("x" . meow-line)
      '("y" . meow-save)
      '("Y" . meow-sync-grab)

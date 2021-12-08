@@ -66,6 +66,8 @@
       ns-right-option-modifier 'hyper
       ns-right-command-modifier 'hyper)
 
+(setq confirm-kill-processes nil)
+
 (setq package-native-compile t
       use-package-expand-minimally t
       use-package-always-ensure t
@@ -187,6 +189,7 @@
    '("v" . meow-visit)
    '("w" . meow-mark-word)
    '("W" . meow-mark-symbol)
+   '("X" . counsel-M-x)
    '("x" . meow-line)
    '("y" . meow-save)
    '("Y" . meow-sync-grab)
