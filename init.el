@@ -350,11 +350,13 @@
   (add-hook 'cnfonts-set-font-finish-hook '(lambda (fontsizes-list)
 					     (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)))
   (add-hook 'after-init-hook 'cnfonts-enable)
-  (setq cnfonts-use-face-font-rescale t)
+  (setq cnfonts-use-face-font-rescale t
+	cnfonts-default-fontsize 24)
   :config
   (general-define-key
    "s-=" 'cnfonts-increase-fontsize
    "s--" 'cnfonts-decrease-fontsize))
+
 (use-package rime
   :defer t
   :custom
