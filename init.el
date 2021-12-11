@@ -117,7 +117,9 @@
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
   (meow-motion-overwrite-define-key
    '("j" . meow-next)
-   '("k" . meow-prev))
+   '("k" . meow-prev)
+   '("}" . scroll-up)
+   '("{" . scroll-down))
   (meow-leader-define-key
    ;; SPC j/k will run the original command in MOTION state.
    '("j" . "H-j")
@@ -198,9 +200,10 @@
    '("g" . mode-line-other-buffer)
    ;; customize
    '("P" . meow-yank-pop)
+   '(":" . meow-goto-line)
    '("}" . scroll-up)
    '("{" . scroll-down)
-   '(":" . meow-goto-line)
+
    '("C-r" . undo-redo)
    '("'" . meow-start-kmacro-or-insert-counter)
    '("%" . meow-query-replace-regexp)
@@ -254,26 +257,25 @@
   "Calculate the actual char height of the mode-line."
   (+ (frame-char-height) 2))
 
-  (use-package doom-modeline
-    :init
-    (add-hook 'after-init-hook (lambda ()
-				 (doom-modeline-mode)
-				 (column-number-mode)
-				 (doom-modeline-def-modeline 'my-line
-				   '(bar workspace-name modals buffer-info buffer-position)
-				   '(input-method checker major-mode parrot lsp))
-				 (defun setup-custom-doom-modeline ()
-				   (interactive)
-				   (doom-modeline-set-modeline 'my-line 'default))
-				 (setup-custom-doom-modeline)))
-    :config
-
-(advice-add 'doom-modeline--font-height :override 'my-doom-modeline--font-height)
-(set-face-attribute 'mode-line nil :height 100)
-     (set-face-attribute 'mode-line-inactive nil :height 100)
-    (setq doom-modeline-buffer-modification-icon nil
-	  doom-modeline-buffer-state-icon nil
-	  doom-modeline-buffer-file-name-style 'file-name))
+(use-package doom-modeline
+  :init
+  (add-hook 'after-init-hook (lambda ()
+			       (doom-modeline-mode)
+			       (column-number-mode)
+			       (doom-modeline-def-modeline 'my-line
+				 '(bar workspace-name modals buffer-info buffer-position)
+				 '(input-method checker major-mode parrot lsp))
+			       (defun setup-custom-doom-modeline ()
+				 (interactive)
+				 (doom-modeline-set-modeline 'my-line 'default))
+			       (setup-custom-doom-modeline)))
+  :config
+  (advice-add 'doom-modeline--font-height :override 'my-doom-modeline--font-height)
+  ;; (set-face-attribute 'mode-line nil :height 100)
+  ;; (set-face-attribute 'mode-line-inactive nil :height 100)
+  (setq doom-modeline-buffer-modification-icon nil
+	doom-modeline-buffer-state-icon nil
+	doom-modeline-buffer-file-name-style 'file-name))
 
 (use-package doom-themes
   :init
