@@ -1646,48 +1646,48 @@
   #+end_src
 * FlySpell 拼写错误检查
   在 [[https://www.emacswiki.org/emacs/FlySpell][我的Wiki： Fly Spell]] 找到了自建词典的使用方法，见 =flyspell-learn-work-at-point= 方法。该方法会将收录的新词保存在 =~/.hunspell_en_US= 文件内，我会将该文件链接到 =.emacs.d= 项目中，方便同步。
-  #+begin_src emacs-lisp
-    (use-package flyspell
-      :ensure-system-package hunspell
-      :hook (text-mode . flyspell-mode)
-      :hook (prog-mode . flyspell-prog-mode)
-      :init
-      (setenv "LANG" "en_US")
-      (setq flyspell-issue-welcome-flag nil)
-      :config
-      (setq ispell-program-name (executable-find "hunspell")
-	    ispell-dictionary "en_US"
-	    ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)))
-      (global-set-key (kbd "C-c s") 'flyspell-learn-word-at-point)
+#+begin_src emacs-lisp
+  (use-package flyspell
+    :ensure-system-package hunspell
+    :hook (text-mode . flyspell-mode)
+    :hook (prog-mode . flyspell-prog-mode)
+    :init
+    (setenv "LANG" "en_US")
+    (setq flyspell-issue-welcome-flag nil)
+    :config
+    (setq ispell-program-name (executable-find "hunspell")
+	  ispell-dictionary "en_US"
+	  ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)))
+    (global-set-key (kbd "C-c s") 'flyspell-learn-word-at-point)
 
-      (defun flyspell-learn-word-at-point ()
-	"Takes the highlighted word at point -- nominally a misspelling -- and inserts it into the personal/private dictionary, such that it is known and recognized as a valid word in the future."
-	(interactive)
-	(let ((current-location (point))
-	      (word (flyspell-get-word)))
-	  (when (consp word)
-	    (flyspell-do-correct
-	     'save nil
-	     (car word)
-	     current-location
-	     (cadr word)
-	     (caddr word)
-	     current-location)))))
+    (defun flyspell-learn-word-at-point ()
+      "Takes the highlighted word at point -- nominally a misspelling -- and inserts it into the personal/private dictionary, such that it is known and recognized as a valid word in the future."
+      (interactive)
+      (let ((current-location (point))
+	    (word (flyspell-get-word)))
+	(when (consp word)
+	  (flyspell-do-correct
+	   'save nil
+	   (car word)
+	   current-location
+	   (cadr word)
+	   (caddr word)
+	   current-location)))))
 
-    (use-package flyspell-correct-ivy
-      :after flyspell-correct)
+  (use-package flyspell-correct-ivy
+    :after flyspell-correct)
 
-    (use-package flyspell-correct
-      :commands (flyspell-correct-wrapper)
-      :init
-      (setq flyspell-correct-interface 'flyspell-correct-ivy)
-      :general
-      (general-define-key
-       :keymaps 'flyspell-mode-map
-       "C-;" 'flyspell-correct-wrapper
-       "C-," nil
-       "C-'" 'flyspell-learn-word-at-point))
-  #+end_src
+  (use-package flyspell-correct
+    :commands (flyspell-correct-wrapper)
+    :init
+    (setq flyspell-correct-interface 'flyspell-correct-ivy)
+    :general
+    (general-define-key
+     :keymaps 'flyspell-mode-map
+     "C-;" 'flyspell-correct-wrapper
+     "C-," nil
+     "C-'" 'flyspell-learn-word-at-point))
+#+end_src
 * 资源管理器
   使用默认的 dired 足矣。
   #+begin_src emacs-lisp
