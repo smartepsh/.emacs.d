@@ -192,7 +192,8 @@
 	    evil-flash-delay 1
 	    evil-want-integration nil
 	    evil-undo-system 'undo-redo
-	    )
+            evil-want-integration t
+            evil-want-keybinding nil)
       (evil-mode)
       :config
       (defun copy-to-clipboard()
@@ -260,12 +261,14 @@
 #+end_src
 ** 提示
   keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提供。
-  #+begin_src emacs-lisp
-    (use-package which-key
-      :defer t
-      :init
-      (add-hook 'after-init-hook 'which-key-mode))
-  #+end_src
+#+begin_src emacs-lisp
+  (use-package which-key
+    :defer t
+    :init
+    (add-hook 'after-init-hook 'which-key-mode)
+    :config
+    (which-key-enable-god-mode-support))
+#+end_src
 ** 按键及方法显示
    [[https://github.com/lewang/command-log-mode][lewang/command-log-mode: log commands to buffer]]
 #+begin_src emacs-lisp
@@ -275,15 +278,15 @@
 #+end_src
 
 ** 注释
-  #+begin_src emacs-lisp
-    (use-package evil-nerd-commenter
-  :commands (evilnc-comment-or-uncomment-lines)
-  :config
-  (evilnc-default-hotkeys)
-  :general
-  (common-leader
-    "gc" 'evilnc-comment-or-uncomment-lines))
-  #+end_src
+#+begin_src emacs-lisp
+  (use-package evil-nerd-commenter
+    :commands (evilnc-comment-or-uncomment-lines)
+    :config
+    (evilnc-default-hotkeys)
+    :general
+    (common-leader
+      "gc" 'evilnc-comment-or-uncomment-lines))
+#+end_src
 
 ** 其他 Evil 相关
 #+begin_src emacs-lisp
@@ -319,11 +322,14 @@
 ** 快捷键辅助 god-mode
 #+begin_src emacs-lisp
   (use-package god-mode)
-  (use-package evil-god-state)
+  (use-package evil-god-state
+    :init
+    (general-define-key
+     "C-SPC" 'evil-execute-in-god-state))
 #+end_src
 * 外观
 ** modeline
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun my-doom-modeline--font-height ()
     "Calculate the actual char height of the mode-line."
     (+ (frame-char-height) 2))
@@ -347,6 +353,34 @@
     (setq doom-modeline-buffer-modification-icon nil
 	  doom-modeline-buffer-state-icon nil
 	  doom-modeline-buffer-file-name-style 'file-name))
+#+end_src
+#+begin_src emacs-lisp
+  (use-package spaceline
+    :init
+    (setq powerline-image-apple-rgb t
+	  spaceline-buffer-size-p nil
+	  spaceline-evil-state-p t
+	  spaceline-flycheck-error-p t
+	  spaceline-flycheck-warning-p t
+	  spaceline-flycheck-info-p t
+	  spaceline-minor-modes-p nil
+	  spaceline-anzu-p t
+	  spaceline-projectile-root-p nil
+	  spaceline-version-control-p nil
+	  spaceline-org-pomodoro-p nil
+	  powerline-default-separator 'box
+	  spaceline-separator-dir-left '(right . right)
+	  spaceline-separator-dir-right '(left . left)
+	  spaceline-highlight-face-func 'spaceline-highlight-face-evil-state
+	  spaceline-workspace-numbers-unicode t)
+    (add-hook 'after-init-hook #'spaceline-emacs-theme))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package evil-anzu
+    :init
+    (global-anzu-mode +1)
+    (setq anzu-cons-mode-line-p nil))
 #+end_src
 ** theme
 #+begin_src emacs-lisp
@@ -451,7 +485,7 @@
 	"H-t" 'switch-window))
    #+end_src
 * 自动 revert
-  #+begin_src emacs-lisp
+  #+begin_src emacs-lisp :tangle no
     (use-package autorevert
       :defer t
       :ensure nil
@@ -996,6 +1030,7 @@
 ** 本体
 #+begin_src emacs-lisp
   (use-package org
+    :pin gnu
     :ensure-system-package terminal-notifier
     :defer t
     :init
@@ -1377,7 +1412,7 @@
 	      calibredb-library-alist '(private/book-directory)))
   #+end_src
 * 剪贴板
-  #+begin_src emacs-lisp
+  #+begin_src emacs-lisp :tangle no
     (use-package simpleclip
       :init
       (simpleclip-mode t))
