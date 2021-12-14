@@ -113,136 +113,74 @@
   :config
   (exec-path-from-shell-initialize))
 
-(defun meow-setup ()
-  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-  (meow-motion-overwrite-define-key
-   '("j" . meow-next)
-   '("k" . meow-prev)
-   '("}" . scroll-up)
-   '("{" . scroll-down))
-  (meow-leader-define-key
-   ;; SPC j/k will run the original command in MOTION state.
-   '("j" . "H-j")
-   '("k" . "H-k")
-   ;; Use SPC (0-9) for digit arguments.
-   '("1" . meow-digit-argument)
-   '("2" . meow-digit-argument)
-   '("3" . meow-digit-argument)
-   '("4" . meow-digit-argument)
-   '("5" . meow-digit-argument)
-   '("6" . meow-digit-argument)
-   '("7" . meow-digit-argument)
-   '("8" . meow-digit-argument)
-   '("9" . meow-digit-argument)
-   '("0" . meow-digit-argument)
-   ;; '("/" . meow-keypad-describe-key)
-   '("?" . meow-cheatsheet))
-  (meow-normal-define-key
-   '("0" . meow-expand-0)
-   '("9" . meow-expand-9)
-   '("8" . meow-expand-8)
-   '("7" . meow-expand-7)
-   '("6" . meow-expand-6)
-   '("5" . meow-expand-5)
-   '("4" . meow-expand-4)
-   '("3" . meow-expand-3)
-   '("2" . meow-expand-2)
-   '("1" . meow-expand-1)
-   '("-" . negative-argument)
-   '(";" . meow-reverse)
-   '("," . meow-inner-of-thing)
-   '("." . meow-bounds-of-thing)
-   '("[" . meow-beginning-of-thing)
-   '("]" . meow-end-of-thing)
-   '("a" . meow-append)
-   '("A" . meow-open-below)
-   '("b" . meow-back-word)
-   '("B" . meow-back-symbol)
-   '("c" . meow-change)
-   '("d" . meow-delete)
-   '("D" . meow-backward-delete)
-   '("e" . meow-next-word)
-   '("E" . meow-next-symbol)
-   '("f" . meow-find)
-   '("G" . meow-grab)
-   '("h" . meow-left)
-   '("H" . meow-left-expand)
-   '("i" . meow-insert)
-   '("I" . meow-open-above)
-   '("j" . meow-next)
-   '("J" . meow-next-expand)
-   '("k" . meow-prev)
-   '("K" . meow-prev-expand)
-   '("l" . meow-right)
-   '("L" . meow-right-expand)
-   '("m" . meow-join)
-   '("n" . meow-search)
-   '("o" . meow-block)
-   '("O" . meow-to-block)
-   '("p" . meow-yank)
-   '("q" . meow-quit)
-   '("Q" . meow-goto-line)
-   '("r" . meow-replace)
-   '("R" . meow-swap-grab)
-   '("s" . meow-kill)
-   '("t" . meow-till)
-   '("u" . meow-undo)
-   '("U" . meow-undo-in-selection)
-   '("v" . meow-visit)
-   '("w" . meow-mark-word)
-   '("W" . meow-mark-symbol)
-   '("X" . counsel-M-x)
-   '("x" . meow-line)
-   '("y" . meow-save)
-   '("Y" . meow-sync-grab)
-   '("z" . meow-pop-selection)
-   '("<escape>" . meow-cancel-selection)
-   '("g" . mode-line-other-buffer)
-   ;; customize
-   '("P" . meow-yank-pop)
-   '(":" . meow-goto-line)
-   '("}" . scroll-up)
-   '("{" . scroll-down)
-
-   '("C-r" . undo-redo)
-   '("'" . meow-start-kmacro-or-insert-counter)
-   '("%" . meow-query-replace-regexp)
-   '("\"" . meow-end-or-call-kmacro)))
-;; '("C" . meow--save)
-;; '("F" . meow-find-expand)
-;; '("N" . meow-pop-search)
-;; '("T" . meow-till-expand)
-;; '("V" . meow-kmacro-psave)
-;; '("X" . meow-kmacro-lines)
-;; '("Z" . meow-pop-all-selection)
-;; '("&" . meow-query-replace)
-;; '("'" . repeat)
-;; '("\\" . quotesaved-insert)
-;; '("g" . meow-last-savesave)
-;; '("S" . meow-repaaaaaaaaaaaaaaaaceaaaa-save)))
-
-(use-package meow
-  :demand t
+(use-package evil
   :init
-  (setq meow-use-cursor-position-hack t
-	meow-use-enhanced-selection-effect t)
-  (meow-global-mode t)
+  (setq evil-shift-width 2
+	evil-flash-delay 1
+	evil-want-integration nil
+	evil-undo-system 'undo-redo
+	)
+  (evil-mode)
   :config
-  (meow-setup)
-  (add-to-list 'meow-mode-state-list '(sly-mrepl-mode . normal))
-  (setq meow-expand-exclude-mode-list '()
-	meow-selection-command-fallback
-	'((meow-change . meow-change-char)
-	  (meow-replace . meow-replace-char)
-	  (meow-save . meow-save-char)
-	  (meow-kill . meow-C-k)
-	  (meow-cancel-selection . meow-keyboard-quit)
-	  (meow-pop-selection . meow-pop-grab)
-	  (meow-beacon-change . meow-beacon-change-char))))
+  (defun copy-to-clipboard()
+    "Copies selection to x-clipboard."
+    (interactive)
+    (if (display-graphic-p)
+	(progn
+	  (if (use-region-p)
+	      (progn
+		(evil-yank (region-beginning) (region-end) t (evil-use-register ?+))
+		(message "Yanked region to clipboard!")
+		(deactivate-mark))
+	    (message "No region active; can't yank to clipboard!"))
+	  )
+      ))
+
+  (defun paste-from-clipboard ()
+    "Pastes from x-clipboard."
+    (interactive)
+    (evil-paste-after 1 (evil-use-register ?+))
+    )
+  (general-define-key
+   :states 'insert
+   "\C-h" 'delete-backward-char
+   "\C-d" 'delete-char)
+  (general-define-key
+   "s-c" 'copy-to-clipboard
+   "s-v" 'paste-from-clipboard)
+  (mapc #'evil-declare-ignore-repeat
+	'(kill-this-buffer
+	  ido-kill-buffer
+	  save-buffer
+	  split-window-below
+	  split-window-below-and-focus
+	  split-window-right
+	  split-window-right-and-focus
+	  switch-window)))
 
 (use-package general
   :config
-  (general-auto-unbind-keys))
+  (general-evil-setup)
+  (general-auto-unbind-keys)
+  (general-create-definer common-leader
+    :prefix-name "SPC"
+    :non-normal-prefix "C-SPC"
+    :prefix "SPC"
+    :states '(insert motion normal emacs))
+  (general-create-definer local-leader
+    :prefix-name "leader"
+    :non-normal-prefix "C-,"
+    :prefix ","
+    :states '(insert motion normal emacs))
+  (general-create-definer clear-spc
+    :prefix-name "NOSPC"
+    "SPC" nil)
+  (general-define-key
+   :keymaps '(global-map)
+   "C-SPC" nil))
+(common-leader
+  "fed" 'goto-configuration-org
+  "SPC" 'counsel-M-x)
 
 (use-package which-key
   :defer t
@@ -252,6 +190,45 @@
 (use-package command-log-mode
   :defer t
   :commands (command-log-mode))
+
+(use-package evil-nerd-commenter
+:commands (evilnc-comment-or-uncomment-lines)
+:config
+(evilnc-default-hotkeys)
+:general
+(common-leader
+  "gc" 'evilnc-comment-or-uncomment-lines))
+
+(use-package evil-matchit
+  :hook (prog-mode . evil-matchit-mode))
+
+(use-package evil-surround
+  :after evil
+  :config (global-evil-surround-mode t)
+  :general
+  (general-define-key
+   :states 'motion
+   "s" 'evil-surround-region))
+
+(use-package evil-embrace
+  :after evil-surround
+  :config
+  (evil-embrace-enable-evil-surround-integration))
+
+(use-package evil-visualstar
+  :after evil
+  :init
+  (global-evil-visualstar-mode)
+  :config
+  (setq evil-visualstar/persistent t))
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config
+  (evil-collection-init))
+
+(use-package god-mode)
+(use-package evil-god-state)
 
 (defun my-doom-modeline--font-height ()
   "Calculate the actual char height of the mode-line."
@@ -370,8 +347,7 @@
 	rime-show-preedit 'inline
 	rime-disable-predicates '(rime-predicate-hydra-p
 				  rime-predicate-prog-in-code-p
-				  rime-predicate-punctuation-after-ascii-p
-				  meow-normal-mode-p))
+				  rime-predicate-punctuation-after-ascii-p))
   (global-set-key (kbd "s-SPC") 'toggle-input-method)
   (general-define-key
    :keymaps 'rime-active-mode-map
@@ -521,7 +497,8 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
      (elixir . t)
      (org . t)
      (haskell . t)
-     (lisp . t)))
+     (lisp . t)
+     (plantuml . t)))
   ;;(R . t)))
   :config
 ;;; auto display inline images on Org TAB cycle expand headlines.
@@ -532,6 +509,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 	;; org-default-notes-file org-agenda-file
 	org-archive-location (concat org-directory "Archived/" "%s_archive::")
 	org-id-locations-file (concat org-directory ".org-id-locations")
+	org-plantuml-jar-path (concat private/config-directory "plantuml-1.2021.16.jar")
 	org-log-done nil
 	;; (nconc org-modules '(org-id))
 	;; org-refile-targets '((org-agenda-files :maxlevel . 2))
@@ -757,9 +735,10 @@ ${tags:20}")
    :keymaps 'ivy-minibuffer-map
    [escape] 'minibuffer-keyboard-quit
    "C-<return>" 'ivy-immediate-done)
-  :config
-  (meow-leader-define-key
-   '("/" . counsel-rg)))
+  (clear-spc
+    :keymaps 'ivy-occur-grep-mode-map)
+  (common-leader
+    "/" 'counsel-rg))
 
 (use-package swiper
   :defer t
@@ -771,10 +750,10 @@ ${tags:20}")
 (use-package counsel
   :hook (ivy-mode . counsel-mode)
   :config
-  (meow-leader-define-key
-   '("ff" . counsel-find-file)
-   '("fb" . counsel-switch-buffer)
-   '("fr" . counsel-buffer-or-recentf)))
+  (common-leader
+    "ff" 'counsel-find-file
+    "fb" 'counsel-switch-buffer
+    "fr" 'counsel-buffer-or-recentf))
 
 (use-package all-the-icons-ivy
   :init (add-hook 'after-init-hook 'all-the-icons-ivy-setup))
@@ -837,15 +816,6 @@ ${tags:20}")
   :hook (prog-mode . smartparens-mode)
   :hook (org-mode . smartparens-mode))
 
-(use-package embrace
-  :defer t
-  :commands (embrace-add embrace-delete embrace-change embrace-commander)
-  :init
-  (meow-leader-define-key
-   '("sc" . embrace-change)
-   '("sd" . embrace-delete)
-   '("ss" . embrace-add)))
-
 (use-package yasnippet
   :defer t
   :hook (prog-mode . yas-minor-mode)
@@ -872,13 +842,14 @@ ${tags:20}")
 
 (use-package avy
   :commands (avy-goto-char-2 avy-goto-line)
-  :init
-  (meow-leader-define-key
-   '("fc" . avy-goto-char-2)
-   '("fl" . avy-goto-line))
   :config
   (setq avy-all-windows nil
-        avy-background t))
+	avy-background t)
+  :general
+  (common-leader
+   "j" '(ignore t :which-key "jumping")
+   "jj" 'avy-goto-char-2
+   "jl" 'avy-goto-line))
 
 (defun projectile-relevant-known-projects ()
   "Return a list of known projects except the current one (if present)."
@@ -906,22 +877,53 @@ ${tags:20}")
 (use-package counsel-projectile
   :init
   (add-hook 'after-init-hook 'counsel-projectile-mode)
-  (meow-leader-define-key
-   '("pf" . counsel-projectile-find-file)
-   '("pl" . counsel-projectile-switch-project)))
+  :general
+  (common-leader
+   "pf" 'counsel-projectile-find-file
+   "pl" 'counsel-projectile-switch-project))
 
 (use-package magit
   :commands (magit-status magit-blame)
   :init
-  (general-define-key
-   "C-M-s" 'magit-status
-   "C-M-b" 'magit-blame)
-  :config
-  (general-define-key
-   :keymaps 'magit-mode-map
-   "s-<return>" 'magit-diff-visit-file-other-window
-   "C-c C-k" 'magit-discard
-   "x" 'meow-line))
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  :general
+  (clear-spc
+    :keymaps
+    '(magit-mode-map
+      magit-status-mode-map
+      magit-diff-mode-map
+      magit-process-mode-map
+      magit-blame-read-only-mode-map
+      magit-log-mode-map
+      git-rebase-mode-map))
+  (common-leader
+    "gs" 'magit-status
+    "gb" 'magit-blame
+    "gi" 'vc-msg-show)
+  (general-nmap
+    :keymaps 'magit-mode-map
+    "s-<return>" 'magit-diff-visit-file-other-window))
+(use-package diff-hl
+  :defer t
+  :hook (prog-mode . diff-hl-flydiff-mode))
+
+(use-package vc-msg
+  :defer t
+  :commands (vc-msg-show)
+  :init
+  (eval-after-load 'vc-msg-git
+    '(progn
+       ;; show code of commit
+       (setq vc-msg-git-show-commit-function 'magit-show-commit)
+       ;; open file of certain revision
+       (push '("m"
+	       "[m]agit-find-file"
+	       (lambda ()
+		 (let* ((info vc-msg-previous-commit-info)
+			(git-dir (locate-dominating-file default-directory ".git")))
+		   (magit-find-file (plist-get info :id )
+				    (concat git-dir (plist-get info :filename))))))
+	     vc-msg-git-extra))))
 
 (use-package elixir-mode
   :defer t
@@ -950,13 +952,15 @@ ${tags:20}")
 	     exunit-toggle-file-and-test)
   :general
   (general-define-key
-   :keymaps 'elixir-mode-map
-   :keymaps 'exunit-compilation-mode-map
-   "C-c C-t a" 'exunit-verify-all
-   "C-c C-t t" 'exunit-verify-single
-   "C-c C-t b" 'exunit-verify
-   "C-c C-t r" 'exunit-rerun
-   "C-c C-t f" 'exunit-toggle-file-and-test
+   :keymaps '(exunit-compilation-mode-map)
+   "SPC" nil)
+  (local-leader
+   "t" '(:ignore t :which-key "test")
+   "ta" 'exunit-verify-all
+   "tt" 'exunit-verify-single
+   "tb" 'exunit-verify
+   "tr" 'exunit-rerun
+   "tf" 'exunit-toggle-file-and-test
    ))
 
 (use-package haskell-mode
@@ -986,11 +990,12 @@ ${tags:20}")
   :config
   (setq lsp-headerline-breadcrumb-enable nil
 	lsp-file-watch-threshold 2000)
-  (meow-leader-define-key
-   '("." . lsp-find-definition)
-   '("," . xref-pop-marker-stack))
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.elixir_ls\\'")
-  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\deps\\'"))
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\deps\\'")
+  :general
+  (local-leader
+   "." 'lsp-find-definition
+   "," 'xref-pop-marker-stack))
 
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 ;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
@@ -1045,10 +1050,65 @@ ${tags:20}")
 	dired-listing-switches "-alh"
 	insert-directory-program "gls"
 	dired-use-ls-dired t)
+  :general
+  (common-leader
+   "fd" 'dired-jump
+   "fD" 'dired-jump-other-window))
+
+(use-package bm
+  :init
+  ;; restore on load (even before you require bm)
+  (setq bm-restore-repository-on-load t)
   :config
-  (meow-leader-define-key
-   '("fd" . dired-jump)
-   '("fD" . dired-jump-other-window)))
+  ;; Allow cross-buffer 'next'
+  (setq bm-cycle-all-buffers t)
+  ;; where to store persistant files
+  (setq bm-repository-file "~/.emacs.d/bms")
+  ;; save bookmarks
+  (setq-default bm-buffer-persistence t)
+  ;; Loading the repository from file when on start up.
+  (add-hook 'after-init-hook 'bm-repository-load)
+  ;; Saving bookmarks
+  (add-hook 'kill-buffer-hook #'bm-buffer-save)
+  ;; Saving the repository to file when on exit.
+  ;; kill-buffer-hook is not called when Emacs is killed, so we
+  ;; must save all bookmarks first.
+  (add-hook 'kill-emacs-hook #'(lambda nil
+				 (bm-buffer-save-all)
+				 (bm-repository-save)))
+  ;; The `after-save-hook' is not necessary to use to achieve persistence,
+  ;; but it makes the bookmark data in repository more in sync with the file
+  ;; state.
+  (add-hook 'after-save-hook #'bm-buffer-save)
+  ;; Restoring bookmarks
+  (add-hook 'find-file-hooks   #'bm-buffer-restore)
+  (add-hook 'after-revert-hook #'bm-buffer-restore)
+  ;; The `after-revert-hook' is not necessary to use to achieve persistence,
+  ;; but it makes the bookmark data in repository more in sync with the file
+  ;; state. This hook might cause trouble when using packages
+  ;; that automatically reverts the buffer (like vc after a check-in).
+  ;; This can easily be avoided if the package provides a hook that is
+  ;; called before the buffer is reverted (like `vc-before-checkin-hook').
+  ;; Then new bookmarks can be saved before the buffer is reverted.
+  ;; Make sure bookmarks is saved before check-in (and revert-buffer)
+  (add-hook 'vc-before-checkin-hook #'bm-buffer-save)
+  :custom-face
+  (bm-persistent-face ((t (:background "blue violet" :foreground "White"))))
+  :general
+  (general-define-key
+    :keymaps 'bm-show-mode-map
+    "<RET>" 'bm-show-goto-bookmark
+    "<return>" 'bm-show-goto-bookmark)
+  (common-leader
+    "b" '(:ignore t :which-key "bookmarks")
+    "ba" 'bm-bookmark-annotate
+    "bb" 'bm-toggle
+    "bj" 'bm-next
+    "bk" 'bm-previous
+    "bl" 'bm-show-all
+    "bc" 'bm-remove-all-current-buffer
+    "bn" 'bm-lifo-next
+    "bp" 'bm-lifo-previous))
 
 (use-package flycheck
   :defer t
@@ -1058,10 +1118,3 @@ ${tags:20}")
 
 (use-package flycheck-posframe
   :after flycheck)
-
-(use-package evil-nerd-commenter
-  :defer t
-  :commands (evilnc-comment-or-uncomment-lines)
-  :init
-  (general-define-key
-   "C-M-c" 'evilnc-comment-or-uncomment-lines))
