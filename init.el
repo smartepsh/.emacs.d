@@ -119,7 +119,8 @@
 	evil-flash-delay 1
 	evil-want-integration nil
 	evil-undo-system 'undo-redo
-	)
+        evil-want-integration t
+        evil-want-keybinding nil)
   (evil-mode)
   :config
   (defun copy-to-clipboard()
@@ -185,19 +186,21 @@
 (use-package which-key
   :defer t
   :init
-  (add-hook 'after-init-hook 'which-key-mode))
+  (add-hook 'after-init-hook 'which-key-mode)
+  :config
+  (which-key-enable-god-mode-support))
 
 (use-package command-log-mode
   :defer t
   :commands (command-log-mode))
 
 (use-package evil-nerd-commenter
-:commands (evilnc-comment-or-uncomment-lines)
-:config
-(evilnc-default-hotkeys)
-:general
-(common-leader
-  "gc" 'evilnc-comment-or-uncomment-lines))
+  :commands (evilnc-comment-or-uncomment-lines)
+  :config
+  (evilnc-default-hotkeys)
+  :general
+  (common-leader
+    "gc" 'evilnc-comment-or-uncomment-lines))
 
 (use-package evil-matchit
   :hook (prog-mode . evil-matchit-mode))
@@ -228,31 +231,35 @@
   (evil-collection-init))
 
 (use-package god-mode)
-(use-package evil-god-state)
-
-(defun my-doom-modeline--font-height ()
-  "Calculate the actual char height of the mode-line."
-  (+ (frame-char-height) 2))
-
-(use-package doom-modeline
+(use-package evil-god-state
   :init
-  (add-hook 'after-init-hook (lambda ()
-			       (doom-modeline-mode)
-			       (column-number-mode)
-			       (doom-modeline-def-modeline 'my-line
-				 '(bar workspace-name modals buffer-info buffer-position)
-				 '(input-method checker major-mode parrot lsp))
-			       (defun setup-custom-doom-modeline ()
-				 (interactive)
-				 (doom-modeline-set-modeline 'my-line 'default))
-			       (setup-custom-doom-modeline)))
-  :config
-  (advice-add 'doom-modeline--font-height :override 'my-doom-modeline--font-height)
-  ;; (set-face-attribute 'mode-line nil :height 100)
-  ;; (set-face-attribute 'mode-line-inactive nil :height 100)
-  (setq doom-modeline-buffer-modification-icon nil
-	doom-modeline-buffer-state-icon nil
-	doom-modeline-buffer-file-name-style 'file-name))
+  (general-define-key
+   "C-SPC" 'evil-execute-in-god-state))
+
+(use-package spaceline
+  :init
+  (setq powerline-image-apple-rgb t
+	spaceline-buffer-size-p nil
+	spaceline-evil-state-p t
+	spaceline-flycheck-error-p t
+	spaceline-flycheck-warning-p t
+	spaceline-flycheck-info-p t
+	spaceline-minor-modes-p nil
+	spaceline-anzu-p t
+	spaceline-projectile-root-p nil
+	spaceline-version-control-p nil
+	spaceline-org-pomodoro-p nil
+	powerline-default-separator 'box
+	spaceline-separator-dir-left '(right . right)
+	spaceline-separator-dir-right '(left . left)
+	spaceline-highlight-face-func 'spaceline-highlight-face-evil-state
+	spaceline-workspace-numbers-unicode t)
+  (add-hook 'after-init-hook #'spaceline-emacs-theme))
+
+(use-package evil-anzu
+  :init
+  (global-anzu-mode +1)
+  (setq anzu-cons-mode-line-p nil))
 
 (use-package doom-themes
   :init
@@ -313,11 +320,6 @@
    "s-]" 'windmove-right
    "s-w" 'delete-window
    "H-t" 'switch-window))
-
-(use-package autorevert
-  :defer t
-  :ensure nil
-  :hook (after-init . global-auto-revert-mode))
 
 (setq private/rime-directory (concat private/config-directory "rime/")
       rime-emacs-module-header-root (concat private/config-directory "helpers/"))
@@ -488,6 +490,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 (use-package ob-elixir :after org)
 
 (use-package org
+  :pin gnu
   :ensure-system-package terminal-notifier
   :defer t
   :init
@@ -776,10 +779,6 @@ ${tags:20}")
 	calibredb-root-dir private/book-directory
 	calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
 	calibredb-library-alist '(private/book-directory)))
-
-(use-package simpleclip
-  :init
-  (simpleclip-mode t))
 
 (general-define-key
  "s-q" 'delete-frame)
