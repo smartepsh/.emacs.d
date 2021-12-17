@@ -813,6 +813,9 @@ ${tags:20}")
 	  company-yasnippet
 	  company-dabbrev-code
 	  company-dabbrev))
+  ;; 使 org-mode 中的 company 可以补全代码 symbol
+  :config
+  (push 'org-mode company-dabbrev-code-modes)
   :general
   (general-define-key
    :keymaps 'company-active-map
