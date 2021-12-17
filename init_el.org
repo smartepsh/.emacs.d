@@ -263,7 +263,7 @@
   keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提供。
 #+begin_src emacs-lisp
   (use-package which-key
-    :defer t
+    :after god-mode
     :init
     (add-hook 'after-init-hook 'which-key-mode)
     :config
@@ -321,11 +321,23 @@
 
 ** 快捷键辅助 god-mode
 #+begin_src emacs-lisp
-  (use-package god-mode)
+  (use-package god-mode
+    :config
+    (setq god-mode-alist '((nil . "C-") ("m" . "M-") ("G" . "C-M-")))
+    (evil-define-key 'god global-map "<escape>" 'evil-god-state-bail))
+
+  (defun private/god-start ()
+    (interactive)
+    (evil-execute-in-god-state)
+    (god-mode-self-insert))
+
   (use-package evil-god-state
-    :init
-    (general-define-key
-     "C-SPC" 'evil-execute-in-god-state))
+    :general
+    (common-leader
+      "c" 'private/god-start
+      "x" 'private/god-start
+      "m" 'private/god-start
+      "G" 'private/god-start))
 #+end_src
 * 外观
 ** modeline
@@ -1641,13 +1653,13 @@
      :keymaps '(exunit-compilation-mode-map)
      "SPC" nil)
     (local-leader
-     "t" '(:ignore t :which-key "test")
-     "ta" 'exunit-verify-all
-     "tt" 'exunit-verify-single
-     "tb" 'exunit-verify
-     "tr" 'exunit-rerun
-     "tf" 'exunit-toggle-file-and-test
-     ))
+      "t" '(:ignore t :which-key "test")
+      "ta" 'exunit-verify-all
+      "tt" 'exunit-verify-single
+      "tb" 'exunit-verify
+      "tr" 'exunit-rerun
+      "tf" 'exunit-toggle-file-and-test
+      ))
 #+end_src
 ** Haskell
    感觉函数式编程绕不开 Haskell ，所以尝试下。
@@ -1751,6 +1763,8 @@
 	    insert-directory-program "gls"
 	    dired-use-ls-dired t)
       :general
+    (clear-spc
+      :keymaps 'dired-mode-map)
       (common-leader
        "fd" 'dired-jump
        "fD" 'dired-jump-other-window))
