@@ -1699,7 +1699,7 @@
     (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.elixir_ls\\'")
     (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\deps\\'")
     :general
-    (local-leader
+    (common-leader
      "." 'lsp-find-definition
      "," 'xref-pop-marker-stack))
 
