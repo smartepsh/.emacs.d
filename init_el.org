@@ -1467,48 +1467,51 @@
 * 自动补全
   =smartparens= 暂时没有找到如何更改包裹，只找到另一个插件[[https://github.com/cute-jumper/embrace.el][embrace]] ，但暂时先不考虑。
   可以开始考虑 embrace 了。。。
-  #+begin_src emacs-lisp
-    (use-package company
-      :defer t
-      :init
-      (add-hook 'after-init-hook 'global-company-mode)
-      (setq company-idle-delay 0.3
-	    company-require-match 'never
-	    company-tooltip-align-annotations t
-	    company-dabbrev-downcase nil
-	    company-dabbrev-ignore-case nil
-	    company-minimum-prefix-length 1)
-      (setq company-backend
-	    '(company-keywords
-	      company-elisp
-	      company-files
-	      company-capf
-	      company-yasnippet
-	      company-dabbrev-code
-	      company-dabbrev))
-      :general
-      (general-define-key
-       :keymaps 'company-active-map
-       "<tab>" 'company-complete-selection
-       "<RET>" nil
-       "<return>" nil
-       "C-w" nil
-       "C-n" 'company-select-next
-       "C-p" 'company-select-previous))
+#+begin_src emacs-lisp
+  (use-package company
+    :defer t
+    :init
+    (add-hook 'after-init-hook 'global-company-mode)
+    (setq company-idle-delay 0.3
+	  company-require-match 'never
+	  company-tooltip-align-annotations t
+	  company-dabbrev-downcase nil
+	  company-dabbrev-ignore-case nil
+	  company-minimum-prefix-length 1)
+    (setq company-backend
+	  '(company-keywords
+	    company-elisp
+	    company-files
+	    company-capf
+	    company-yasnippet
+	    company-dabbrev-code
+	    company-dabbrev))
+    ;; 使 org-mode 中的 company 可以补全代码 symbol
+    :config
+    (push 'org-mode company-dabbrev-code-modes)
+    :general
+    (general-define-key
+     :keymaps 'company-active-map
+     "<tab>" 'company-complete-selection
+     "<RET>" nil
+     "<return>" nil
+     "C-w" nil
+     "C-n" 'company-select-next
+     "C-p" 'company-select-previous))
 
-    (use-package smartparens
-      :hook (prog-mode . smartparens-mode)
-      :hook (org-mode . smartparens-mode))
+  (use-package smartparens
+    :hook (prog-mode . smartparens-mode)
+    :hook (org-mode . smartparens-mode))
 
-    (use-package yasnippet
-      :defer t
-      :hook (prog-mode . yas-minor-mode)
-      :hook (org-mode . yas-minor-mode))
+  (use-package yasnippet
+    :defer t
+    :hook (prog-mode . yas-minor-mode)
+    :hook (org-mode . yas-minor-mode))
 
-    (use-package yasnippet-snippets
-      :defer t
-      :hook (yas-minor-mode . yas-reload-all))
-  #+end_src
+  (use-package yasnippet-snippets
+    :defer t
+    :hook (yas-minor-mode . yas-reload-all))
+#+end_src
 * prescient
   #+begin_src emacs-lisp
     (use-package prescient
