@@ -230,11 +230,23 @@
   :config
   (evil-collection-init))
 
-(use-package god-mode)
+(use-package god-mode
+  :config
+  (setq god-mode-alist '((nil . "C-") ("m" . "M-") ("G" . "C-M-")))
+  (evil-define-key 'god global-map "<escape>" 'evil-god-state-bail))
+
+(defun private/god-start ()
+  (interactive)
+  (evil-execute-in-god-state)
+  (god-mode-self-insert))
+
 (use-package evil-god-state
-  :init
-  (general-define-key
-   "C-SPC" 'evil-execute-in-god-state))
+  :general
+  (common-leader
+    "c" 'private/god-start
+    "x" 'private/god-start
+    "m" 'private/god-start
+    "G" 'private/god-start))
 
 (use-package spaceline
   :init
@@ -954,13 +966,13 @@ ${tags:20}")
    :keymaps '(exunit-compilation-mode-map)
    "SPC" nil)
   (local-leader
-   "t" '(:ignore t :which-key "test")
-   "ta" 'exunit-verify-all
-   "tt" 'exunit-verify-single
-   "tb" 'exunit-verify
-   "tr" 'exunit-rerun
-   "tf" 'exunit-toggle-file-and-test
-   ))
+    "t" '(:ignore t :which-key "test")
+    "ta" 'exunit-verify-all
+    "tt" 'exunit-verify-single
+    "tb" 'exunit-verify
+    "tr" 'exunit-rerun
+    "tf" 'exunit-toggle-file-and-test
+    ))
 
 (use-package haskell-mode
   :defer t
@@ -1050,6 +1062,8 @@ ${tags:20}")
 	insert-directory-program "gls"
 	dired-use-ls-dired t)
   :general
+(clear-spc
+  :keymaps 'dired-mode-map)
   (common-leader
    "fd" 'dired-jump
    "fD" 'dired-jump-other-window))
