@@ -184,7 +184,7 @@
   "SPC" 'counsel-M-x)
 
 (use-package which-key
-  :defer t
+  :after god-mode
   :init
   (add-hook 'after-init-hook 'which-key-mode)
   :config
@@ -1004,7 +1004,7 @@ ${tags:20}")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.elixir_ls\\'")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\deps\\'")
   :general
-  (local-leader
+  (common-leader
    "." 'lsp-find-definition
    "," 'xref-pop-marker-stack))
 
