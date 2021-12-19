@@ -28,6 +28,7 @@
 
 * 基础设置
 
+
 ** 窗口最大化
    #+begin_src emacs-lisp
      (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
@@ -130,6 +131,12 @@
 ** 退出时不询问是否关闭进程
 #+begin_src emacs-lisp
   (setq confirm-kill-processes nil)
+#+end_src
+
+** 移除 org-mode
+#+begin_src emacs-lisp
+  (assq-delete-all 'org package--builtins)
+  (assq-delete-all 'org package--builtin-versions)
 #+end_src
 * 包管理
   我们使用 [[https://github.com/jwiegley/use-package][jwiegley/use-package]] 进行 melpa 包管理，同时配合 [[https://github.com/quelpa/quelpa][quelpa/quelpa]] 进行源码包管理（含 github），并使用 [[https://github.com/Silex/package-utils][Silex/package-utils]] 提供 helper 方便使用。
@@ -318,7 +325,6 @@
     :config
     (evil-collection-init))
 #+end_src
-
 ** 快捷键辅助 god-mode
 #+begin_src emacs-lisp
   (use-package god-mode
@@ -752,24 +758,20 @@
   算是重头戏了。。。我也是菜鸟，之前使用 evil 自定义按键，其实有些功能是很少用的。这次换为 =meow= 之后，使用原生快捷键看看效果。
 ** org 根路径
    真实路径在 icloud 中。
-  #+begin_src emacs-lisp
-	    (setq base-directory  (file-truename "~/KentonBase/")
-		  private/book-directory (concat base-directory "publications/")
-		  org-directory (concat base-directory "orgs/"))
-  #+end_src
+#+begin_src emacs-lisp
+  (setq base-directory  (file-truename "~/KentonBase/")
+	private/book-directory (concat base-directory "publications/")
+	org-directory (concat base-directory "orgs/"))
+#+end_src
 ** Org-capture
-   #+begin_src emacs-lisp
-     (use-package org-capture
-       :after org
-       :ensure org-plus-contrib)
-
-     (use-package org-mac-link
-       :defer t
-       :ensure org-plus-contrib
-       :commands (org-mac-skim-insert-page
-		  org-mac-safari-insert-frontmost-url
-		  org-mac-finder-insert-selected))
-   #+end_src
+#+begin_src emacs-lisp
+  (use-package org-mac-link
+    :after org
+    :quelpa (org-mac-link :fetcher gitlab :repo "aimebertrand/org-mac-link" :branch "main")
+    :commands (org-mac-skim-insert-page
+	       org-mac-safari-insert-frontmost-url
+	       org-mac-finder-insert-selected))
+#+end_src
 ** Ebook Reader
    org-mode 用来干嘛呢？对吧？
 *** epub
@@ -911,116 +913,116 @@
 *** DONE 设置翻页快捷键
     - State "DONE"       from "TODO"       [2021-11-14 Sun 21:55]
     检测当前是否有 nov buffer ，如果有，则执行 nov 翻页，否则执行 skim 翻页。
-    #+begin_src emacs-lisp
-      (require 'skim)
+#+begin_src emacs-lisp
+  (require 'skim)
 
-      (defun nov-buffer-in-current ()
-	(cl-find-if
-	 (lambda (window)
-	   (with-current-buffer (window-buffer window) (eq major-mode 'nov-mode)))
-	 (window-list)))
+  (defun nov-buffer-in-current ()
+    (cl-find-if
+     (lambda (window)
+       (with-current-buffer (window-buffer window) (eq major-mode 'nov-mode)))
+     (window-list)))
 
-      (defun reader/scroll-up (arg)
-	(interactive "P")
-	(let ((nov-window (nov-buffer-in-current))
-	      (current-window (get-buffer-window)))
-	  (if nov-window
-	      (progn
-		(select-window nov-window)
-		(nov-scroll-up arg)
-		(select-window current-window))
-	    (skim-next-page))))
+  (defun reader/scroll-up (arg)
+    (interactive "P")
+    (let ((nov-window (nov-buffer-in-current))
+	  (current-window (get-buffer-window)))
+      (if nov-window
+	  (progn
+	    (select-window nov-window)
+	    (nov-scroll-up arg)
+	    (select-window current-window))
+	(skim-next-page))))
 
-      (defun reader/scroll-down (arg)
-	(interactive "P")
-	(let ((nov-window (nov-buffer-in-current))
-	      (current-window (get-buffer-window)))
-	  (if nov-window
-	      (progn
-		(select-window nov-window)
-		(nov-scroll-down arg)
-		(select-window current-window))
-	    (skim-prev-page))))
+  (defun reader/scroll-down (arg)
+    (interactive "P")
+    (let ((nov-window (nov-buffer-in-current))
+	  (current-window (get-buffer-window)))
+      (if nov-window
+	  (progn
+	    (select-window nov-window)
+	    (nov-scroll-down arg)
+	    (select-window current-window))
+	(skim-prev-page))))
 
-      (defun reader/goto-pdf-first-page-or-nov-toc ()
-	(interactive)
-	(let ((nov-window (nov-buffer-in-current))
-	      (current-window (get-buffer-window)))
-	  (if nov-window
-	      (progn
-		(select-window nov-window)
-		(nov-goto-toc)
-		(select-window current-window))
-	    (skim-goto 1))))
+  (defun reader/goto-pdf-first-page-or-nov-toc ()
+    (interactive)
+    (let ((nov-window (nov-buffer-in-current))
+	  (current-window (get-buffer-window)))
+      (if nov-window
+	  (progn
+	    (select-window nov-window)
+	    (nov-goto-toc)
+	    (select-window current-window))
+	(skim-goto 1))))
 
-    #+end_src
+#+end_src
 ** Helpers
 *** tab 循环展开图片
-    #+begin_src emacs-lisp
-      ;;; Only display inline images under current subtree.
-      (defun org-display-subtree-inline-images (&optional state)
-	"Toggle the display of inline images under current subtree.
-      INCLUDE-LINKED is passed to `org-display-inline-images'."
-	(interactive)
-	(save-excursion
-	  (save-restriction
-	    (org-narrow-to-subtree)
-	    (let* ((beg (point-min))
-		   (end (point-max))
-		   (image-overlays (cl-intersection
-				    org-inline-image-overlays
-				    (overlays-in beg end)))
-		   (display-inline-images-local
-		    (lambda ()
-		      (org-display-inline-images t t beg end)
-		      (setq image-overlays (cl-intersection
-					    org-inline-image-overlays
-					    (overlays-in beg end)))
-		      (if (and (org-called-interactively-p) image-overlays)
-			  (message "%d images displayed inline"
-				   (length image-overlays)))))
-		   (hide-inline-images-local
-		    (lambda ()
-		      (org-remove-inline-images)
-		      (message "Inline image display turned off"))))
-	      (if state
-		  (pcase state
-		    ('subtree
-		     (funcall display-inline-images-local))
-		    ('folded
-		     (funcall hide-inline-images-local)))
-		(if image-overlays
-		    (funcall display-inline-images-local)
-		  (funcall hide-inline-images-local)))))))
-    #+end_src
+#+begin_src emacs-lisp
+  ;;; Only display inline images under current subtree.
+  (defun org-display-subtree-inline-images (&optional state)
+    "Toggle the display of inline images under current subtree.
+  INCLUDE-LINKED is passed to `org-display-inline-images'."
+    (interactive)
+    (save-excursion
+      (save-restriction
+	(org-narrow-to-subtree)
+	(let* ((beg (point-min))
+	       (end (point-max))
+	       (image-overlays (cl-intersection
+				org-inline-image-overlays
+				(overlays-in beg end)))
+	       (display-inline-images-local
+		(lambda ()
+		  (org-display-inline-images t t beg end)
+		  (setq image-overlays (cl-intersection
+					org-inline-image-overlays
+					(overlays-in beg end)))
+		  (if (and (org-called-interactively-p) image-overlays)
+		      (message "%d images displayed inline"
+			       (length image-overlays)))))
+	       (hide-inline-images-local
+		(lambda ()
+		  (org-remove-inline-images)
+		  (message "Inline image display turned off"))))
+	  (if state
+	      (pcase state
+		('subtree
+		 (funcall display-inline-images-local))
+		('folded
+		 (funcall hide-inline-images-local)))
+	    (if image-overlays
+		(funcall display-inline-images-local)
+	      (funcall hide-inline-images-local)))))))
+#+end_src
 
 *** 循环展开 properties
-    #+begin_src emacs-lisp
-      (defun org-hide-properties ()
-	"Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
-	(interactive)
-	(save-excursion
-	  (goto-char (point-min))
-	  (while (re-search-forward
-		  "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
-	    (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
-	      (overlay-put ov_this 'display "")
-	      (overlay-put ov_this 'hidden-prop-drawer t))))
-	(put 'org-toggle-properties-hide-state 'state 'hidden))
+#+begin_src emacs-lisp
+  (defun org-hide-properties ()
+    "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
+    (interactive)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward
+	      "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
+	(let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
+	  (overlay-put ov_this 'display "")
+	  (overlay-put ov_this 'hidden-prop-drawer t))))
+    (put 'org-toggle-properties-hide-state 'state 'hidden))
 
-      (defun org-show-properties ()
-	"Show all org-mode property drawers hidden by org-hide-properties."
-	(interactive)
-	(remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
-	(put 'org-toggle-properties-hide-state 'state 'shown))
+  (defun org-show-properties ()
+    "Show all org-mode property drawers hidden by org-hide-properties."
+    (interactive)
+    (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
+    (put 'org-toggle-properties-hide-state 'state 'shown))
 
-      (defun org-toggle-properties ()
-	"Toggle visibility of property drawers."
-	(interactive)
-	(if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
-	    (org-show-properties)
-	  (org-hide-properties)))
-    #+end_src
+  (defun org-toggle-properties ()
+    "Toggle visibility of property drawers."
+    (interactive)
+    (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
+	(org-show-properties)
+      (org-hide-properties)))
+#+end_src
 
 *** mac 通知
 依赖于终端软件 =terminal-notifier= 。
@@ -1043,6 +1045,7 @@
 #+begin_src emacs-lisp
   (use-package org
     :pin gnu
+    :ensure nil
     :ensure-system-package terminal-notifier
     :defer t
     :init
@@ -1056,7 +1059,9 @@
        (plantuml . t)))
     ;;(R . t)))
     :config
-  ;;; auto display inline images on Org TAB cycle expand headlines.
+    ;; 使 org-mode 中的 company 可以补全代码 symbol
+    ;;(push 'org-mode company-dabbrev-code-modes)
+    ;;; auto display inline images on Org TAB cycle expand headlines.
     ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
     (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
     (add-to-list 'org-export-backends 'md)
@@ -1084,10 +1089,10 @@
 #+end_src
 ** 美观
    有时候反而觉得原始状态挺好看。。。而且这个插件极度影响性能。。。所以先禁止掉。
-   #+begin_src emacs-lisp :tangle no
-     (use-package org-bullets
-       :hook (org-mode . org-bullets-mode))
-   #+end_src
+#+begin_src emacs-lisp :tangle no
+  (use-package org-bullets
+    :hook (org-mode . org-bullets-mode))
+#+end_src
 ** TODO Org-ref
      查阅相关资料后，对于我这种没有知识整理，文档输出的人废物来说，无用。。。
      又发现想作到笔记的精确对应（按之前方案只能对应到页），几个成熟方案还是需要他。。。
@@ -1141,103 +1146,85 @@
 
      #+end_src
 ** Agenda
-   #+begin_src emacs-lisp
-     (defun org-refresh-agenda-files ()
-       (interactive)
-       (setq org-agenda-files (directory-files (concat org-directory "journal/") t ".org")))
-     (use-package org-agenda
-       :ensure org-plus-contrib
-       :commands (org-agenda-list
-		  org-agenda
-		  org-agenda-to-appt)
-       :init
-       (org-refresh-agenda-files))
-   #+end_src
+#+begin_src emacs-lisp
+  (defun org-refresh-agenda-files ()
+    (interactive)
+    (setq org-agenda-files (directory-files (concat org-directory "journal/") t ".org")))
+#+end_src
 ** Bookmark
    使用 org 文件做了一个收藏夹。
-   #+begin_src emacs-lisp
-     (setq private/bookmark-file (concat org-directory "bookmarks.org"))
-     (defun open-bookmarks ()
-       (interactive)
-       (if (buffer-live-p "bookmarks.org")
-	   (pop-to-buffer "bookmarks.org")
-	 (find-file private/bookmark-file)))
-   #+end_src
+#+begin_src emacs-lisp
+  (setq private/bookmark-file (concat org-directory "bookmarks.org"))
+  (defun open-bookmarks ()
+    (interactive)
+    (if (buffer-live-p "bookmarks.org")
+	(pop-to-buffer "bookmarks.org")
+      (find-file private/bookmark-file)))
+#+end_src
 ** Org-roam
-   #+begin_src emacs-lisp
-     (use-package org-roam
-       :init
-       (add-hook 'after-init-hook 'org-roam-setup)
-       (setq org-roam-v2-ack t
-	     org-roam-directory org-directory
-	     org-roam-db-gc-threshold most-positive-fixnum
-	     org-roam-db-location (concat org-directory "org-roam.db")
-	     org-roam-dailies-directory "journal/")
+#+begin_src emacs-lisp
+  (use-package org-roam
+    :init
+    (add-hook 'after-init-hook 'org-roam-setup)
+    (setq org-roam-v2-ack t
+	  org-roam-directory org-directory
+	  org-roam-db-gc-threshold most-positive-fixnum
+	  org-roam-db-location (concat org-directory "org-roam.db")
+	  org-roam-dailies-directory "journal/")
 
-       (require 'org-roam-protocol)
-       :config
-       (setq org-roam-node-display-template "${hierarchy:*}
-     ${tags:20}")
-       (setq org-roam-completion-everywhere t)
-       (setq org-roam-completion-system 'ivy)
-       (setq org-roam-capture-ref-templates
-	     '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))) ;;
-       (setq org-roam-dailies-capture-templates
-	     '(("d" "dailies" entry "* %<%R> %?" :target (file+head "%<%Y%m%d-%W>.org" "#+title: %<%Y-%m-%d>\n"))))
-       ;; must after use-package org-roam
-       (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
-	 "Return the file TITLE for the node."
-	 (org-roam-get-keyword "TITLE" (org-roam-node-file node)))
-       (cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
-	 "Return the hierarchy for the node."
-	 (let ((title (org-roam-node-title node))
-	       (olp (org-roam-node-olp node))
-	       (level (org-roam-node-level node))
-	       (filetitle (org-roam-node-filetitle node)))
-	   (concat
-	    (if (> level 0) (concat filetitle " > "))
-	    (if (> level 1) (concat (string-join olp " > ") " > "))
-	    title))
-	 ))
+    (require 'org-roam-protocol)
+    :config
+    (setq org-roam-node-display-template "${hierarchy:*}
+  ${tags:20}")
+    (setq org-roam-completion-everywhere t)
+    (setq org-roam-completion-system 'ivy)
+    (setq org-roam-capture-ref-templates
+	  '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))) ;;
+    (setq org-roam-dailies-capture-templates
+	  '(("d" "dailies" entry "* %<%R> %?" :target (file+head "%<%Y%m%d-%W>.org" "#+title: %<%Y-%m-%d>\n"))))
+    ;; must after use-package org-roam
+    (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
+      "Return the file TITLE for the node."
+      (org-roam-get-keyword "TITLE" (org-roam-node-file node)))
+    (cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
+      "Return the hierarchy for the node."
+      (let ((title (org-roam-node-title node))
+	    (olp (org-roam-node-olp node))
+	    (level (org-roam-node-level node))
+	    (filetitle (org-roam-node-filetitle node)))
+	(concat
+	 (if (> level 0) (concat filetitle " > "))
+	 (if (> level 1) (concat (string-join olp " > ") " > "))
+	 title))
+      ))
 
-     (use-package org-roam-bibtex
-       :after org-roam)
-   #+end_src
+  (use-package org-roam-bibtex
+    :after org-roam)
+#+end_src
 ** Org-clock
-   #+begin_src emacs-lisp
-     (use-package org-clock
-       :after org
-       :ensure org-plus-contrib
-       :config
-       (setq org-clock-clocked-in-display nil
-	     org-clock-mode-line-total 'current))
-   #+end_src
+#+begin_src emacs-lisp
+    (setq org-clock-clocked-in-display nil
+	  org-clock-mode-line-total 'current)
+#+end_src
 ** Org-pomodoro
    番茄钟。但暂不使用。
-   #+begin_src emacs-lisp :tangle no
-     (use-package org-pomodoro
-       :commands org-pomodoro
-       :config
-       (add-hook 'org-pomodoro-finished-hook
-		 (lambda()
-		   (notify-osx "Pomodoro completed!" "Time for a break.")))
-       (add-hook 'org-pomodoro-break-finished-hook
-		 (lambda()
-		   (notify-osx "Pomodoro Short Break Finished!" "Ready for Another?")))
-       (add-hook 'org-pomodoro-long-break-finished-hook
-		 (lambda()
-		   (notify-osx "Pomodoro Long Break Finished!" "Ready for Another?")))
-       (add-hook 'org-pomodoro-killed-hook
-		 (lambda()
-		   (notify-osx "Pomodoro Killed!" "One does not simply kill a pomodoro!"))))
-   #+end_src
-** Org-protocol
-   #+begin_src emacs-lisp
-     (use-package org-protocol
-  :after org
-  :ensure org-plus-contrib)
-   #+end_src
-**
+#+begin_src emacs-lisp :tangle no
+  (use-package org-pomodoro
+    :commands org-pomodoro
+    :config
+    (add-hook 'org-pomodoro-finished-hook
+	      (lambda()
+		(notify-osx "Pomodoro completed!" "Time for a break.")))
+    (add-hook 'org-pomodoro-break-finished-hook
+	      (lambda()
+		(notify-osx "Pomodoro Short Break Finished!" "Ready for Another?")))
+    (add-hook 'org-pomodoro-long-break-finished-hook
+	      (lambda()
+		(notify-osx "Pomodoro Long Break Finished!" "Ready for Another?")))
+    (add-hook 'org-pomodoro-killed-hook
+	      (lambda()
+		(notify-osx "Pomodoro Killed!" "One does not simply kill a pomodoro!"))))
+#+end_src
 ** Org-download
 #+begin_src emacs-lisp
   (use-package org-download
@@ -1486,9 +1473,6 @@
 	    company-yasnippet
 	    company-dabbrev-code
 	    company-dabbrev))
-    ;; 使 org-mode 中的 company 可以补全代码 symbol
-    :config
-    (push 'org-mode company-dabbrev-code-modes)
     :general
     (general-define-key
      :keymaps 'company-active-map
@@ -1600,6 +1584,7 @@
     (general-nmap
       :keymaps 'magit-mode-map
       "s-<return>" 'magit-diff-visit-file-other-window))
+
   (use-package diff-hl
     :defer t
     :hook (prog-mode . diff-hl-flydiff-mode))
