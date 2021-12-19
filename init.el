@@ -68,6 +68,9 @@
 
 (setq confirm-kill-processes nil)
 
+(assq-delete-all 'org package--builtins)
+(assq-delete-all 'org package--builtin-versions)
+
 (setq package-native-compile t
       use-package-expand-minimally t
       use-package-always-ensure t
@@ -371,13 +374,9 @@
       private/book-directory (concat base-directory "publications/")
       org-directory (concat base-directory "orgs/"))
 
-(use-package org-capture
-  :after org
-  :ensure org-plus-contrib)
-
 (use-package org-mac-link
-  :defer t
-  :ensure org-plus-contrib
+  :after org
+  :quelpa (org-mac-link :fetcher gitlab :repo "aimebertrand/org-mac-link" :branch "main")
   :commands (org-mac-skim-insert-page
 	     org-mac-safari-insert-frontmost-url
 	     org-mac-finder-insert-selected))
@@ -503,6 +502,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 
 (use-package org
   :pin gnu
+  :ensure nil
   :ensure-system-package terminal-notifier
   :defer t
   :init
@@ -516,7 +516,9 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
      (plantuml . t)))
   ;;(R . t)))
   :config
-;;; auto display inline images on Org TAB cycle expand headlines.
+  ;; 使 org-mode 中的 company 可以补全代码 symbol
+  ;;(push 'org-mode company-dabbrev-code-modes)
+  ;;; auto display inline images on Org TAB cycle expand headlines.
   ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
   (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
   (add-to-list 'org-export-backends 'md)
@@ -590,13 +592,6 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
 (defun org-refresh-agenda-files ()
   (interactive)
   (setq org-agenda-files (directory-files (concat org-directory "journal/") t ".org")))
-(use-package org-agenda
-  :ensure org-plus-contrib
-  :commands (org-agenda-list
-	     org-agenda
-	     org-agenda-to-appt)
-  :init
-  (org-refresh-agenda-files))
 
 (setq private/bookmark-file (concat org-directory "bookmarks.org"))
 (defun open-bookmarks ()
@@ -643,16 +638,8 @@ ${tags:20}")
 (use-package org-roam-bibtex
   :after org-roam)
 
-(use-package org-clock
-  :after org
-  :ensure org-plus-contrib
-  :config
-  (setq org-clock-clocked-in-display nil
-	org-clock-mode-line-total 'current))
-
-(use-package org-protocol
-:after org
-:ensure org-plus-contrib)
+(setq org-clock-clocked-in-display nil
+      org-clock-mode-line-total 'current)
 
 (use-package org-download
   :after org
@@ -813,9 +800,6 @@ ${tags:20}")
 	  company-yasnippet
 	  company-dabbrev-code
 	  company-dabbrev))
-  ;; 使 org-mode 中的 company 可以补全代码 symbol
-  :config
-  (push 'org-mode company-dabbrev-code-modes)
   :general
   (general-define-key
    :keymaps 'company-active-map
@@ -917,6 +901,7 @@ ${tags:20}")
   (general-nmap
     :keymaps 'magit-mode-map
     "s-<return>" 'magit-diff-visit-file-other-window))
+
 (use-package diff-hl
   :defer t
   :hook (prog-mode . diff-hl-flydiff-mode))
