@@ -28,7 +28,6 @@
 
 * 基础设置
 
-
 ** 窗口最大化
    #+begin_src emacs-lisp
      (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
@@ -244,10 +243,9 @@
 #+begin_src emacs-lisp
   (use-package general
     :config
-    (general-evil-setup)
-    (general-auto-unbind-keys)
     (general-create-definer common-leader
       :prefix-name "SPC"
+      :keymaps 'override
       :non-normal-prefix "C-SPC"
       :prefix "SPC"
       :states '(insert motion normal emacs))
@@ -256,15 +254,14 @@
       :non-normal-prefix "C-,"
       :prefix ","
       :states '(insert motion normal emacs))
-    (general-create-definer clear-spc
-      :prefix-name "NOSPC"
-      "SPC" nil)
-    (general-define-key
-     :keymaps '(global-map)
-     "C-SPC" nil))
-  (common-leader
-    "fed" 'goto-configuration-org
-    "SPC" 'counsel-M-x)
+    (general-evil-setup)
+    (general-auto-unbind-keys)
+    ;;    (general-create-definer clear-spc
+    ;;      :prefix-name "NOSPC"
+    ;;      "SPC" nil)
+    (common-leader
+      "fed" 'goto-configuration-org
+      "SPC" 'counsel-M-x))
 #+end_src
 ** 提示
   keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提供。
@@ -321,7 +318,6 @@
     (setq evil-visualstar/persistent t))
   (use-package evil-collection
     :after evil
-    :ensure t
     :config
     (evil-collection-init))
 #+end_src
@@ -343,7 +339,7 @@
       "c" 'private/god-start
       "x" 'private/god-start
       "m" 'private/god-start
-      "G" 'private/god-start))
+      "g" 'private/god-start))
 #+end_src
 * 外观
 ** modeline
@@ -1359,8 +1355,8 @@
        :keymaps 'ivy-minibuffer-map
        [escape] 'minibuffer-keyboard-quit
        "C-<return>" 'ivy-immediate-done)
-      (clear-spc
-	:keymaps 'ivy-occur-grep-mode-map)
+;;      (clear-spc
+;;	:keymaps 'ivy-occur-grep-mode-map)
       (common-leader
 	"/" 'counsel-rg))
 
@@ -1565,22 +1561,25 @@
 #+begin_src emacs-lisp
   (use-package magit
     :commands (magit-status magit-blame)
+  :after evil-collection
     :init
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  (evil-collection-init)
     :general
-    (clear-spc
-      :keymaps
-      '(magit-mode-map
-	magit-status-mode-map
-	magit-diff-mode-map
-	magit-process-mode-map
-	magit-blame-read-only-mode-map
-	magit-log-mode-map
-	git-rebase-mode-map))
+    ;;(clear-spc
+    ;;:keymaps
+    ;;'(magit-mode-map
+    ;;magit-status-mode-map
+    ;;magit-diff-mode-map
+    ;;magit-process-mode-map
+    ;;magit-blame-read-only-mode-map
+    ;;magit-log-mode-map
+    ;;git-rebase-mode-map))
     (common-leader
       "gs" 'magit-status
       "gb" 'magit-blame
       "gi" 'vc-msg-show)
+
     (general-nmap
       :keymaps 'magit-mode-map
       "s-<return>" 'magit-diff-visit-file-other-window))
@@ -1751,8 +1750,8 @@
 	    insert-directory-program "gls"
 	    dired-use-ls-dired t)
       :general
-    (clear-spc
-      :keymaps 'dired-mode-map)
+    ;;(clear-spc
+      ;;:keymaps 'dired-mode-map)
       (common-leader
        "fd" 'dired-jump
        "fD" 'dired-jump-other-window))
