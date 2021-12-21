@@ -195,13 +195,11 @@
   :defer t
   :commands (command-log-mode))
 
+;; M-; = SPC m ;
 (use-package evil-nerd-commenter
   :commands (evilnc-comment-or-uncomment-lines)
   :config
-  (evilnc-default-hotkeys)
-  :general
-  (common-leader
-    "gc" 'evilnc-comment-or-uncomment-lines))
+  (evilnc-default-hotkeys))
 
 (use-package evil-matchit
   :hook (prog-mode . evil-matchit-mode))
@@ -246,7 +244,7 @@
     "c" 'private/god-start
     "x" 'private/god-start
     "m" 'private/god-start
-    "g" 'private/god-start))
+    "G" 'private/god-start))
 
 (use-package spaceline
   :init
