@@ -177,9 +177,9 @@
     :states '(insert motion normal emacs))
   (general-evil-setup)
   (general-auto-unbind-keys)
-  ;;    (general-create-definer clear-spc
-  ;;      :prefix-name "NOSPC"
-  ;;      "SPC" nil)
+     (general-create-definer clear-spc
+       :prefix-name "NOSPC"
+       "SPC" nil)
   (common-leader
     "fed" 'goto-configuration-org
     "SPC" 'counsel-M-x))
@@ -382,7 +382,10 @@
   :defer t
   :mode ("\\.epub\\'" . nov-mode)
   :init
-  (setq nov-save-place-file (concat org-directory "nov-places")))
+  (setq nov-save-place-file (concat org-directory "nov-places"))
+  :config
+  (clear-spc
+    :keymaps 'nov-mode-map))
 
 (require 'skim)
 
