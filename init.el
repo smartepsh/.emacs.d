@@ -1,3 +1,12 @@
+(defun evil/eval-last-sexp (arg)
+  (interactive "P")
+  (evil-set-marker ?8)
+  (sp-end-of-sexp)
+  (eval-last-sexp arg)
+  (evil-goto-mark ?8))
+
+(global-set-key (kbd "C-x C-e") 'evil/eval-last-sexp)
+
 (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
 (global-set-key (kbd "s-C-f") 'toggle-frame-fullscreen)
 (global-set-key (kbd "s-M-f") 'toggle-frame-maximized)

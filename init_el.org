@@ -27,7 +27,17 @@
    此处我们直接输出配置到 =~/.emacs.d/init.el= 文件，意味着需要手动更新输出，新配置才可能生效。当然也可以直接更改此文件，但在下次导出时，会被覆盖，所以请不要这么做。
 
 * 基础设置
+** 为 evil 设置 eval-last-sexp
+#+begin_src emacs-lisp
+  (defun evil/eval-last-sexp (arg)
+    (interactive "P")
+    (evil-set-marker ?8)
+    (sp-end-of-sexp)
+    (eval-last-sexp arg)
+    (evil-goto-mark ?8))
 
+  (global-set-key (kbd "C-x C-e") 'evil/eval-last-sexp)
+#+end_src
 ** 窗口最大化
    #+begin_src emacs-lisp
      (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
