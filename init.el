@@ -122,9 +122,9 @@
 	evil-flash-delay 1
 	evil-want-integration nil
 	evil-undo-system 'undo-redo
-        evil-want-integration t
-        evil-want-keybinding nil)
-  (evil-mode)
+	evil-want-integration t
+	evil-want-keybinding nil)
+  (evil-mode)				;
   :config
   (defun copy-to-clipboard()
     "Copies selection to x-clipboard."
@@ -195,11 +195,13 @@
   :defer t
   :commands (command-log-mode))
 
-;; M-; = SPC m ;
 (use-package evil-nerd-commenter
   :commands (evilnc-comment-or-uncomment-lines)
   :config
-  (evilnc-default-hotkeys))
+  (evilnc-default-hotkeys)
+  :general
+  (common-leader
+    "gc" 'evilnc-comment-or-uncomment-lines))
 
 (use-package evil-matchit
   :hook (prog-mode . evil-matchit-mode))
@@ -673,19 +675,37 @@ ${tags:20}")
 (general-define-key
  :prefix "C-c C-r"
  "C-d" '(:ignore t :which-key "org-dailies")
- "C-d t" 'org-roam-dailies-goto-today
- "C-d d" 'org-roam-dailies-goto-date
- "C-d p" 'org-roam-dailies-goto-previous-note
- "C-d n" 'org-roam-dailies-goto-next-note
- "f" 'org-roam-node-find)
+ "C-d C-t" 'org-roam-dailies-goto-today
+ "C-d C-d" 'org-roam-dailies-goto-date
+ "C-d C-p" 'org-roam-dailies-goto-previous-note
+ "C-d C-n" 'org-roam-dailies-goto-next-note
+ "C-f" 'org-roam-node-find)
 
-(general-define-key
- :prefix "H-i"
+(common-leader
+ "d" '(:ignore t :which-key "org-dailies")
+ "t" 'org-roam-dailies-goto-today
+ "d" 'org-roam-dailies-goto-date
+ "p" 'org-roam-dailies-goto-previous-note
+ "n" 'org-roam-dailies-goto-next-note)
+
+(common-leader
+ "r" '(:ignore t :which-key "org-roam")
+ "rf" 'org-roam-node-find
+ "rr" 'org-roam-buffer-toggle)
+
+(local-leader
  :keymaps 'org-mode-map
- "r" 'org-mac-skim-insert-page ;; skim
- "s"  'org-mac-safari-insert-frontmost-url ;; internet
- "f"  'org-mac-finder-insert-selected ;; finder
- "i" 'org-store-link)
+ "i" '(:ignore t :which-key "insert")
+ "ii" 'org-roam-node-insert
+ "ia" 'org-roam-alias-add
+ "ir" 'org-roam-ref-add
+ "it" 'org-roam-tag-add
+ "l" '(:ignore t :which-key "link")
+ "lr" 'org-mac-skim-insert-page ;; skim
+ "ls"  'org-mac-safari-insert-frontmost-url ;; internet
+ "lf"  'org-mac-finder-insert-selected ;; finder
+ "ll" 'org-store-link
+ "li" 'org-insert-last-stored-link)
 
 (general-define-key
  :keymaps 'org-mode-map
@@ -715,7 +735,6 @@ ${tags:20}")
 (general-define-key
  :keymaps 'bibtex-mode-map
  "H-b" 'org-ref-bibtex-hydra/body)
-
 
 (general-define-key
  :keymaps 'org-roam-mode-map
