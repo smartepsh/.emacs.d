@@ -164,10 +164,9 @@
 
 (use-package general
   :config
-  (general-evil-setup)
-  (general-auto-unbind-keys)
   (general-create-definer common-leader
     :prefix-name "SPC"
+    :keymaps 'override
     :non-normal-prefix "C-SPC"
     :prefix "SPC"
     :states '(insert motion normal emacs))
@@ -176,15 +175,14 @@
     :non-normal-prefix "C-,"
     :prefix ","
     :states '(insert motion normal emacs))
-  (general-create-definer clear-spc
-    :prefix-name "NOSPC"
-    "SPC" nil)
-  (general-define-key
-   :keymaps '(global-map)
-   "C-SPC" nil))
-(common-leader
-  "fed" 'goto-configuration-org
-  "SPC" 'counsel-M-x)
+  (general-evil-setup)
+  (general-auto-unbind-keys)
+  ;;    (general-create-definer clear-spc
+  ;;      :prefix-name "NOSPC"
+  ;;      "SPC" nil)
+  (common-leader
+    "fed" 'goto-configuration-org
+    "SPC" 'counsel-M-x))
 
 (use-package which-key
   :after god-mode
@@ -229,7 +227,6 @@
   (setq evil-visualstar/persistent t))
 (use-package evil-collection
   :after evil
-  :ensure t
   :config
   (evil-collection-init))
 
@@ -249,7 +246,7 @@
     "c" 'private/god-start
     "x" 'private/god-start
     "m" 'private/god-start
-    "G" 'private/god-start))
+    "g" 'private/god-start))
 
 (use-package spaceline
   :init
@@ -727,43 +724,43 @@ ${tags:20}")
  [mouse-1] 'org-roam-visit-thing)
 
 (use-package ivy
-  :defer t
-  :init
-  (add-hook 'after-init-hook 'ivy-mode)
-  (setq ivy-use-virtual-buffers t
-	enable-recursive-minibuffers t)
-  :general
-  (general-define-key
-   :keymaps 'ivy-minibuffer-map
-   [escape] 'minibuffer-keyboard-quit
-   "C-<return>" 'ivy-immediate-done)
-  (clear-spc
-    :keymaps 'ivy-occur-grep-mode-map)
-  (common-leader
-    "/" 'counsel-rg))
+      :defer t
+      :init
+      (add-hook 'after-init-hook 'ivy-mode)
+      (setq ivy-use-virtual-buffers t
+	    enable-recursive-minibuffers t)
+      :general
+      (general-define-key
+       :keymaps 'ivy-minibuffer-map
+       [escape] 'minibuffer-keyboard-quit
+       "C-<return>" 'ivy-immediate-done)
+;;      (clear-spc
+;;	:keymaps 'ivy-occur-grep-mode-map)
+      (common-leader
+	"/" 'counsel-rg))
 
-(use-package swiper
-  :defer t
-  :commands (swiper)
-  :init
-  (general-define-key
-   "C-s" 'counsel-grep-or-swiper))
+    (use-package swiper
+      :defer t
+      :commands (swiper)
+      :init
+      (general-define-key
+       "C-s" 'counsel-grep-or-swiper))
 
-(use-package counsel
-  :hook (ivy-mode . counsel-mode)
-  :config
-  (common-leader
-    "ff" 'counsel-find-file
-    "fb" 'counsel-switch-buffer
-    "fr" 'counsel-buffer-or-recentf))
+    (use-package counsel
+      :hook (ivy-mode . counsel-mode)
+      :config
+      (common-leader
+	"ff" 'counsel-find-file
+	"fb" 'counsel-switch-buffer
+	"fr" 'counsel-buffer-or-recentf))
 
-(use-package all-the-icons-ivy
-  :init (add-hook 'after-init-hook 'all-the-icons-ivy-setup))
+    (use-package all-the-icons-ivy
+      :init (add-hook 'after-init-hook 'all-the-icons-ivy-setup))
 
-(use-package wgrep
-  :after ivy
-  :config
-  (setq wgrep-auto-save-buffer t))
+    (use-package wgrep
+      :after ivy
+      :config
+      (setq wgrep-auto-save-buffer t))
 
 (use-package calibredb
   :defer t
@@ -882,22 +879,25 @@ ${tags:20}")
 
 (use-package magit
   :commands (magit-status magit-blame)
+:after evil-collection
   :init
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+(evil-collection-init)
   :general
-  (clear-spc
-    :keymaps
-    '(magit-mode-map
-      magit-status-mode-map
-      magit-diff-mode-map
-      magit-process-mode-map
-      magit-blame-read-only-mode-map
-      magit-log-mode-map
-      git-rebase-mode-map))
+  ;;(clear-spc
+  ;;:keymaps
+  ;;'(magit-mode-map
+  ;;magit-status-mode-map
+  ;;magit-diff-mode-map
+  ;;magit-process-mode-map
+  ;;magit-blame-read-only-mode-map
+  ;;magit-log-mode-map
+  ;;git-rebase-mode-map))
   (common-leader
     "gs" 'magit-status
     "gb" 'magit-blame
     "gi" 'vc-msg-show)
+
   (general-nmap
     :keymaps 'magit-mode-map
     "s-<return>" 'magit-diff-visit-file-other-window))
@@ -1050,8 +1050,8 @@ ${tags:20}")
 	insert-directory-program "gls"
 	dired-use-ls-dired t)
   :general
-(clear-spc
-  :keymaps 'dired-mode-map)
+;;(clear-spc
+  ;;:keymaps 'dired-mode-map)
   (common-leader
    "fd" 'dired-jump
    "fD" 'dired-jump-other-window))
