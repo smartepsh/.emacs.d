@@ -1569,8 +1569,8 @@
 	  '(company-keywords
 	    company-elisp
 	    company-files
-	    company-capf
 	    company-yasnippet
+	    company-capf
 	    company-dabbrev-code
 	    company-dabbrev))
     :general
