@@ -530,7 +530,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
   ;;(R . t)))
   :config
   ;; 使 org-mode 中的 company 可以补全代码 symbol
-  ;;(push 'org-mode company-dabbrev-code-modes)
+  (push 'org-mode company-dabbrev-code-modes)
   ;;; auto display inline images on Org TAB cycle expand headlines.
   ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
   (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
