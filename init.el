@@ -1,3 +1,7 @@
+(defun goto-ansible ()
+  (interactive)
+  (find-file "/sshx:192.168.2.54:"))
+
 (defun evil/eval-last-sexp (arg)
   (interactive "P")
   (evil-set-marker ?8)

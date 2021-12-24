@@ -27,6 +27,13 @@
    此处我们直接输出配置到 =~/.emacs.d/init.el= 文件，意味着需要手动更新输出，新配置才可能生效。当然也可以直接更改此文件，但在下次导出时，会被覆盖，所以请不要这么做。
 
 * 基础设置
+
+** 连接到 Center 服务器修改 ansible 脚本
+#+begin_src emacs-lisp
+  (defun goto-ansible ()
+    (interactive)
+    (find-file "/sshx:192.168.2.54:"))
+#+end_src
 ** 为 evil 设置 eval-last-sexp
 #+begin_src emacs-lisp
   (defun evil/eval-last-sexp (arg)
