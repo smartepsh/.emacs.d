@@ -392,7 +392,6 @@
 	     org-mac-finder-insert-selected))
 
 (use-package nov
-  :defer t
   :mode ("\\.epub\\'" . nov-mode)
   :init
   (setq nov-save-place-file (concat org-directory "nov-places"))
@@ -529,8 +528,6 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
      (plantuml . t)))
   ;;(R . t)))
   :config
-  ;; 使 org-mode 中的 company 可以补全代码 symbol
-  (push 'org-mode company-dabbrev-code-modes)
   ;;; auto display inline images on Org TAB cycle expand headlines.
   ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
   (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
@@ -893,10 +890,13 @@ ${tags:20}")
 	'(company-keywords
 	  company-elisp
 	  company-files
-	  company-capf
 	  company-yasnippet
+	  company-capf
 	  company-dabbrev-code
 	  company-dabbrev))
+  :config
+  ;; ;; 使 org-mode 中的 company 可以补全代码 symbol
+  ;; (push 'org-mode company-dabbrev-code-modes)
   :general
   (general-define-key
    :keymaps 'company-active-map
