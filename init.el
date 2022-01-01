@@ -264,6 +264,7 @@
 (use-package spaceline
   :init
   (setq powerline-image-apple-rgb t
+	powerline-height 24
 	spaceline-buffer-size-p nil
 	spaceline-evil-state-p t
 	spaceline-flycheck-error-p t
