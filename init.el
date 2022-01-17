@@ -316,6 +316,11 @@
 
 (setq inhibit-startup-screen t)
 
+(use-package whitespace4r
+  :quelpa (whitespace4r :fetcher github :repo "twlz0ne/whitespace4r.el" :branch "main")
+  :init
+  (whitespace4r-mode))
+
 (use-package eyebrowse
   :defer t
   :init
@@ -1079,6 +1084,13 @@ ${tags:20}")
   :init
   (setq inferior-lisp-program "/Users/smartepsh/.asdf/shims/sbcl"
 	org-babel-lisp-eval-fn 'sly-eval))
+
+(use-package plantuml-mode
+  :mode ("\\.plantuml\\'" . plantuml-mode)
+  :defer t
+  :init
+  (setq plantuml-default-exec-mode 'jar
+	plantuml-jar-path (concat private/config-directory "plantuml-1.2021.16.jar")))
 
 (use-package lsp-mode
   :defer t
