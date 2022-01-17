@@ -457,6 +457,18 @@
    #+begin_src emacs-lisp
      (setq inhibit-startup-screen t)
    #+end_src
+** 显示 region 中的空格和 tab
+本身是有个模式可以全局显示空格和 tab 的，但是平时也不怎么用不到，也丑，就先算了。。。现在发现了一个只针对 region 显示的，感觉应该挺好用的。。。
+#+begin_src emacs-lisp
+  (use-package whitespace4r
+    :quelpa (whitespace4r :fetcher github :repo "twlz0ne/whitespace4r.el" :branch "main")
+    :init
+    (whitespace4r-mode))
+#+end_src
+
+#+RESULTS:
+: whitespace4r
+
 * 窗口管理
   因为 centaur tabs 有点问题，所以先禁止掉。
   快捷键设置向 item 靠拢。
@@ -1775,6 +1787,16 @@
        (setq inferior-lisp-program "/Users/smartepsh/.asdf/shims/sbcl"
 	     org-babel-lisp-eval-fn 'sly-eval))
    #+end_src
+** PlantUML
+#+begin_src emacs-lisp
+  (use-package plantuml-mode
+    :mode ("\\.plantuml\\'" . plantuml-mode)
+    :defer t
+    :init
+    (setq plantuml-default-exec-mode 'jar
+	  plantuml-jar-path (concat private/config-directory "plantuml-1.2021.16.jar")))
+#+end_src
+
 * LSP
   尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
 #+begin_src emacs-lisp
