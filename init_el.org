@@ -213,7 +213,6 @@
     :init
     (setq evil-shift-width 2
 	  evil-flash-delay 1
-	  evil-want-integration nil
 	  evil-undo-system 'undo-redo
 	  evil-want-integration t
 	  evil-want-keybinding nil
@@ -460,7 +459,9 @@
    #+end_src
 ** 显示 region 中的空格和 tab
 本身是有个模式可以全局显示空格和 tab 的，但是平时也不怎么用不到，也丑，就先算了。。。现在发现了一个只针对 region 显示的，感觉应该挺好用的。。。
-#+begin_src emacs-lisp
+
+发现他会影响 evil 的粘贴行为，导致 =yy= + =p= 会在光标处粘贴，而非另起新行，所以先移除。
+#+begin_src emacs-lisp :tangle no
   (use-package whitespace4r
     :quelpa (whitespace4r :fetcher github :repo "twlz0ne/whitespace4r.el" :branch "main")
     :init
