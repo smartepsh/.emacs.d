@@ -1068,7 +1068,9 @@
 *** elixir
     #+begin_src emacs-lisp
       (use-package ob-elixir :after org)
+      (use-package ox-gfm :after org)
     #+end_src
+
 ** 本体
 #+begin_src emacs-lisp
   (use-package org
@@ -1795,6 +1797,15 @@
     :init
     (setq plantuml-default-exec-mode 'jar
 	  plantuml-jar-path (concat private/config-directory "plantuml-1.2021.16.jar")))
+#+end_src
+** Web
+#+begin_src emacs-lisp
+  (use-package web-mode
+    :init
+    (setq web-mode-markup-indent-offset 2
+	  web-mode-css-indent-offset 2
+	  web-mode-code-indent-offset 2
+	  web-mode-comment-style 2))
 #+end_src
 
 * LSP
