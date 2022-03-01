@@ -216,8 +216,9 @@
 	  evil-want-integration nil
 	  evil-undo-system 'undo-redo
 	  evil-want-integration t
-	  evil-want-keybinding nil)
-    (evil-mode)				;
+	  evil-want-keybinding nil
+	  evil-cross-lines t)
+    (evil-mode)
     :config
     (defun copy-to-clipboard()
       "Copies selection to x-clipboard."
@@ -230,14 +231,13 @@
 		  (message "Yanked region to clipboard!")
 		  (deactivate-mark))
 	      (message "No region active; can't yank to clipboard!"))
-	    )
-	))
+	    )))
 
     (defun paste-from-clipboard ()
       "Pastes from x-clipboard."
       (interactive)
-      (evil-paste-after 1 (evil-use-register ?+))
-      )
+      (evil-paste-from-register (evil-use-register ?+)))
+
     (general-define-key
      :states 'insert
      "\C-h" 'delete-backward-char
@@ -255,6 +255,7 @@
 	    split-window-right-and-focus
 	    switch-window)))
 #+end_src
+
 ** 绑定
   +meow 提供了一些全局的绑定方法，但基本均基于 normal state 或者 leader key ，无法根据 keymap 设置按键，故引入 general 。+
 #+begin_src emacs-lisp

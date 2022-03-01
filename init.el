@@ -136,8 +136,9 @@
 	evil-want-integration nil
 	evil-undo-system 'undo-redo
 	evil-want-integration t
-	evil-want-keybinding nil)
-  (evil-mode)				;
+	evil-want-keybinding nil
+	evil-cross-lines t)
+  (evil-mode)
   :config
   (defun copy-to-clipboard()
     "Copies selection to x-clipboard."
@@ -150,14 +151,13 @@
 		(message "Yanked region to clipboard!")
 		(deactivate-mark))
 	    (message "No region active; can't yank to clipboard!"))
-	  )
-      ))
+	  )))
 
   (defun paste-from-clipboard ()
     "Pastes from x-clipboard."
     (interactive)
-    (evil-paste-after 1 (evil-use-register ?+))
-    )
+    (evil-paste-from-register (evil-use-register ?+)))
+
   (general-define-key
    :states 'insert
    "\C-h" 'delete-backward-char
@@ -517,6 +517,7 @@ INCLUDE-LINKED is passed to `org-display-inline-images'."
               "-activate" "org.gnu.Emacs"))
 
 (use-package ob-elixir :after org)
+(use-package ox-gfm :after org)
 
 (use-package org
   :pin gnu
@@ -1091,6 +1092,13 @@ ${tags:20}")
   :init
   (setq plantuml-default-exec-mode 'jar
 	plantuml-jar-path (concat private/config-directory "plantuml-1.2021.16.jar")))
+
+(use-package web-mode
+  :init
+  (setq web-mode-markup-indent-offset 2
+	web-mode-css-indent-offset 2
+	web-mode-code-indent-offset 2
+	web-mode-comment-style 2))
 
 (use-package lsp-mode
   :defer t
