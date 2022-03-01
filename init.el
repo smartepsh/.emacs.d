@@ -133,7 +133,6 @@
   :init
   (setq evil-shift-width 2
 	evil-flash-delay 1
-	evil-want-integration nil
 	evil-undo-system 'undo-redo
 	evil-want-integration t
 	evil-want-keybinding nil
@@ -315,11 +314,6 @@
   :defer t)
 
 (setq inhibit-startup-screen t)
-
-(use-package whitespace4r
-  :quelpa (whitespace4r :fetcher github :repo "twlz0ne/whitespace4r.el" :branch "main")
-  :init
-  (whitespace4r-mode))
 
 (use-package eyebrowse
   :defer t
