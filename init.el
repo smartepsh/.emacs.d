@@ -338,7 +338,8 @@
 (use-package switch-window
   :init
   (setq switch-window-auto-resize-window t
-	switch-window-minibuffer-shortcut ?z)
+	switch-window-minibuffer-shortcut ?z
+	switch-window-multiple-frames t)
   (general-define-key
    "s-d" 'switch-window-then-split-right
    "s-[" 'windmove-left
