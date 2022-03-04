@@ -139,6 +139,8 @@
 	evil-cross-lines t)
   (evil-mode)
   :config
+  (evil-set-initial-state 'calibredb-search-mode 'emacs)
+  (evil-set-initial-state 'custom-mode 'emacs)
   (defun copy-to-clipboard()
     "Copies selection to x-clipboard."
     (interactive)
