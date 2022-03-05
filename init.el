@@ -143,6 +143,7 @@
   :config
   (evil-set-initial-state 'calibredb-search-mode 'emacs)
   (evil-set-initial-state 'custom-mode 'emacs)
+  (evil-set-initial-state 'code-review-mode 'emacs)
   (defun copy-to-clipboard()
     "Copies selection to x-clipboard."
     (interactive)
@@ -1014,6 +1015,7 @@ ${tags:20}")
 
 (use-package forge
   :after magit)
+
 (use-package vc-msg
   :defer t
   :commands (vc-msg-show)
@@ -1031,6 +1033,10 @@ ${tags:20}")
 		   (magit-find-file (plist-get info :id )
 				    (concat git-dir (plist-get info :filename))))))
 	     vc-msg-git-extra))))
+
+(use-package code-review
+  :defer t
+  :commands (code-review code-review-forge-pr-at-point))
 
 (use-package elixir-mode
   :defer t

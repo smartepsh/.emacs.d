@@ -27,3 +27,5 @@ rime/
 !rime/*.yaml
 .DS_Store
 forge-database.sqlite
+code-review-db-file.sqlite
+code-review-error.log
