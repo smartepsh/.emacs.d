@@ -26,3 +26,4 @@ eln-cache/
 rime/
 !rime/*.yaml
 .DS_Store
+forge-database.sqlite

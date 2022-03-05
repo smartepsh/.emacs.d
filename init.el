@@ -2,6 +2,8 @@
   (interactive)
   (find-file "/sshx:192.168.2.54:"))
 
+(setq epa-pinentry-mode 'loopback)
+
 (defun evil/eval-last-sexp (arg)
   (interactive "P")
   (evil-set-marker ?8)
@@ -983,10 +985,10 @@ ${tags:20}")
 
 (use-package magit
   :commands (magit-status magit-blame)
-:after evil-collection
+  :after evil-collection
   :init
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-(evil-collection-init)
+  (evil-collection-init)
   :general
   ;;(clear-spc
   ;;:keymaps
@@ -1010,6 +1012,8 @@ ${tags:20}")
   :defer t
   :hook (prog-mode . diff-hl-flydiff-mode))
 
+(use-package forge
+  :after magit)
 (use-package vc-msg
   :defer t
   :commands (vc-msg-show)
