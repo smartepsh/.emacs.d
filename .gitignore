@@ -29,3 +29,4 @@ rime/
 forge-database.sqlite
 code-review-db-file.sqlite
 code-review-error.log
+init_el.el

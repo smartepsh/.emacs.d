@@ -1,6 +1,5 @@
 :PROPERTIES:
 :ID:       52F81E86-D8C4-4A74-B8C4-EE0A32CA7100
-:header-args: :tangle "~/.emacs.d/init.el"
 :END:
 #+title: init.el
 
