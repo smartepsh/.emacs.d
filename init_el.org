@@ -1079,6 +1079,11 @@
     #+begin_src emacs-lisp
       (use-package ob-elixir :after org)
       (use-package ox-gfm :after org)
+      (use-package ob-racket
+        :quelpa (ob-racket :fetcher github :repo "hasu/emacs-ob-racket" :branch "master")
+        :init
+        (setq ob-racket-default-lang "sicp")
+        :after org)
     #+end_src
 
 ** 本体
@@ -1096,34 +1101,35 @@
        (org . t)
        (haskell . t)
        (lisp . t)
-       (plantuml . t)))
+       (plantuml . t)
+       (racket . t)))
     ;;(R . t)))
     :config
-    ;;; auto display inline images on Org TAB cycle expand headlines.
+      ;;; auto display inline images on Org TAB cycle expand headlines.
     ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
     (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
     (add-to-list 'org-export-backends 'md)
     (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
-	  ;; org-default-notes-file org-agenda-file
-	  org-archive-location (concat org-directory "Archived/" "%s_archive::")
-	  org-id-locations-file (concat org-directory ".org-id-locations")
-	  org-plantuml-jar-path (concat private/config-directory "plantuml-1.2021.16.jar")
-	  org-log-done nil
-	  ;; (nconc org-modules '(org-id))
-	  ;; org-refile-targets '((org-agenda-files :maxlevel . 2))
-	  org-refile-use-outline-path 'file
-	  org-outline-path-complete-in-steps nil
-	  org-refile-allow-creating-parent-nodes 'confirm
-	  org-refile-use-cache t
-	  org-startup-truncated nil
-	  org-confirm-babel-evaluate nil
-	  org-M-RET-may-split-line '((headline . nil) (item . nil) (default . t))
-	  org-html-validation-link nil)
+          ;; org-default-notes-file org-agenda-file
+          org-archive-location (concat org-directory "Archived/" "%s_archive::")
+          org-id-locations-file (concat org-directory ".org-id-locations")
+          org-plantuml-jar-path (concat private/config-directory "plantuml-1.2021.16.jar")
+          org-log-done nil
+          ;; (nconc org-modules '(org-id))
+          ;; org-refile-targets '((org-agenda-files :maxlevel . 2))
+          org-refile-use-outline-path 'file
+          org-outline-path-complete-in-steps nil
+          org-refile-allow-creating-parent-nodes 'confirm
+          org-refile-use-cache t
+          org-startup-truncated nil
+          org-confirm-babel-evaluate nil
+          org-M-RET-may-split-line '((headline . nil) (item . nil) (default . t))
+          org-html-validation-link nil)
     ;; refresh cache when emacs idle 5 mins
     (run-with-idle-timer 300 t (lambda ()
-				 (org-refile-cache-clear)
-				 ;; (org-refile-get-targets)
-				 (org-roam-db-sync))))
+                                 (org-refile-cache-clear)
+                                 ;; (org-refile-get-targets)
+                                 (org-roam-db-sync))))
 #+end_src
 ** 美观
    有时候反而觉得原始状态挺好看。。。而且这个插件极度影响性能。。。所以先禁止掉。
@@ -1835,6 +1841,13 @@
        (setq inferior-lisp-program "/Users/smartepsh/.asdf/shims/sbcl"
 	     org-babel-lisp-eval-fn 'sly-eval))
    #+end_src
+** Racket
+学习 SICP 。MIT-Scheme 无法在 M1 上安装，打算尝试走偏门，Racket + SICP 包。
+#+begin_src emacs-lisp
+  (use-package racket-mode
+    :defer t)
+#+end_src
+
 ** PlantUML
 #+begin_src emacs-lisp
   (use-package plantuml-mode
