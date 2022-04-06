@@ -1719,6 +1719,7 @@
     :after evil-collection
     :init
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+    (setq forge-add-default-bindings nil)
     (evil-collection-init)
     :general
     ;;(clear-spc
@@ -1752,22 +1753,25 @@
     :init
     (eval-after-load 'vc-msg-git
       '(progn
-	 ;; show code of commit
-	 (setq vc-msg-git-show-commit-function 'magit-show-commit)
-	 ;; open file of certain revision
-	 (push '("m"
-		 "[m]agit-find-file"
-		 (lambda ()
-		   (let* ((info vc-msg-previous-commit-info)
-			  (git-dir (locate-dominating-file default-directory ".git")))
-		     (magit-find-file (plist-get info :id )
-				      (concat git-dir (plist-get info :filename))))))
-	       vc-msg-git-extra))))
+   ;; show code of commit
+   (setq vc-msg-git-show-commit-function 'magit-show-commit)
+   ;; open file of certain revision
+   (push '("m"
+     "[m]agit-find-file"
+     (lambda ()
+       (let* ((info vc-msg-previous-commit-info)
+        (git-dir (locate-dominating-file default-directory ".git")))
+         (magit-find-file (plist-get info :id )
+              (concat git-dir (plist-get info :filename))))))
+         vc-msg-git-extra))))
 
   (use-package code-review
     :defer t
     :commands (code-review code-review-forge-pr-at-point))
 #+end_src
+
+#+RESULTS:
+
 * Programming Language
 ** Elixir
    虽说是主力语言，但配置并不算多。
