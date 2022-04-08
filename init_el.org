@@ -1142,53 +1142,53 @@
      又发现想作到笔记的精确对应（按之前方案只能对应到页），几个成熟方案还是需要他。。。
      这里有个问题，是默认从 calibredb 生成的 bibtex 文件的 key 包含有中括号，会影响 org-ref 的解析，所以需要注意更改导出的 key 格式。
 
-     #+begin_src emacs-lisp
-       (setq publication-bib (concat base-directory "publication_catelog.bib")
-	     collections-bib (concat base-directory "collections.bib"))
+#+begin_src emacs-lisp
+  (setq publication-bib (concat base-directory "publication_catelog.bib")
+        collections-bib (concat base-directory "collections.bib"))
 
-       (use-package ivy-bibtex
-	 :defer t
-	 :init
-	 (setq bibtex-completion-bibliography `(,publication-bib)
-	       bibtex-completion-pdf-field "file"
-	       bibtex-completion-notes-path org-directory
-	       bibtex-completion-library-path (concat base-directory "collections/")
-	       bibtex-completion-display-formats '((article . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${journal:40}")
-						   (inbook . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} Chapter ${chapter:32}")
-						   (incollection . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${booktitle:40}")
-						   (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${booktitle:40}")
-						   (t . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*}"))
-	       bibtex-completion-pdf-extension '(".pdf" ".djvu")))
-       (use-package org-ref
-	 :after org
-	 :init
-	 (setq reftex-default-bibliography `(,publication-bib ,collections-bib)
-	       ;;org-ref-bibliography-notes (concat org-directory "ref-notes.org")
-	       org-ref-default-bibliography `(,publication-bib ,collections-bib)
-	       ;;org-ref-pdf-directory private/book-directory
-	       calibredb-ref-default-bibliography publication-bib
-	       org-ref-get-pdf-filename-function 'org-ref-get-mendeley-filename)
-	 (require 'bibtex)
+  (use-package ivy-bibtex
+    :defer t
+    :init
+    (setq bibtex-completion-bibliography `(,publication-bib)
+          bibtex-completion-pdf-field "file"
+          bibtex-completion-notes-path org-directory
+          bibtex-completion-library-path (concat base-directory "collections/")
+          bibtex-completion-display-formats '((article . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${journal:40}")
+                                              (inbook . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} Chapter ${chapter:32}")
+                                              (incollection . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${booktitle:40}")
+                                              (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${booktitle:40}")
+                                              (t . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*}"))
+          bibtex-completion-pdf-extension '(".pdf" ".djvu")))
+  (use-package org-ref
+    :after org
+    :init
+    (setq reftex-default-bibliography `(,publication-bib ,collections-bib)
+          ;;org-ref-bibliography-notes (concat org-directory "ref-notes.org")
+          org-ref-default-bibliography `(,publication-bib ,collections-bib)
+          ;;org-ref-pdf-directory private/book-directory
+          calibredb-ref-default-bibliography publication-bib
+          org-ref-get-pdf-filename-function 'org-ref-get-mendeley-filename)
+    (require 'bibtex)
 
-	 (setq bibtex-autokey-year-length 4
-	       bibtex-autokey-name-year-separator "-"
-	       bibtex-autokey-year-title-separator "-"
-	       bibtex-autokey-titleword-separator "-"
-	       bibtex-autokey-titlewords 2
-	       bibtex-autokey-titlewords-stretch 1
-	       bibtex-autokey-titleword-length 5
-	       org-ref-bibtex-hydra-key-binding (kbd "H-b"))
+    (setq bibtex-autokey-year-length 4
+          bibtex-autokey-name-year-separator "-"
+          bibtex-autokey-year-title-separator "-"
+          bibtex-autokey-titleword-separator "-"
+          bibtex-autokey-titlewords 2
+          bibtex-autokey-titlewords-stretch 1
+          bibtex-autokey-titleword-length 5
+          org-ref-bibtex-hydra-key-binding (kbd "H-b"))
 
-	 (require 'org-ref-ivy)
+    (require 'org-ref-ivy)
 
-	 (setq org-ref-insert-link-function 'org-ref-insert-link-hydra/body
-	       org-ref-insert-cite-function 'org-ref-cite-insert-ivy
-	       org-ref-insert-label-function 'org-ref-insert-label-link
-	       org-ref-insert-ref-function 'org-ref-insert-ref-link
-	       org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body))))
-       ;; org-ref-completion-library 'org-ref-ivy-cite-completion))
+    (setq org-ref-insert-link-function 'org-ref-insert-link-hydra/body
+          org-ref-insert-cite-function 'org-ref-cite-insert-ivy
+          org-ref-insert-label-function 'org-ref-insert-label-link
+          org-ref-insert-ref-function 'org-ref-insert-ref-link
+          org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body))))
+  ;; org-ref-completion-library 'org-ref-ivy-cite-completion))
 
-     #+end_src
+#+end_src
 ** Agenda
 #+begin_src emacs-lisp
   (defun org-refresh-agenda-files ()
