@@ -1144,12 +1144,13 @@
 
 #+begin_src emacs-lisp
   (setq publication-bib (concat base-directory "publication_catelog.bib")
+        videos-bib (concat base-directory "videos.bib")
         collections-bib (concat base-directory "collections.bib"))
 
   (use-package ivy-bibtex
     :defer t
     :init
-    (setq bibtex-completion-bibliography `(,publication-bib)
+    (setq bibtex-completion-bibliography `(,publication-bib ,videos-bib)
           bibtex-completion-pdf-field "file"
           bibtex-completion-notes-path org-directory
           bibtex-completion-library-path (concat base-directory "collections/")
@@ -1162,9 +1163,9 @@
   (use-package org-ref
     :after org
     :init
-    (setq reftex-default-bibliography `(,publication-bib ,collections-bib)
+    (setq reftex-default-bibliography `(,publication-bib ,collections-bib ,videos-bib)
           ;;org-ref-bibliography-notes (concat org-directory "ref-notes.org")
-          org-ref-default-bibliography `(,publication-bib ,collections-bib)
+          org-ref-default-bibliography `(,publication-bib ,collections-bib ,videos-bib)
           ;;org-ref-pdf-directory private/book-directory
           calibredb-ref-default-bibliography publication-bib
           org-ref-get-pdf-filename-function 'org-ref-get-mendeley-filename)
@@ -1211,10 +1212,10 @@
     :init
     (add-hook 'after-init-hook 'org-roam-setup)
     (setq org-roam-v2-ack t
-	  org-roam-directory org-directory
-	  org-roam-db-gc-threshold most-positive-fixnum
-	  org-roam-db-location (concat org-directory "org-roam.db")
-	  org-roam-dailies-directory "journal/")
+    org-roam-directory org-directory
+    org-roam-db-gc-threshold most-positive-fixnum
+    org-roam-db-location (concat org-directory "org-roam.db")
+    org-roam-dailies-directory "journal/")
 
     (require 'org-roam-protocol)
     :config
@@ -1223,9 +1224,9 @@
     (setq org-roam-completion-everywhere t)
     (setq org-roam-completion-system 'ivy)
     (setq org-roam-capture-ref-templates
-	  '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))) ;;
+    '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))) ;;
     (setq org-roam-dailies-capture-templates
-	  '(("d" "dailies" entry "* %<%R> %?" :target (file+head "%<%Y%m%d-%W>.org" "#+title: %<%Y-%m-%d>\n"))))
+    '(("d" "dailies" entry "* %<%R> %?" :target (file+head "%<%Y%m%d-%W>.org" "#+title: %<%Y-%m-%d>\n"))))
     ;; must after use-package org-roam
     (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
       "Return the file TITLE for the node."
@@ -1233,18 +1234,21 @@
     (cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
       "Return the hierarchy for the node."
       (let ((title (org-roam-node-title node))
-	    (olp (org-roam-node-olp node))
-	    (level (org-roam-node-level node))
-	    (filetitle (org-roam-node-filetitle node)))
-	(concat
-	 (if (> level 0) (concat filetitle " > "))
-	 (if (> level 1) (concat (string-join olp " > ") " > "))
-	 title))
+      (olp (org-roam-node-olp node))
+      (level (org-roam-node-level node))
+      (filetitle (org-roam-node-filetitle node)))
+  (concat
+   (if (> level 0) (concat filetitle " > "))
+   (if (> level 1) (concat (string-join olp " > ") " > "))
+   title))
       ))
 
   (use-package org-roam-bibtex
-    :after org-roam)
+    :after org-roam
+    :init
+    (setq orb-roam-ref-format "org-ref-v3"))
 #+end_src
+
 ** Org-clock
 #+begin_src emacs-lisp
     (setq org-clock-clocked-in-display nil
@@ -1299,9 +1303,12 @@
   (use-package org-media-note
     :hook (org-mode .  org-media-note-mode)
     :quelpa (org-media-note :fetcher github :repo "yuchen-lea/org-media-note" :branch "master")
+    :init
+    (setq org-media-note-use-org-ref t)
     :config
     (require 'org-attach)
-    (setq org-media-note-screenshot-image-dir (concat org-directory "images/org-media/")))
+    (setq org-media-note-screenshot-image-dir (concat org-directory "images/org-media/")
+          org-media-note-use-refcite-first t))
 #+end_src
 ** 翻译
 注意， =sdcv-dictionary-data-dir= 必须使用绝对地址。
@@ -1482,88 +1489,88 @@
         :commands (restart-emacs))
   #+end_src
 * calibredb
-    #+begin_src emacs-lisp
-      (use-package calibredb
-	:defer t
-	:quelpa (calibredb :fetcher github :repo "chenyanming/calibredb.el" :branch "develop")
-	:commands (calibredb)
-	:config
-	(setq calibredb-size-show t
-	      ;;calibredb-format-all-the-icons t
-	      calibredb-id-width 4
-	      calibredb-title-width 40
-	      calibredb-date-width 0
-	      calibredb-root-dir private/book-directory
-	      calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
-	      calibredb-library-alist '(private/book-directory))
-	:general
-	(local-leader
-	  :keymaps 'calibredb-show-mode-map
-	  "?" 'calibredb-entry-dispatch
-	  "o" 'calibredb-find-file
-	  "O" 'calibredb-find-file-other-frame
-	  "V" 'calibredb-open-file-with-default-tool
-	  "s" 'calibredb-set-metadata-dispatch
-	  "e" 'calibredb-export-dispatch
-	  "q" 'calibredb-entry-quit
-	  "y" 'calibredb-yank-dispatch
-	  "," 'calibredb-quick-look
-	  "." 'calibredb-open-dired
-	  "\M-/" 'calibredb-rga
-	  "\M-t" 'calibredb-set-metadata--tags
-	  "\M-a" 'calibredb-set-metadata--author_sort
-	  "\M-A" 'calibredb-set-metadata--authors
-	  "\M-T" 'calibredb-set-metadata--title
-	  "\M-c" 'calibredb-set-metadata--comments)
-	(local-leader
-	  :keymaps 'calibredb-search-mode-map
-	  "<RET>" 'calibredb-find-file
-	  "?" 'calibredb-dispatch
-	  "a" 'calibredb-add
-	  "A" 'calibredb-add-dir
-	  "c" 'calibredb-clone
-	  "d" 'calibredb-remove
-	  "D" 'calibredb-remove-marked-items
-	  "j" 'calibredb-next-entry
-	  "k" 'calibredb-previous-entry
-	  "l" 'calibredb-virtual-library-list
-	  "L" 'calibredb-library-list
-	  "n" 'calibredb-virtual-library-next
-	  "N" 'calibredb-library-next
-	  "p" 'calibredb-virtual-library-previous
-	  "P" 'calibredb-library-previous
-	  "s" 'calibredb-set-metadata-dispatch
-	  "S" 'calibredb-switch-library
-	  "o" 'calibredb-find-file
-	  "O" 'calibredb-find-file-other-frame
-	  "v" 'calibredb-view
-	  "V" 'calibredb-open-file-with-default-tool
-	  "," 'calibredb-quick-look
-	  "." 'calibredb-open-dired
-	  "y" 'calibredb-yank-dispatch
-	  "b" 'calibredb-catalog-bib-dispatch
-	  "e" 'calibredb-export-dispatch
-	  "r" 'calibredb-search-refresh-and-clear-filter
-	  "R" 'calibredb-search-clear-filter
-	  "q" 'calibredb-search-quit
-	  "m" 'calibredb-mark-and-forward
-	  "f" 'calibredb-toggle-favorite-at-point
-	  "x" 'calibredb-toggle-archive-at-point
-	  "h" 'calibredb-toggle-highlight-at-point
-	  "u" 'calibredb-unmark-and-forward
-	  "i" 'calibredb-edit-annotation
-	  "<DEL>" 'calibredb-unmark-and-backward
-	  "<backtab>" 'calibredb-toggle-view
-	  "TAB" 'calibredb-toggle-view-at-point
-	  "\M-n" 'calibredb-show-next-entry
-	  "\M-p" 'calibredb-show-previous-entry
-	  "/" 'calibredb-search-live-filter
-	  "\M-t" 'calibredb-set-metadata--tags
-	  "\M-a" 'calibredb-set-metadata--author_sort
-	  "\M-A" 'calibredb-set-metadata--authors
-	  "\M-T" 'calibredb-set-metadata--title
-	  "\M-c" 'calibredb-set-metadata--comments))
-  #+end_src
+#+begin_src emacs-lisp
+  (use-package calibredb
+    :defer t
+    :quelpa (calibredb :fetcher github :repo "chenyanming/calibredb.el" :branch "develop")
+    :commands (calibredb)
+    :config
+    (setq calibredb-size-show t
+          ;;calibredb-format-all-the-icons t
+          calibredb-id-width 4
+          calibredb-title-width 40
+          calibredb-date-width 0
+          calibredb-root-dir private/book-directory
+          calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
+          calibredb-library-alist '(private/book-directory))
+    :general
+    (local-leader
+      :keymaps 'calibredb-show-mode-map
+      "?" 'calibredb-entry-dispatch
+      "o" 'calibredb-find-file
+      "O" 'calibredb-find-file-other-frame
+      "V" 'calibredb-open-file-with-default-tool
+      "s" 'calibredb-set-metadata-dispatch
+      "e" 'calibredb-export-dispatch
+      "q" 'calibredb-entry-quit
+      "y" 'calibredb-yank-dispatch
+      "," 'calibredb-quick-look
+      "." 'calibredb-open-dired
+      "\M-/" 'calibredb-rga
+      "\M-t" 'calibredb-set-metadata--tags
+      "\M-a" 'calibredb-set-metadata--author_sort
+      "\M-A" 'calibredb-set-metadata--authors
+      "\M-T" 'calibredb-set-metadata--title
+      "\M-c" 'calibredb-set-metadata--comments)
+    (local-leader
+      :keymaps 'calibredb-search-mode-map
+      "<RET>" 'calibredb-find-file
+      "?" 'calibredb-dispatch
+      "a" 'calibredb-add
+      "A" 'calibredb-add-dir
+      "c" 'calibredb-clone
+      "d" 'calibredb-remove
+      "D" 'calibredb-remove-marked-items
+      "j" 'calibredb-next-entry
+      "k" 'calibredb-previous-entry
+      "l" 'calibredb-virtual-library-list
+      "L" 'calibredb-library-list
+      "n" 'calibredb-virtual-library-next
+      "N" 'calibredb-library-next
+      "p" 'calibredb-virtual-library-previous
+      "P" 'calibredb-library-previous
+      "s" 'calibredb-set-metadata-dispatch
+      "S" 'calibredb-switch-library
+      "o" 'calibredb-find-file
+      "O" 'calibredb-find-file-other-frame
+      "v" 'calibredb-view
+      "V" 'calibredb-open-file-with-default-tool
+      "," 'calibredb-quick-look
+      "." 'calibredb-open-dired
+      "y" 'calibredb-yank-dispatch
+      "b" 'calibredb-catalog-bib-dispatch
+      "e" 'calibredb-export-dispatch
+      "r" 'calibredb-search-refresh-and-clear-filter
+      "R" 'calibredb-search-clear-filter
+      "q" 'calibredb-search-quit
+      "m" 'calibredb-mark-and-forward
+      "f" 'calibredb-toggle-favorite-at-point
+      "x" 'calibredb-toggle-archive-at-point
+      "h" 'calibredb-toggle-highlight-at-point
+      "u" 'calibredb-unmark-and-forward
+      "i" 'calibredb-edit-annotation
+      "<DEL>" 'calibredb-unmark-and-backward
+      "<backtab>" 'calibredb-toggle-view
+      "TAB" 'calibredb-toggle-view-at-point
+      "\M-n" 'calibredb-show-next-entry
+      "\M-p" 'calibredb-show-previous-entry
+      "/" 'calibredb-search-live-filter
+      "\M-t" 'calibredb-set-metadata--tags
+      "\M-a" 'calibredb-set-metadata--author_sort
+      "\M-A" 'calibredb-set-metadata--authors
+      "\M-T" 'calibredb-set-metadata--title
+      "\M-c" 'calibredb-set-metadata--comments))
+#+end_src
 * 剪贴板
   #+begin_src emacs-lisp :tangle no
     (use-package simpleclip
