@@ -1147,6 +1147,10 @@
         videos-bib (concat base-directory "videos.bib")
         collections-bib (concat base-directory "collections.bib"))
 
+  (defun goto-videos-bib ()
+    (interactive)
+    (find-file videos-bib))
+
   (use-package ivy-bibtex
     :defer t
     :init
@@ -1299,17 +1303,20 @@
     :after ox)
 #+end_src
 ** Org-media-note
+使用了自己本地的修改，修改的内容是可以获取继承的 property ，可以播放父级下的视频。
 #+begin_src emacs-lisp
   (use-package org-media-note
     :hook (org-mode .  org-media-note-mode)
-    :quelpa (org-media-note :fetcher github :repo "yuchen-lea/org-media-note" :branch "master")
+    ;; :quelpa (org-media-note :fetcher github :repo "yuchen-lea/org-media-note" :branch "master")
+    :quelpa (org-media-note :fetcher file :path "~/Kenton/org-media-note")
     :init
-    (setq org-media-note-use-org-ref t)
+    (setq org-media-note-use-org-ref t
+          org-media-note-ref-key-field "Video_ID")
     :config
-    (require 'org-attach)
     (setq org-media-note-screenshot-image-dir (concat org-directory "images/org-media/")
           org-media-note-use-refcite-first t))
 #+end_src
+
 ** 翻译
 注意， =sdcv-dictionary-data-dir= 必须使用绝对地址。
 #+begin_src emacs-lisp
