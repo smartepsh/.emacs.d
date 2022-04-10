@@ -800,14 +800,6 @@
 	org-directory (concat base-directory "orgs/"))
 #+end_src
 ** Org-capture
-#+begin_src emacs-lisp
-  (use-package org-mac-link
-    :after org
-    :quelpa (org-mac-link :fetcher gitlab :repo "aimebertrand/org-mac-link" :branch "main")
-    :commands (org-mac-skim-insert-page
-	       org-mac-safari-insert-frontmost-url
-	       org-mac-finder-insert-selected))
-#+end_src
 ** Ebook Reader
    org-mode 用来干嘛呢？对吧？
 *** epub
@@ -822,129 +814,58 @@
     #+end_src
 *** pdf(skim)
     #+begin_src emacs-lisp :tangle "~/.emacs.d/helpers/skim.el"
-      ;;; Public Domain by Stian Haklev 2014
-      ;;; heavily under construction, mostly built for my own use, but
-      ;;; feel free to improve and make more general
-      ;;; I keep all my academic PDFs in the same directory, and want special
-      ;;; handling for them - eventually I'll check if the PDF is in that dir
-      ;;; and if not, I'll insert the whole path in the org-link etc.
+          ;;; Public Domain by Stian Haklev 2014
+          ;;; heavily under construction, mostly built for my own use, but
+          ;;; feel free to improve and make more general
+          ;;; I keep all my academic PDFs in the same directory, and want special
+          ;;; handling for them - eventually I'll check if the PDF is in that dir
+          ;;; and if not, I'll insert the whole path in the org-link etc.
 
-      ;;; based on https://github.com/houshuang/skim-emacs/blob/master/skim.el
-
-      (require 'org-mac-link)
+          ;;; based on https://github.com/houshuang/skim-emacs/blob/master/skim.el
 
       (defun skim-page (&optional offset)
-	(interactive)
-	(when (not offset) (setq offset 1))
-	(do-applescript (format "
-      tell document 1 of application \"Skim\" to set a to index of current page
-      tell document 1 of application \"Skim\" to go to page (a + %d)
-      a" offset)))
+        (interactive)
+        (when (not offset) (setq offset 1))
+        (do-applescript (format "
+          tell document 1 of application \"Skim\" to set a to index of current page
+          tell document 1 of application \"Skim\" to go to page (a + %d)
+          a" offset)))
 
       (defun skim-page-absolute (offset)
-	(interactive)
-	(do-applescript (format "
-      tell document 1 of application \"Skim\" to set a to index of current page
-      tell document 1 of application \"Skim\" to go to page %d
-      a" offset)))
+        (interactive)
+        (do-applescript (format "
+          tell document 1 of application \"Skim\" to set a to index of current page
+          tell document 1 of application \"Skim\" to go to page %d
+          a" offset)))
 
       (defun skim-goto (page)
-	(interactive "nPDF Page: ")
-	(skim-page-absolute page))
-      ;; (defun skim-get-highlights ()
-      ;;   (interactive)
-      ;;   (insert (do-applescript "
-      ;; tell application \"Skim\"
-      ;; 	set pageNotes to notes of page 3 of document 1
-      ;; 	set out to \"\"
-      ;; 	repeat with i in pageNotes
-      ;; 		set txt to get text of i
-      ;; 		set out to out & txt & \"\n\n\"
-      ;; 	end repeat
-      ;; end tell
-      ;; out")))
+        (interactive "nPDF Page: ")
+        (skim-page-absolute page))
 
       (defun skim-current-page ()
-	(interactive)
-	(skim-page 0))
+        (interactive)
+        (skim-page 0))
 
       (defun skim-current-file ()
-	(interactive)
-	(do-applescript "tell document 1 of application \"Skim\" to set a to name
-      a"))
+        (interactive)
+        (do-applescript "tell document 1 of application \"Skim\" to set a to name a"))
 
       (defun skim-next-page ()
-	(interactive)
-	(skim-page 1))
+        (interactive)
+        (skim-page 1))
 
       (defun skim-prev-page ()
-	(interactive)
-	(skim-page -1))
+        (interactive)
+        (skim-page -1))
 
       (defun skim-kill-other-windows ()
-	(interactive)
-	(do-applescript "
-      tell application \"Skim\"
-	      set mainID to id of front window
-	      -- insert your code
-	      close (every window whose id ≠ mainID)
-      end tell"))
-
-      (defun open-link-in-skim ()
-	(interactive)
-	(let ((link (org-element-context)))
-	  (if (string-equal (org-element-property :type link) "skim")
-	      (progn
-		(org-mac-skim-open (org-element-property :path link))
-		(skim-kill-other-windows)
-		(sleep-for 0 100)
-		(do-applescript "tell application \"Emacs\" to activate"))
-	    (message "It's not a skim link !!!"))))
-
-
-      (defun skim-insert-book-link ()
-	(interactive)
-	(insert (skim-book-link)))
-
-      (defun skim-insert-page-link ()
-	(interactive)
-	(insert (skim-page-link-without-book-name)))
-
-      (defun skim-book-link ()
-	"get book link into org with page 1 and description don't contain page number"
-	(let* ((link-and-descr (as-get-skim-page-link))
-	       (split-link (split-string link-and-descr "::split::"))
-	       (link (car split-link))
-	       (description (cadr split-link))
-	       (book-link (concat (link-to-book link) "::1"))
-	       (book-name (book-name description))
-	       (org-link))
-	  (when (not (string= link ""))
-	    (setq org-link (org-link-make-string book-link book-name)))
-	  (kill-new org-link)
-	  org-link))
-
-      (defun skim-page-link-without-book-name ()
-	"only get page link with page number as description (without book name)"
-	(let* ((link-and-descr (as-get-skim-page-link))
-	       (split-link (split-string link-and-descr "::split::"))
-	       (link (car split-link))
-	       (description (cadr split-link))
-	       (page-number (concat "p." (page-number description)))
-	       (org-link))
-	  (when (not (string= link ""))
-	    (setq org-link (org-link-make-string link page-number)))
-	  (kill-new org-link)
-	  org-link))
-
-      (defun link-to-book (link)
-	(s-join "" (reverse (cdr (reverse (split-string link "::"))))))
-
-      (defun page-number (description)
-	(car (reverse (split-string description ", p\\."))))
-
-      (defun book-name (description)
-	(s-join "" (reverse (cdr (reverse (split-string description ", p\\."))))))
+        (interactive)
+        (do-applescript "
+          tell application \"Skim\"
+            set mainID to id of front window
+            -- insert your code
+            close (every window whose id ≠ mainID)
+          end tell"))
 
       (provide 'skim)
     #+end_src
@@ -963,35 +884,35 @@
   (defun reader/scroll-up (arg)
     (interactive "P")
     (let ((nov-window (nov-buffer-in-current))
-	  (current-window (get-buffer-window)))
+    (current-window (get-buffer-window)))
       (if nov-window
-	  (progn
-	    (select-window nov-window)
-	    (nov-scroll-up arg)
-	    (select-window current-window))
-	(skim-next-page))))
+    (progn
+      (select-window nov-window)
+      (nov-scroll-up arg)
+      (select-window current-window))
+  (skim-next-page))))
 
   (defun reader/scroll-down (arg)
     (interactive "P")
     (let ((nov-window (nov-buffer-in-current))
-	  (current-window (get-buffer-window)))
+    (current-window (get-buffer-window)))
       (if nov-window
-	  (progn
-	    (select-window nov-window)
-	    (nov-scroll-down arg)
-	    (select-window current-window))
-	(skim-prev-page))))
+    (progn
+      (select-window nov-window)
+      (nov-scroll-down arg)
+      (select-window current-window))
+  (skim-prev-page))))
 
   (defun reader/goto-pdf-first-page-or-nov-toc ()
     (interactive)
     (let ((nov-window (nov-buffer-in-current))
-	  (current-window (get-buffer-window)))
+    (current-window (get-buffer-window)))
       (if nov-window
-	  (progn
-	    (select-window nov-window)
-	    (nov-goto-toc)
-	    (select-window current-window))
-	(skim-goto 1))))
+    (progn
+      (select-window nov-window)
+      (nov-goto-toc)
+      (select-window current-window))
+  (skim-goto 1))))
 
 #+end_src
 ** Helpers
@@ -1383,9 +1304,9 @@
      "ir" 'org-roam-ref-add
      "it" 'org-roam-tag-add
      "l" '(:ignore t :which-key "link")
-     "lr" 'org-mac-skim-insert-page ;; skim
-     "ls"  'org-mac-safari-insert-frontmost-url ;; internet
-     "lf"  'org-mac-finder-insert-selected ;; finder
+     ;; "lr" 'org-mac-skim-insert-page ;; skim
+     ;; "ls"  'org-mac-safari-insert-frontmost-url ;; internet
+     ;; "lf"  'org-mac-finder-insert-selected ;; finder
      "ll" 'org-store-link
      "li" 'org-insert-last-stored-link)
 
