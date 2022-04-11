@@ -869,6 +869,70 @@
 
       (provide 'skim)
     #+end_src
+*** TODO skim with org-ref
+设置更加具有交互性的 skim 行为。探索中。。。想法 [[https://emacs-china.org/t/org-ref-integration-with-skim-app-update/4614/14][源自于此]] ，但这里的代码并不能成功运行，而且他是利用 skim 笔记在页面中的索引做导航的，所以干脆改为根据 note id 做导航吧。
+#+begin_src emacs-lisp
+  (defun private/get-skim-link ()
+    "Generate the formatted skim link"
+    (do-applescript
+     (concat
+      "tell application \"Skim\"\n"
+      "  set theDoc to front document\n"
+      "  set theTitle to (name of theDoc)\n"
+      "  set thePath to (path of theDoc)\n"
+      "  set thePage to (get index of current page of theDoc)\n"
+      "  set theNote to (active note of theDoc)\n"
+      "  set theSelection to selection of theDoc\n"
+      "  set theContent to (contents of theSelection) as string\n"
+      "  if theNote is not missing value then\n"
+      "    set theContent to (contents of (get text of theNote))\n"
+      "    set theNotePage to (get page of theNote)\n"
+      "    set thePage to (get index of theNotePage)\n"
+      "    set theNoteID to (get id of theNote)\n"
+      "  else\n"
+      "    if theContent is \"\" then\n"
+      "        set theNoteID to \"0000\"\n"
+      "    else\n"
+      "        tell theDoc\n"
+      "            set theNote to make new note with data theSelection with properties {type:underline note, color: red}\n"
+      "            set active note of theDoc to theNote\n"
+      "            set text of theNote to (contents of theSelection) as string\n"
+      "            set theNotePage to (get page of theNote)\n"
+      "            set thePage to (get index of theNotePage)\n"
+      "            set theNoteID to (get id of theNote)\n"
+      "        end tell\n"
+      "    end if\n"
+      "  end if\n"
+      "  set theLink to \"skim://\" & thePath & \"::\" & thePage & \";;\" & theNoteID \n"
+      "end tell\n"
+      "return theLink as string\n")))
+
+  (defun private/open-skim-link (uri)
+    "Visit page of pdf in Skim"
+    (let* ((note-id (when (string-match ";;\\(.+\\)\\'" uri) (match-string 1 uri)))
+           (page (when (string-match "::\\(.+\\);;" uri) (match-string 1 uri)))
+           (document (substring uri 0 (match-beginning 0))))
+      (do-applescript
+       (concat
+        "tell application \"Skim\"\n"
+        "activate\n"
+        "set theDoc to open \"" document "\"\n"
+        "set thePage to (first page of theDoc where its index =\"" page "\")\n"
+        "try\n"
+        "  set theNote to (first note of thePage where its id = \"" note-id "\")\n"
+        "on error errMsg number errorNumber\n"
+        "  set theNote to 0\n"
+        "end try\n"
+        "if theNote is 0 then\n"
+        "    go document 1 to thePage\n"
+        "else\n"
+        "  set thePathList to (get path list of theNote)\n"
+        "  set thePoint to (first item of (first list of thePathList))\n"
+        "  go document 1 to thePage at thePoint\n"
+        "  set active note to theNote\n"
+        "end if\n"
+        "end tell"))))
+#+end_src
 *** DONE 设置翻页快捷键
     - State "DONE"       from "TODO"       [2021-11-14 Sun 21:55]
     检测当前是否有 nov buffer ，如果有，则执行 nov 翻页，否则执行 skim 翻页。
