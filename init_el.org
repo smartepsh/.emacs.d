@@ -1201,6 +1201,7 @@
     #+begin_src emacs-lisp
       (use-package ob-elixir :after org)
       (use-package ox-gfm :after org)
+      (use-package ob-applescript :after org)
       (use-package ob-racket
         :quelpa (ob-racket :fetcher github :repo "hasu/emacs-ob-racket" :branch "master")
         :init
@@ -1219,6 +1220,7 @@
     (org-babel-do-load-languages
      'org-babel-load-languages
      '((emacs-lisp . t)
+       (applescript . t)
        (elixir . t)
        (org . t)
        (haskell . t)
@@ -1957,6 +1959,17 @@
       "tr" 'exunit-rerun
       "tf" 'exunit-toggle-file-and-test))
 #+end_src
+** AppleScript
+做点自动化的操作，还是有好处的。只是又和 mac 加深了绑定。。。
+#+begin_src emacs-lisp
+    (use-package apples-mode
+      :defer t
+      :general
+      (general-define-key
+       :keymaps 'apples-mode-map
+       "C-c C-c" 'apples-run-region/buffer))
+#+end_src
+
 ** Haskell
    感觉函数式编程绕不开 Haskell ，所以尝试下。
    #+begin_src emacs-lisp
