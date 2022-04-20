@@ -1279,6 +1279,7 @@
     (setq bibtex-completion-bibliography `(,publication-bib ,videos-bib)
           bibtex-completion-pdf-field "file"
           bibtex-completion-notes-path org-directory
+          ivy-bibtex-default-action 'bibtex-completion-edit-notes
           bibtex-completion-library-path (concat base-directory "collections/")
           bibtex-completion-display-formats '((article . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${journal:40}")
                                               (inbook . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} Chapter ${chapter:32}")
@@ -1286,6 +1287,7 @@
                                               (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${booktitle:40}")
                                               (t . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*}"))
           bibtex-completion-pdf-extension '(".pdf" ".djvu")))
+
   (use-package org-ref
     :after org
     :init
@@ -1314,7 +1316,6 @@
           org-ref-insert-ref-function 'org-ref-insert-ref-link
           org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body))))
   ;; org-ref-completion-library 'org-ref-ivy-cite-completion))
-
 #+end_src
 ** Agenda
 #+begin_src emacs-lisp
@@ -1366,13 +1367,13 @@
   (concat
    (if (> level 0) (concat filetitle " > "))
    (if (> level 1) (concat (string-join olp " > ") " > "))
-   title))
-      ))
+   title))))
 
   (use-package org-roam-bibtex
+    :hook (org-mode . org-roam-bibtex-mode)
     :after org-roam
     :init
-    (setq orb-roam-ref-format "org-ref-v3"))
+    (setq orb-roam-ref-format 'org-ref-v3))
 #+end_src
 
 ** Org-clock
@@ -1380,6 +1381,7 @@
     (setq org-clock-clocked-in-display nil
 	  org-clock-mode-line-total 'current)
 #+end_src
+
 ** Org-pomodoro
    番茄钟。但暂不使用。
 #+begin_src emacs-lisp :tangle no
