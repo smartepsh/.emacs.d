@@ -1341,21 +1341,26 @@
     :init
     (add-hook 'after-init-hook 'org-roam-setup)
     (setq org-roam-v2-ack t
-    org-roam-directory org-directory
-    org-roam-db-gc-threshold most-positive-fixnum
-    org-roam-db-location (concat org-directory "org-roam.db")
-    org-roam-dailies-directory "journal/")
+          org-roam-directory org-directory
+          org-roam-db-gc-threshold most-positive-fixnum
+          org-roam-db-location (concat org-directory "org-roam.db")
+          org-roam-dailies-directory "journal/")
 
     (require 'org-roam-protocol)
     :config
     (setq org-roam-node-display-template "${hierarchy:*}
   ${tags:20}")
-    (setq org-roam-completion-everywhere t)
-    (setq org-roam-completion-system 'ivy)
+    (setq org-roam-completion-everywhere t
+          org-roam-completion-system 'ivy
+          org-roam-capture-templates
+          '(("r" "bibliography reference" plain "%?"
+             :target
+             (file+head "references/${citekey}.org" "#+title: ${title\n}")
+             :unnarrowed t)))
     (setq org-roam-capture-ref-templates
-    '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))) ;;
+          '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))) ;;
     (setq org-roam-dailies-capture-templates
-    '(("d" "dailies" entry "* %<%R> %?" :target (file+head "%<%Y%m%d-%W>.org" "#+title: %<%Y-%m-%d>\n"))))
+          '(("d" "dailies" entry "* %<%R> %?" :target (file+head "%<%Y%m%d-%W>.org" "#+title: %<%Y-%m-%d>\n"))))
     ;; must after use-package org-roam
     (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
       "Return the file TITLE for the node."
@@ -1363,13 +1368,13 @@
     (cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
       "Return the hierarchy for the node."
       (let ((title (org-roam-node-title node))
-      (olp (org-roam-node-olp node))
-      (level (org-roam-node-level node))
-      (filetitle (org-roam-node-filetitle node)))
-  (concat
-   (if (> level 0) (concat filetitle " > "))
-   (if (> level 1) (concat (string-join olp " > ") " > "))
-   title))))
+            (olp (org-roam-node-olp node))
+            (level (org-roam-node-level node))
+            (filetitle (org-roam-node-filetitle node)))
+        (concat
+         (if (> level 0) (concat filetitle " > "))
+         (if (> level 1) (concat (string-join olp " > ") " > "))
+         title))))
 
   (use-package org-roam-bibtex
     :hook (org-mode . org-roam-bibtex-mode)
