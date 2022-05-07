@@ -216,28 +216,29 @@
   (use-package evil
     :init
     (setq evil-shift-width 2
-	  evil-flash-delay 1
-	  evil-undo-system 'undo-redo
-	  evil-want-integration t
-	  evil-want-keybinding nil
-	  evil-cross-lines t)
+          evil-flash-delay 1
+          evil-undo-system 'undo-redo
+          evil-want-integration t
+          evil-want-keybinding nil
+          evil-cross-lines t)
     (evil-mode)
     :config
     (evil-set-initial-state 'calibredb-search-mode 'emacs)
     (evil-set-initial-state 'custom-mode 'emacs)
     (evil-set-initial-state 'code-review-mode 'emacs)
+    (evil-set-initial-state 'ivy-occur-grep-mode 'normal)
     (defun copy-to-clipboard()
       "Copies selection to x-clipboard."
       (interactive)
       (if (display-graphic-p)
-	  (progn
-	    (if (use-region-p)
-		(progn
-		  (evil-yank (region-beginning) (region-end) t (evil-use-register ?+))
-		  (message "Yanked region to clipboard!")
-		  (deactivate-mark))
-	      (message "No region active; can't yank to clipboard!"))
-	    )))
+          (progn
+            (if (use-region-p)
+                (progn
+                  (evil-yank (region-beginning) (region-end) t (evil-use-register ?+))
+                  (message "Yanked region to clipboard!")
+                  (deactivate-mark))
+              (message "No region active; can't yank to clipboard!"))
+            )))
 
     (defun paste-from-clipboard ()
       "Pastes from x-clipboard."
@@ -252,14 +253,14 @@
      "s-c" 'copy-to-clipboard
      "s-v" 'paste-from-clipboard)
     (mapc #'evil-declare-ignore-repeat
-	  '(kill-this-buffer
-	    ido-kill-buffer
-	    save-buffer
-	    split-window-below
-	    split-window-below-and-focus
-	    split-window-right
-	    split-window-right-and-focus
-	    switch-window)))
+          '(kill-this-buffer
+            ido-kill-buffer
+            save-buffer
+            split-window-below
+            split-window-below-and-focus
+            split-window-right
+            split-window-right-and-focus
+            switch-window)))
 #+end_src
 
 ** 绑定
