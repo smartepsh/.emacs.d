@@ -155,8 +155,8 @@
 
 ** 移除 org-mode
 #+begin_src emacs-lisp
-  (assq-delete-all 'org package--builtins)
-  (assq-delete-all 'org package--builtin-versions)
+  ;; (assq-delete-all 'org package--builtins)
+  ;; (assq-delete-all 'org package--builtin-versions)
 #+end_src
 * 包管理
   我们使用 [[https://github.com/jwiegley/use-package][jwiegley/use-package]] 进行 melpa 包管理，同时配合 [[https://github.com/quelpa/quelpa][quelpa/quelpa]] 进行源码包管理（含 github），并使用 [[https://github.com/Silex/package-utils][Silex/package-utils]] 提供 helper 方便使用。
@@ -227,6 +227,7 @@
     (evil-set-initial-state 'custom-mode 'emacs)
     (evil-set-initial-state 'code-review-mode 'emacs)
     (evil-set-initial-state 'ivy-occur-grep-mode 'normal)
+    (with-eval-after-load 'evil-maps (define-key evil-motion-state-map (kbd "TAB") nil))
     (defun copy-to-clipboard()
       "Copies selection to x-clipboard."
       (interactive)
