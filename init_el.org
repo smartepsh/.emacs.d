@@ -345,8 +345,9 @@
   (use-package evil-collection
     :after evil
     :config
-    (evil-collection-init 'magit))
+    (evil-collection-init))
 #+end_src
+
 ** 快捷键辅助 god-mode
 #+begin_src emacs-lisp
   (use-package god-mode
