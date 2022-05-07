@@ -1434,6 +1434,11 @@
   (use-package ox-hugo
     :after ox)
 #+end_src
+** org-pandoc-import
+#+begin_src emacs-lisp
+  (use-package org-pandoc-import
+    :quelpa (org-pandoc-import :fetcher github :repo "tecosaur/org-pandoc-import" :branch "master" :files ("*.el" "filters" "preprocessors")))
+#+end_src
 ** Org-media-note
 使用了自己本地的修改，修改的内容是可以获取继承的 property ，可以播放父级下的视频。
 #+begin_src emacs-lisp
