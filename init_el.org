@@ -343,7 +343,7 @@
   (use-package evil-collection
     :after evil
     :config
-    (evil-collection-init))
+    (evil-collection-init 'magit))
 #+end_src
 ** 快捷键辅助 god-mode
 #+begin_src emacs-lisp
@@ -1871,7 +1871,6 @@
     :init
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
     (setq forge-add-default-bindings nil)
-    (evil-collection-init)
     :general
     ;;(clear-spc
     ;;:keymaps
