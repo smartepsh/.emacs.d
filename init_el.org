@@ -1213,6 +1213,7 @@
     #+end_src
 
 ** 本体
+
 #+begin_src emacs-lisp
   (use-package org
     :pin gnu
@@ -1258,6 +1259,7 @@
                                  ;; (org-refile-get-targets)
                                  (org-roam-db-sync))))
 #+end_src
+
 ** 美观
    有时候反而觉得原始状态挺好看。。。而且这个插件极度影响性能。。。所以先禁止掉。
 #+begin_src emacs-lisp :tangle no
@@ -1326,7 +1328,7 @@
 #+begin_src emacs-lisp
   (defun org-refresh-agenda-files ()
     (interactive)
-    (setq org-agenda-files (directory-files (concat org-directory "journal/") t ".org")))
+    (setq org-agenda-files (directory-files (concat org-directory "worklog/") t ".org")))
 #+end_src
 ** Bookmark
    使用 org 文件做了一个收藏夹。
@@ -1348,7 +1350,7 @@
           org-roam-directory org-directory
           org-roam-db-gc-threshold most-positive-fixnum
           org-roam-db-location (concat org-directory "org-roam.db")
-          org-roam-dailies-directory "journal/"
+          org-roam-dailies-directory "worklog/"
           org-roam-database-connector 'sqlite-builtin)
 
     (require 'org-roam-protocol)
@@ -2192,6 +2194,21 @@
     (use-package flycheck-posframe
       :after flycheck)
   #+end_src
+* Jira
+#+begin_src emacs-lisp
+  (use-package dash-functional)
+  (use-package ejira
+    :quelpa (ejira :fetcher github :repo "nyyManni/ejira" :branch "master")
+    :init
+    (setq jiralib2-url "https://choiceform.atlassian.net/"
+          jiralib2-auth 'token
+          jiralib2-user-login-name "kenton.wang@choiceform.com"
+          jiralib2-token nil
+          ejira-org-directory (concat org-directory "worklog/")
+          ejira-projects '("CORE"))
+    :config
+    (require 'ejira-agenda))
+#+end_src
 * 废弃！！！
 经过一段时间的试用，meow 虽然轻量了一些，但对 vi 造成的影响蛮大，而且他对于移动边界判定和 vi 不同，有点不太能适应。但他的 keypad 模式挺方便的，不过也有 god-mode 作为备选方案，所以决定放弃 meow 回到 evil 模式下。同时使用 god-mode 作为辅助，以减少 evil 的快捷键设定。
 #+begin_src emacs-lisp :tangle no
