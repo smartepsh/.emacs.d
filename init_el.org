@@ -250,9 +250,9 @@
      :states 'insert
      "\C-h" 'delete-backward-char
      "\C-d" 'delete-char)
-    (general-define-key
-     "s-c" 'copy-to-clipboard
-     "s-v" 'paste-from-clipboard)
+    ;; (general-define-key
+    ;;  "s-c" 'copy-to-clipboard
+    ;;  "s-v" 'paste-from-clipboard)
     (mapc #'evil-declare-ignore-repeat
           '(kill-this-buffer
             ido-kill-buffer
@@ -1722,11 +1722,16 @@
       "\M-c" 'calibredb-set-metadata--comments))
 #+end_src
 * 剪贴板
-  #+begin_src emacs-lisp :tangle no
-    (use-package simpleclip
-      :init
-      (simpleclip-mode t))
-  #+end_src
+#+begin_src emacs-lisp
+  (use-package simpleclip
+    :init
+    (simpleclip-mode t)
+    :general
+    (general-define-key
+     "s-c" 'simpleclip-copy
+     "s-x" 'simpleclip-cut
+     "s-v" 'simpleclip-paste))
+#+end_src
 * 使用 Server Client 方式启动 emacs
 ** 开机启动
    新建 plist 文件如下，然后使用 =launchctl start gnu.emacs.daemon= 激活。
