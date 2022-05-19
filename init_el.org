@@ -1724,13 +1724,17 @@
 * 剪贴板
 #+begin_src emacs-lisp
   (use-package simpleclip
+    :defer
     :init
-    (simpleclip-mode t)
+    (defun private/paste ()
+      (interactive)
+      (right-char)
+      (simpleclip-paste))
     :general
     (general-define-key
      "s-c" 'simpleclip-copy
      "s-x" 'simpleclip-cut
-     "s-v" 'simpleclip-paste))
+     "s-v" 'private/paste))
 #+end_src
 * 使用 Server Client 方式启动 emacs
 ** 开机启动
