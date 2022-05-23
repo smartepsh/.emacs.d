@@ -478,9 +478,6 @@
     (whitespace4r-mode))
 #+end_src
 
-#+RESULTS:
-: whitespace4r
-
 * 窗口管理
   因为 centaur tabs 有点问题，所以先禁止掉。
   快捷键设置向 item 靠拢。
@@ -1780,19 +1777,19 @@
     :init
     (add-hook 'after-init-hook 'global-company-mode)
     (setq company-idle-delay 0.3
-	  company-require-match 'never
-	  company-tooltip-align-annotations t
-	  company-dabbrev-downcase nil
-	  company-dabbrev-ignore-case nil
-	  company-minimum-prefix-length 1)
+          company-require-match 'never
+          company-tooltip-align-annotations t
+          company-dabbrev-downcase nil
+          company-dabbrev-ignore-case nil
+          company-minimum-prefix-length 1)
     (setq company-backend
-	  '(company-keywords
-	    company-elisp
-	    company-files
-	    company-yasnippet
-	    company-capf
-	    company-dabbrev-code
-	    company-dabbrev))
+          '(company-keywords
+            company-elisp
+            company-files
+            company-yasnippet
+            company-capf
+            company-dabbrev-code
+            company-dabbrev))
     :config
     ;; ;; 使 org-mode 中的 company 可以补全代码 symbol
     ;; (push 'org-mode company-dabbrev-code-modes)
@@ -2060,7 +2057,7 @@
     :hook (lsp-mode . lsp-enable-which-key-integration)
     :config
     (setq lsp-headerline-breadcrumb-enable nil
-	  lsp-file-watch-threshold 2000)
+    lsp-file-watch-threshold 2000)
     (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.elixir_ls\\'")
     (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\deps\\'")
     :general
@@ -2069,7 +2066,7 @@
      "," 'xref-pop-marker-stack))
 
   (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-  ;;(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+  (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 #+end_src
 * FlySpell 拼写错误检查
   在 [[https://www.emacswiki.org/emacs/FlySpell][我的Wiki： Fly Spell]] 找到了自建词典的使用方法，见 =flyspell-learn-work-at-point= 方法。该方法会将收录的新词保存在 =~/.hunspell_en_US= 文件内，我会将该文件链接到 =.emacs.d= 项目中，方便同步。
