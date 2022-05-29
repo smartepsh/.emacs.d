@@ -1447,8 +1447,8 @@
 #+begin_src emacs-lisp
   (use-package org-media-note
     :hook (org-mode .  org-media-note-mode)
-    ;; :quelpa (org-media-note :fetcher github :repo "yuchen-lea/org-media-note" :branch "master")
-    :quelpa (org-media-note :fetcher file :path "~/Kenton/org-media-note")
+    :quelpa (org-media-note :fetcher github :repo "yuchen-lea/org-media-note" :branch "master")
+    ;; :quelpa (org-media-note :fetcher file :path "~/Kenton/org-media-note")
     :init
     (setq org-media-note-use-org-ref t
           org-media-note-ref-key-field "Video_ID")
