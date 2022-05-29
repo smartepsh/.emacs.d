@@ -2209,7 +2209,6 @@
     (setq jiralib2-url "https://choiceform.atlassian.net/"
           jiralib2-auth 'token
           jiralib2-user-login-name "kenton.wang@choiceform.com"
-          jiralib2-token nil
           ejira-org-directory (concat org-directory "worklog/")
           ejira-projects '("CORE"))
     :config
