@@ -70,7 +70,7 @@
    #+end_src
 ** 增加从进程读取消息的大小
    因为 lsp-mode 需要更改此大小。
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle no
      (setq read-process-output-max (* 3 (* 1024 1024))) ;; 3mb
    #+end_src
 ** 计算启动时间
@@ -1565,30 +1565,30 @@
 * Ivy
   =ivy-rich= 经过几天试用，发现并不太方便，暂时关闭。
   注意，需要在安装完成后，手动调用 =all-the-icons-install= 。
+#+begin_src emacs-lisp :tangle no
+  (use-package ivy-rich
+    :hook (all-the-icons-ivy-rich-mode . ivy-rich-mode)
+    :init
+    (setq ivy-virtual-abbreviate 'full
+	  ivy-rich-switch-buffer-align-virtual-buffer t)
+    (add-hook 'ivy-rich-mode-hook (lambda ()
+				    ;; 因为文件在 project 中的路径较深，所以简化 counsel-projectile-find-file 的排版，仅显示图标、文件路径及文件大小
+				    (ivy-rich-set-columns
+				     'counsel-projectile-find-file
+				     '((all-the-icons-ivy-rich-file-icon)
+				       (counsel-projectile-find-file-transformer (:width 0.5))
+				       (all-the-icons-ivy-rich-project-file-size (:width 0.1 :face all-the-icons-ivy-rich-size-face))))
+				    ))
+    :config
+    (setcdr (assq t ivy-format-functions-alist) 'ivy-format-function-line))
+  (use-package all-the-icons-ivy-rich
+    :after counsel-projectile
+    :init
+    (add-hook 'after-init-hook 'all-the-icons-ivy-rich-mode))
+
+#+end_src
+
   #+begin_src emacs-lisp :tangle no
-    (use-package ivy-rich
-      :hook (all-the-icons-ivy-rich-mode . ivy-rich-mode)
-      :init
-      (setq ivy-virtual-abbreviate 'full
-	    ivy-rich-switch-buffer-align-virtual-buffer t)
-      (add-hook 'ivy-rich-mode-hook (lambda ()
-				      ;; 因为文件在 project 中的路径较深，所以简化 counsel-projectile-find-file 的排版，仅显示图标、文件路径及文件大小
-				      (ivy-rich-set-columns
-				       'counsel-projectile-find-file
-				       '((all-the-icons-ivy-rich-file-icon)
-					 (counsel-projectile-find-file-transformer (:width 0.5))
-					 (all-the-icons-ivy-rich-project-file-size (:width 0.1 :face all-the-icons-ivy-rich-size-face))))
-				      ))
-      :config
-      (setcdr (assq t ivy-format-functions-alist) 'ivy-format-function-line))
-    (use-package all-the-icons-ivy-rich
-      :after counsel-projectile
-      :init
-      (add-hook 'after-init-hook 'all-the-icons-ivy-rich-mode))
-
-  #+end_src
-
-  #+begin_src emacs-lisp
     (use-package ivy
       :defer t
       :init
@@ -1772,37 +1772,6 @@
   =smartparens= 暂时没有找到如何更改包裹，只找到另一个插件[[https://github.com/cute-jumper/embrace.el][embrace]] ，但暂时先不考虑。
   可以开始考虑 embrace 了。。。
 #+begin_src emacs-lisp
-  (use-package company
-    :defer t
-    :init
-    (add-hook 'after-init-hook 'global-company-mode)
-    (setq company-idle-delay 0.3
-          company-require-match 'never
-          company-tooltip-align-annotations t
-          company-dabbrev-downcase nil
-          company-dabbrev-ignore-case nil
-          company-minimum-prefix-length 1)
-    (setq company-backend
-          '(company-keywords
-            company-elisp
-            company-files
-            company-yasnippet
-            company-capf
-            company-dabbrev-code
-            company-dabbrev))
-    :config
-    ;; ;; 使 org-mode 中的 company 可以补全代码 symbol
-    ;; (push 'org-mode company-dabbrev-code-modes)
-    :general
-    (general-define-key
-     :keymaps 'company-active-map
-     "<tab>" 'company-complete-selection
-     "<RET>" nil
-     "<return>" nil
-     "C-w" nil
-     "C-n" 'company-select-next
-     "C-p" 'company-select-previous))
-
   (use-package smartparens
     :hook (prog-mode . smartparens-mode)
     :hook (org-mode . smartparens-mode))
@@ -2047,7 +2016,7 @@
 
 * LSP
   尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package lsp-mode
     :defer t
     :init
@@ -2215,6 +2184,7 @@
     (require 'ejira-agenda))
 #+end_src
 * 废弃！！！
+** meow
 经过一段时间的试用，meow 虽然轻量了一些，但对 vi 造成的影响蛮大，而且他对于移动边界判定和 vi 不同，有点不太能适应。但他的 keypad 模式挺方便的，不过也有 god-mode 作为备选方案，所以决定放弃 meow 回到 evil 模式下。同时使用 god-mode 作为辅助，以减少 evil 的快捷键设定。
 #+begin_src emacs-lisp :tangle no
   (defun meow-setup ()
@@ -2343,4 +2313,38 @@
 	    (meow-cancel-selection . meow-keyboard-quit)
 	    (meow-pop-selection . meow-pop-grab)
 	    (meow-beacon-change . meow-beacon-change-char))))
+#+end_src
+
+** company
+#+begin_src emacs-lisp :tangle no
+  (use-package company
+    :defer t
+    :init
+    (add-hook 'after-init-hook 'global-company-mode)
+    (setq company-idle-delay 0.3
+          company-require-match 'never
+          company-tooltip-align-annotations t
+          company-dabbrev-downcase nil
+          company-dabbrev-ignore-case nil
+          company-minimum-prefix-length 1)
+    (setq company-backend
+          '(company-keywords
+            company-elisp
+            company-files
+            company-yasnippet
+            company-capf
+            company-dabbrev-code
+            company-dabbrev))
+    :config
+    ;; ;; 使 org-mode 中的 company 可以补全代码 symbol
+    ;; (push 'org-mode company-dabbrev-code-modes)
+    :general
+    (general-define-key
+     :keymaps 'company-active-map
+     "<tab>" 'company-complete-selection
+     "<RET>" nil
+     "<return>" nil
+     "C-w" nil
+     "C-n" 'company-select-next
+     "C-p" 'company-select-previous))
 #+end_src
