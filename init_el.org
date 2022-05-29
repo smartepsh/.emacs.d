@@ -68,11 +68,6 @@
      (setq gc-cons-threshold most-positive-fixnum)
      (add-hook 'after-init-hook '(lambda () (setq gc-cons-threshold 5121024)))
    #+end_src
-** 增加从进程读取消息的大小
-   因为 lsp-mode 需要更改此大小。
-   #+begin_src emacs-lisp :tangle no
-     (setq read-process-output-max (* 3 (* 1024 1024))) ;; 3mb
-   #+end_src
 ** 计算启动时间
  #+begin_src emacs-lisp
    (setq emacs-start-time (current-time))
@@ -123,11 +118,11 @@
      (set-default-coding-systems 'utf-8-unix)
      (add-hook 'before-save-hook 'delete-trailing-whitespace)
      (setq tab-width 2
-           indent-tabs-mode nil
-           auto-save-default nil
-           make-backup-files nil
-           create-lockfiles nil
-           x-select-enable-clipboard nil)
+	   indent-tabs-mode nil
+	   auto-save-default nil
+	   make-backup-files nil
+	   create-lockfiles nil
+	   x-select-enable-clipboard nil)
    #+end_src
 ** 翻墙（虽然一般不怎么用）
    #+begin_src emacs-lisp
@@ -226,7 +221,6 @@
     (evil-set-initial-state 'calibredb-search-mode 'emacs)
     (evil-set-initial-state 'custom-mode 'emacs)
     (evil-set-initial-state 'code-review-mode 'emacs)
-    (evil-set-initial-state 'ivy-occur-grep-mode 'normal)
     (with-eval-after-load 'evil-maps (define-key evil-motion-state-map (kbd "TAB") nil))
     (defun copy-to-clipboard()
       "Copies selection to x-clipboard."
@@ -287,7 +281,7 @@
          "SPC" nil)
     (common-leader
       "fed" 'goto-configuration-org
-      "SPC" 'counsel-M-x))
+      "SPC" 'execute-extended-command))
 #+end_src
 ** 提示
   keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提供。
@@ -370,31 +364,6 @@
 #+end_src
 * 外观
 ** modeline
-#+begin_src emacs-lisp :tangle no
-  (defun my-doom-modeline--font-height ()
-    "Calculate the actual char height of the mode-line."
-    (+ (frame-char-height) 2))
-
-  (use-package doom-modeline
-    :init
-    (add-hook 'after-init-hook (lambda ()
-				 (doom-modeline-mode)
-				 (column-number-mode)
-				 (doom-modeline-def-modeline 'my-line
-				   '(bar workspace-name modals buffer-info buffer-position)
-				   '(input-method checker major-mode parrot lsp))
-				 (defun setup-custom-doom-modeline ()
-				   (interactive)
-				   (doom-modeline-set-modeline 'my-line 'default))
-				 (setup-custom-doom-modeline)))
-    :config
-    (advice-add 'doom-modeline--font-height :override 'my-doom-modeline--font-height)
-    ;; (set-face-attribute 'mode-line nil :height 100)
-    ;; (set-face-attribute 'mode-line-inactive nil :height 100)
-    (setq doom-modeline-buffer-modification-icon nil
-	  doom-modeline-buffer-state-icon nil
-	  doom-modeline-buffer-file-name-style 'file-name))
-#+end_src
 #+begin_src emacs-lisp
   (use-package spaceline
     :init
@@ -546,7 +515,6 @@
       :hook (after-init . global-auto-revert-mode))
   #+end_src
 * 字体及输入法（中文）
-
 #+begin_src c :tangle "~/.emacs.d/helpers/emacs-module.h"
 
   /* emacs-module.h - GNU Emacs module API.
@@ -1277,20 +1245,6 @@
     (interactive)
     (find-file videos-bib))
 
-  (use-package ivy-bibtex
-    :defer t
-    :init
-    (setq bibtex-completion-bibliography `(,publication-bib ,videos-bib)
-          bibtex-completion-pdf-field "file"
-          bibtex-completion-notes-path org-directory
-          ivy-bibtex-default-action 'bibtex-completion-edit-notes
-          bibtex-completion-library-path (concat base-directory "collections/")
-          bibtex-completion-display-formats '((article . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${journal:40}")
-                                              (inbook . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} Chapter ${chapter:32}")
-                                              (incollection . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${booktitle:40}")
-                                              (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*} ${booktitle:40}")
-                                              (t . "${=has-pdf=:1}${=has-note=:1} ${=type=:4} ${title:*}"))
-          bibtex-completion-pdf-extension '(".pdf" ".djvu")))
 
   (use-package org-ref
     :after org
@@ -1311,8 +1265,6 @@
           bibtex-autokey-titlewords-stretch 1
           bibtex-autokey-titleword-length 5
           org-ref-bibtex-hydra-key-binding (kbd "H-b"))
-
-    (require 'org-ref-ivy)
 
     (setq org-ref-insert-link-function 'org-ref-insert-link-hydra/body
           org-ref-insert-cite-function 'org-ref-cite-insert-ivy
@@ -1562,72 +1514,49 @@
      :keymaps 'org-roam-mode-map
      [mouse-1] 'org-roam-visit-thing)
 #+end_src
-* Ivy
+* 页面内搜索
+#+begin_src emacs-lisp
+  (use-package consult
+    :defer t
+    :commands (consult-line consult-imenu consult-org-heading)
+    :general
+    (general-define-key
+     "C-s" 'consult-line
+     "C-d" 'consult-imenu))
+#+end_src
+* mini buffer 增强
   =ivy-rich= 经过几天试用，发现并不太方便，暂时关闭。
   注意，需要在安装完成后，手动调用 =all-the-icons-install= 。
-#+begin_src emacs-lisp :tangle no
-  (use-package ivy-rich
-    :hook (all-the-icons-ivy-rich-mode . ivy-rich-mode)
+  使用 =vertico= 替换 =ivy= 。
+#+begin_src emacs-lisp
+  (use-package vertico
     :init
-    (setq ivy-virtual-abbreviate 'full
-	  ivy-rich-switch-buffer-align-virtual-buffer t)
-    (add-hook 'ivy-rich-mode-hook (lambda ()
-				    ;; 因为文件在 project 中的路径较深，所以简化 counsel-projectile-find-file 的排版，仅显示图标、文件路径及文件大小
-				    (ivy-rich-set-columns
-				     'counsel-projectile-find-file
-				     '((all-the-icons-ivy-rich-file-icon)
-				       (counsel-projectile-find-file-transformer (:width 0.5))
-				       (all-the-icons-ivy-rich-project-file-size (:width 0.1 :face all-the-icons-ivy-rich-size-face))))
-				    ))
-    :config
-    (setcdr (assq t ivy-format-functions-alist) 'ivy-format-function-line))
-  (use-package all-the-icons-ivy-rich
-    :after counsel-projectile
-    :init
-    (add-hook 'after-init-hook 'all-the-icons-ivy-rich-mode))
+    (vertico-mode)
+    :general
+    (common-leader
+      "ff" 'find-file
+      "fb" 'consult-buffer)
+    (general-define-key
+     :keymaps 'vertico-map
+     "?" 'minibuffer-completion-help
+     "M-RET" 'minibuffer-force-complete-and-exit
+     "M-TAB" 'minibuffer-complete))
 
+  (use-package marginalia
+    :init
+    (marginalia-mode t))
+
+  (use-package savehist
+    :init
+    (savehist-mode))
+
+  (use-package orderless
+    :init
+    (setq completion-styles '(orderless basic)
+	  completion-category-defaults nil
+	  completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 
-  #+begin_src emacs-lisp :tangle no
-    (use-package ivy
-      :defer t
-      :init
-      (add-hook 'after-init-hook 'ivy-mode)
-      (setq ivy-use-virtual-buffers t
-	    enable-recursive-minibuffers t)
-      :general
-      (general-define-key
-       :keymaps 'ivy-minibuffer-map
-       [escape] 'minibuffer-keyboard-quit
-       "C-<return>" 'ivy-immediate-done)
-;;      (clear-spc
-;;	:keymaps 'ivy-occur-grep-mode-map)
-      (common-leader
-	"/" 'counsel-rg))
-
-    (use-package swiper
-      :defer t
-      :commands (swiper)
-      :init
-      (general-define-key
-       "C-s" 'counsel-grep-or-swiper))
-
-    (use-package counsel
-      :hook (ivy-mode . counsel-mode)
-      :config
-      (common-leader
-	"ff" 'counsel-find-file
-	"fb" 'counsel-switch-buffer
-	"fr" 'counsel-buffer-or-recentf))
-
-    (use-package all-the-icons-ivy
-      :init (add-hook 'after-init-hook 'all-the-icons-ivy-setup))
-
-    (use-package wgrep
-      :after ivy
-      :config
-      (setq wgrep-auto-save-buffer t))
-  #+end_src
 * Restart Emacs
   由于暂时采用 server client 启动方式，故不再需要 restart emacs 。
     #+begin_src emacs-lisp :tangle no
@@ -1772,6 +1701,19 @@
   =smartparens= 暂时没有找到如何更改包裹，只找到另一个插件[[https://github.com/cute-jumper/embrace.el][embrace]] ，但暂时先不考虑。
   可以开始考虑 embrace 了。。。
 #+begin_src emacs-lisp
+  (use-package corfu
+    :init
+    (global-corfu-mode)
+    (setq completion-cycyle-threshold 3
+	  corfu-auto-prefix 1
+	  tab-always-indent 'complete))
+
+  (use-package cape
+    :init
+    ;; Add `completion-at-point-functions', used by `completion-at-point'.
+    (add-to-list 'completion-at-point-functions #'cape-file)
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+
   (use-package smartparens
     :hook (prog-mode . smartparens-mode)
     :hook (org-mode . smartparens-mode))
@@ -1786,22 +1728,11 @@
     :hook (yas-minor-mode . yas-reload-all))
 #+end_src
 * prescient
-  #+begin_src emacs-lisp
+  #+begin_src emacs-lisp :tangle no
     (use-package prescient
       :after (ivy company)
       :config
       (setq prescient-filter-method 'regexp))
-
-    (use-package ivy-prescient
-      :after (prescient counsel)
-      :hook (ivy-mode . ivy-prescient-mode)
-      :config
-      (setq ivy-prescient-retain-classic-highlighting t))
-
-    (use-package company-prescient
-      :after prescient
-      :hook (company-mode . company-prescient-mode))
-
   #+end_src
 * navigation
 #+begin_src emacs-lisp
@@ -1836,19 +1767,14 @@
     (add-hook 'after-init-hook 'projectile-mode)
     (setq project-cache-file "~/.emacs.d/projectile.cache"
 	  project-know-projects-file "~/.emacs.d/projectile-bookmarks.eld"
-	  projectile-project-search-path '("~/Kenton/")
-	  projectile-completion-system 'ivy)
+	  projectile-project-search-path '("~/Kenton/"))
     :config
     (projectile-discover-projects-in-search-path)
-    (projectile-relevant-known-projects))
-
-  (use-package counsel-projectile
-    :init
-    (add-hook 'after-init-hook 'counsel-projectile-mode)
+    (projectile-relevant-known-projects)
     :general
     (common-leader
-     "pf" 'counsel-projectile-find-file
-     "pl" 'counsel-projectile-switch-project))
+      "pf" 'projectile-find-file
+      "pl" 'projectile-switch-project))
 #+end_src
 * Magit
 #+begin_src emacs-lisp
@@ -1906,8 +1832,6 @@
     :defer t
     :commands (code-review code-review-forge-pr-at-point))
 #+end_src
-
-#+RESULTS:
 
 * Programming Language
 ** Elixir
@@ -2016,27 +1940,20 @@
 
 * LSP
   尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
-#+begin_src emacs-lisp :tangle no
-  (use-package lsp-mode
-    :defer t
-    :init
-    (setq lsp-keymap-prefix "s-l")
-    (add-to-list 'exec-path (concat private/config-directory "elixir-ls"))
-    :hook (elixir-mode . lsp)
-    :hook (lsp-mode . lsp-enable-which-key-integration)
-    :config
-    (setq lsp-headerline-breadcrumb-enable nil
-    lsp-file-watch-threshold 2000)
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.elixir_ls\\'")
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\deps\\'")
-    :general
-    (common-leader
-     "." 'lsp-find-definition
-     "," 'xref-pop-marker-stack))
-
-  (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-  (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-#+end_src
+  #+begin_src emacs-lisp
+      (use-package lsp-bridge
+	:quelpa (lsp-bridge :fetcher github :repo "manateelazycat/lsp-bridge" :branch "master" :files ("*"))
+	:init
+	(add-hook 'lsp-bridge-mode-hook (lambda ()
+					  (add-hook 'xref-backend-functions #'lsp-bridge-xref-backend nil t)))
+	(require 'lsp-bridge-icon)
+	(require 'lsp-bridge-orderless)
+	(global-lsp-bridge-mode)
+	:general
+	(common-leader
+	  "." 'lsp-find-definition
+	  "," 'xref-pop-marker-stack))
+  #+end_src
 * FlySpell 拼写错误检查
   在 [[https://www.emacswiki.org/emacs/FlySpell][我的Wiki： Fly Spell]] 找到了自建词典的使用方法，见 =flyspell-learn-work-at-point= 方法。该方法会将收录的新词保存在 =~/.hunspell_en_US= 文件内，我会将该文件链接到 =.emacs.d= 项目中，方便同步。
 #+begin_src emacs-lisp
@@ -2067,13 +1984,10 @@
 	   (caddr word)
 	   current-location)))))
 
-  (use-package flyspell-correct-ivy
-    :after flyspell-correct)
-
   (use-package flyspell-correct
     :commands (flyspell-correct-wrapper)
     :init
-    (setq flyspell-correct-interface 'flyspell-correct-ivy)
+    ;; (setq flyspell-correct-interface 'flyspell-correct-ivy)
     :general
     (general-define-key
      :keymaps 'flyspell-mode-map
@@ -2182,169 +2096,4 @@
           ejira-projects '("CORE"))
     :config
     (require 'ejira-agenda))
-#+end_src
-* 废弃！！！
-** meow
-经过一段时间的试用，meow 虽然轻量了一些，但对 vi 造成的影响蛮大，而且他对于移动边界判定和 vi 不同，有点不太能适应。但他的 keypad 模式挺方便的，不过也有 god-mode 作为备选方案，所以决定放弃 meow 回到 evil 模式下。同时使用 god-mode 作为辅助，以减少 evil 的快捷键设定。
-#+begin_src emacs-lisp :tangle no
-  (defun meow-setup ()
-    (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-    (meow-motion-overwrite-define-key
-     '("j" . meow-next)
-     '("k" . meow-prev)
-     '("}" . scroll-up)
-     '("{" . scroll-down))
-    (meow-leader-define-key
-     ;; SPC j/k will run the original command in MOTION state.
-     '("j" . "H-j")
-     '("k" . "H-k")
-     ;; Use SPC (0-9) for digit arguments.
-     '("1" . meow-digit-argument)
-     '("2" . meow-digit-argument)
-     '("3" . meow-digit-argument)
-     '("4" . meow-digit-argument)
-     '("5" . meow-digit-argument)
-     '("6" . meow-digit-argument)
-     '("7" . meow-digit-argument)
-     '("8" . meow-digit-argument)
-     '("9" . meow-digit-argument)
-     '("0" . meow-digit-argument)
-     ;; '("/" . meow-keypad-describe-key)
-     '("?" . meow-cheatsheet))
-    (meow-normal-define-key
-     '("0" . meow-expand-0)
-     '("9" . meow-expand-9)
-     '("8" . meow-expand-8)
-     '("7" . meow-expand-7)
-     '("6" . meow-expand-6)
-     '("5" . meow-expand-5)
-     '("4" . meow-expand-4)
-     '("3" . meow-expand-3)
-     '("2" . meow-expand-2)
-     '("1" . meow-expand-1)
-     '("-" . negative-argument)
-     '(";" . meow-reverse)
-     '("," . meow-inner-of-thing)
-     '("." . meow-bounds-of-thing)
-     '("[" . meow-beginning-of-thing)
-     '("]" . meow-end-of-thing)
-     '("a" . meow-append)
-     '("A" . meow-open-below)
-     '("b" . meow-back-word)
-     '("B" . meow-back-symbol)
-     '("c" . meow-change)
-     '("d" . meow-delete)
-     '("D" . meow-backward-delete)
-     '("e" . meow-next-word)
-     '("E" . meow-next-symbol)
-     '("f" . meow-find)
-     '("G" . meow-grab)
-     '("h" . meow-left)
-     '("H" . meow-left-expand)
-     '("i" . meow-insert)
-     '("I" . meow-open-above)
-     '("j" . meow-next)
-     '("J" . meow-next-expand)
-     '("k" . meow-prev)
-     '("K" . meow-prev-expand)
-     '("l" . meow-right)
-     '("L" . meow-right-expand)
-     '("m" . meow-join)
-     '("n" . meow-search)
-     '("o" . meow-block)
-     '("O" . meow-to-block)
-     '("p" . meow-yank)
-     '("q" . meow-quit)
-     '("Q" . meow-goto-line)
-     '("r" . meow-replace)
-     '("R" . meow-swap-grab)
-     '("s" . meow-kill)
-     '("t" . meow-till)
-     '("u" . meow-undo)
-     '("U" . meow-undo-in-selection)
-     '("v" . meow-visit)
-     '("w" . meow-mark-word)
-     '("W" . meow-mark-symbol)
-     '("X" . counsel-M-x)
-     '("x" . meow-line)
-     '("y" . meow-save)
-     '("Y" . meow-sync-grab)
-     '("z" . meow-pop-selection)
-     '("<escape>" . meow-cancel-selection)
-     '("g" . mode-line-other-buffer)
-     ;; customize
-     '("P" . meow-yank-pop)
-     '(":" . meow-goto-line)
-     '("}" . scroll-up)
-     '("{" . scroll-down)
-
-     '("C-r" . undo-redo)
-     '("'" . meow-start-kmacro-or-insert-counter)
-     '("%" . meow-query-replace-regexp)
-     '("\"" . meow-end-or-call-kmacro)))
-  ;; '("C" . meow--save)
-  ;; '("F" . meow-find-expand)
-  ;; '("N" . meow-pop-search)
-  ;; '("T" . meow-till-expand)
-  ;; '("V" . meow-kmacro-psave)
-  ;; '("X" . meow-kmacro-lines)
-  ;; '("Z" . meow-pop-all-selection)
-  ;; '("&" . meow-query-replace)
-  ;; '("'" . repeat)
-  ;; '("\\" . quotesaved-insert)
-  ;; '("g" . meow-last-savesave)
-  ;; '("S" . meow-repaaaaaaaaaaaaaaaaceaaaa-save)))
-
-  (use-package meow
-    :demand t
-    :init
-    (setq meow-use-cursor-position-hack t
-	  meow-use-enhanced-selection-effect t)
-    (meow-global-mode t)
-    :config
-    (meow-setup)
-    (add-to-list 'meow-mode-state-list '(sly-mrepl-mode . normal))
-    (setq meow-expand-exclude-mode-list '()
-	  meow-selection-command-fallback
-	  '((meow-change . meow-change-char)
-	    (meow-replace . meow-replace-char)
-	    (meow-save . meow-save-char)
-	    (meow-kill . meow-C-k)
-	    (meow-cancel-selection . meow-keyboard-quit)
-	    (meow-pop-selection . meow-pop-grab)
-	    (meow-beacon-change . meow-beacon-change-char))))
-#+end_src
-
-** company
-#+begin_src emacs-lisp :tangle no
-  (use-package company
-    :defer t
-    :init
-    (add-hook 'after-init-hook 'global-company-mode)
-    (setq company-idle-delay 0.3
-          company-require-match 'never
-          company-tooltip-align-annotations t
-          company-dabbrev-downcase nil
-          company-dabbrev-ignore-case nil
-          company-minimum-prefix-length 1)
-    (setq company-backend
-          '(company-keywords
-            company-elisp
-            company-files
-            company-yasnippet
-            company-capf
-            company-dabbrev-code
-            company-dabbrev))
-    :config
-    ;; ;; 使 org-mode 中的 company 可以补全代码 symbol
-    ;; (push 'org-mode company-dabbrev-code-modes)
-    :general
-    (general-define-key
-     :keymaps 'company-active-map
-     "<tab>" 'company-complete-selection
-     "<RET>" nil
-     "<return>" nil
-     "C-w" nil
-     "C-n" 'company-select-next
-     "C-p" 'company-select-previous))
 #+end_src
