@@ -242,7 +242,6 @@
 
     (general-define-key
      :states 'insert
-     "\C-h" 'delete-backward-char
      "\C-d" 'delete-char)
     ;; (general-define-key
     ;;  "s-c" 'copy-to-clipboard
@@ -1709,7 +1708,14 @@
     (global-corfu-mode)
     (setq completion-cycyle-threshold 3
 	  corfu-auto-prefix 1
-	  tab-always-indent 'complete))
+	  tab-always-indent 'complete)
+    :general
+    (general-define-key
+     :keymaps 'corfu-map
+     "<return>" 'corfu-quit))
+
+  (use-package corfu-doc
+    :hook (corfu-mode . corfu-doc-mode))
 
   (use-package cape
     :init
