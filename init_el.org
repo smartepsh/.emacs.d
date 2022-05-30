@@ -1943,20 +1943,20 @@
 
 * LSP
   尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
-  #+begin_src emacs-lisp
-      (use-package lsp-bridge
-	:quelpa (lsp-bridge :fetcher github :repo "manateelazycat/lsp-bridge" :branch "master" :files ("*"))
-	:init
-	(add-hook 'lsp-bridge-mode-hook (lambda ()
-					  (add-hook 'xref-backend-functions #'lsp-bridge-xref-backend nil t)))
-	(require 'lsp-bridge-icon)
-	(require 'lsp-bridge-orderless)
-	(global-lsp-bridge-mode)
-	:general
-	(common-leader
-	  "." 'lsp-find-definition
-	  "," 'xref-pop-marker-stack))
-  #+end_src
+#+begin_src emacs-lisp
+  (use-package lsp-bridge
+    :quelpa (lsp-bridge :fetcher github :repo "manateelazycat/lsp-bridge" :branch "master" :files ("*"))
+    :init
+    (add-hook 'lsp-bridge-mode-hook (lambda ()
+				      (add-hook 'xref-backend-functions #'lsp-bridge-xref-backend nil t)))
+    (require 'lsp-bridge-icon)
+    (require 'lsp-bridge-orderless)
+    (global-lsp-bridge-mode)
+    :general
+    (common-leader
+      "." 'lsp-bridge-find-def
+      "," 'xref-pop-marker-stack))
+#+end_src
 * FlySpell 拼写错误检查
   在 [[https://www.emacswiki.org/emacs/FlySpell][我的Wiki： Fly Spell]] 找到了自建词典的使用方法，见 =flyspell-learn-work-at-point= 方法。该方法会将收录的新词保存在 =~/.hunspell_en_US= 文件内，我会将该文件链接到 =.emacs.d= 项目中，方便同步。
 #+begin_src emacs-lisp
