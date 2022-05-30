@@ -1522,7 +1522,10 @@
     :general
     (general-define-key
      "C-s" 'consult-line
-     "C-d" 'consult-imenu))
+     "C-d" 'consult-imenu
+     )
+    (common-leader
+      "/" 'consult-ripgrep))
 #+end_src
 * mini buffer 增强
   =ivy-rich= 经过几天试用，发现并不太方便，暂时关闭。
