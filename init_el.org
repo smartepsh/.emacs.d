@@ -1896,18 +1896,18 @@
 
 ** Haskell
    感觉函数式编程绕不开 Haskell ，所以尝试下。
-   #+begin_src emacs-lisp
-     (use-package haskell-mode
-       :defer t
-       :init
-       (add-hook 'haskell-mode-hook 'lsp)
-       (add-hook 'haskell-literate-mode-hook 'lsp)
-       :config
-       (setq haskell-process-type 'stack-ghci))
+#+begin_src emacs-lisp
+  (use-package haskell-mode
+    :defer t
+    :init
+    ;; (add-hook 'haskell-mode-hook 'lsp)
+    ;;       (add-hook 'haskell-literate-mode-hook 'lsp)
+    :config
+    (setq haskell-process-type 'stack-ghci))
 
-     (use-package lsp-haskell
-       :defer t)
-   #+end_src
+  ;;     (use-package lsp-haskell
+  ;;       :defer t)
+#+end_src
 ** Common Lisp
    #+begin_src emacs-lisp
      (use-package sly
