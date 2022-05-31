@@ -1703,6 +1703,16 @@
   =smartparens= 暂时没有找到如何更改包裹，只找到另一个插件[[https://github.com/cute-jumper/embrace.el][embrace]] ，但暂时先不考虑。
   可以开始考虑 embrace 了。。。
 #+begin_src emacs-lisp
+  (defun corfu-quit-esc ()
+    (interactive)
+    (corfu-quit)
+    (evil-normal-state))
+
+  (defun corfu-quit-ret ()
+    (interactive)
+    (corfu-quit)
+    (evil-ret))
+
   (use-package corfu
     :init
     (global-corfu-mode)
@@ -1712,7 +1722,9 @@
     :general
     (general-define-key
      :keymaps 'corfu-map
-     "<return>" 'corfu-quit))
+     :states 'insert
+     "<return>" 'corfu-quit-ret
+     "<escape>" 'corfu-quit-esc))
 
   (use-package corfu-doc
     :hook (corfu-mode . corfu-doc-mode))
