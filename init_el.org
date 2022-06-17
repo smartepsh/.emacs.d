@@ -727,8 +727,6 @@
 	rime-emacs-module-header-root (concat private/config-directory "helpers/"))
 
   (use-package cnfonts
-    :ensure t
-    :after all-the-icons
     :init
     (add-hook 'cnfonts-set-font-finish-hook '(lambda (fontsizes-list)
 					       (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)))
@@ -1963,10 +1961,9 @@
   尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
 #+begin_src emacs-lisp
   (use-package lsp-bridge
+    :defer t
     :quelpa (lsp-bridge :fetcher github :repo "manateelazycat/lsp-bridge" :branch "master" :files ("*"))
     :init
-    (require 'lsp-bridge-icon)
-    (require 'lsp-bridge-orderless)
     (global-lsp-bridge-mode)
     :general
     (common-leader
