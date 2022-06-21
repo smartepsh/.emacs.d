@@ -1519,8 +1519,7 @@
     :general
     (general-define-key
      "C-s" 'consult-line
-     "C-d" 'consult-imenu
-     )
+     "C-d" 'consult-imenu)
     (common-leader
       "/" 'consult-ripgrep))
 #+end_src
@@ -1701,23 +1700,22 @@
   =smartparens= 暂时没有找到如何更改包裹，只找到另一个插件[[https://github.com/cute-jumper/embrace.el][embrace]] ，但暂时先不考虑。
   可以开始考虑 embrace 了。。。
 #+begin_src emacs-lisp
-  (defun corfu-quit-esc ()
-    (interactive)
-    (corfu-quit)
-    (evil-normal-state))
-
-  (defun corfu-quit-ret ()
-    (interactive)
-    (corfu-quit)
-    (evil-ret))
-
   (use-package corfu
     :init
-    (global-corfu-mode)
     (setq completion-cycyle-threshold 3
-	  corfu-auto-prefix 1
-	  tab-always-indent 'complete)
-    :general
+	    corfu-auto-prefix 1
+	    tab-always-indent 'complete)
+    (global-corfu-mode)
+    (defun corfu-quit-esc ()
+      (interactive)
+      (corfu-quit)
+      (evil-normal-state))
+
+    (defun corfu-quit-ret ()
+      (interactive)
+      (corfu-quit)
+      (evil-ret))
+    :config
     (general-define-key
      :keymaps 'corfu-map
      :states 'insert
@@ -1725,7 +1723,8 @@
      "<escape>" 'corfu-quit-esc))
 
   (use-package corfu-doc
-    :hook (corfu-mode . corfu-doc-mode))
+    :hook
+    (corfu-mode . corfu-doc-mode))
 
   (use-package cape
     :init
@@ -1965,6 +1964,14 @@
     :quelpa (lsp-bridge :fetcher github :repo "manateelazycat/lsp-bridge" :branch "master" :files ("*"))
     :init
     (global-lsp-bridge-mode)
+    :config
+    (general-define-key
+     :keymaps 'acm-mode-map
+     [remap evil-complete-next] 'acm-select-next
+     [remap evil-complete-previous] 'acm-select-prev
+     [remap yas-expand] 'acm-complete
+     "<return>" 'acm-hide
+     "<escape>" 'acm-hide)
     :general
     (common-leader
       "." 'lsp-bridge-find-def
