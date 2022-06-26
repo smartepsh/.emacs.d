@@ -1722,15 +1722,15 @@
      "<return>" 'corfu-quit-ret
      "<escape>" 'corfu-quit-esc))
 
-  (use-package corfu-doc
-    :hook
-    (corfu-mode . corfu-doc-mode))
+  ;; (use-package corfu-doc
+  ;;   :hook
+  ;;   (corfu-mode . corfu-doc-mode))
 
-  (use-package cape
-    :init
-    ;; Add `completion-at-point-functions', used by `completion-at-point'.
-    (add-to-list 'completion-at-point-functions #'cape-file)
-    (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+  ;; ;; (use-package cape
+  ;;   :init
+  ;;   ;; Add `completion-at-point-functions', used by `completion-at-point'.
+  ;;   (add-to-list 'completion-at-point-functions #'cape-file)
+  ;;   (add-to-list 'completion-at-point-functions #'cape-dabbrev))
 
   (use-package smartparens
     :hook (prog-mode . smartparens-mode)
