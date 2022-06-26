@@ -1794,6 +1794,13 @@
       "pf" 'projectile-find-file
       "pl" 'projectile-switch-project))
 #+end_src
+* 协作编程
+#+begin_src emacs-lisp
+  (use-package crdt
+    :defer t
+    :config
+    (setq crdt-ask-for-name nil))
+#+end_src
 * Magit
 #+begin_src emacs-lisp
   (use-package magit
