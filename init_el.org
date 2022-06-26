@@ -1858,8 +1858,8 @@
   (use-package elixir-mode
     :defer t
     :config
-    (add-hook 'elixir-mode-hook
-	      (lambda() (add-hook 'before-save-hook 'elixir-format nil t)))
+    ;; (add-hook 'elixir-mode-hook
+    ;; 	    (lambda() (add-hook 'before-save-hook 'elixir-format nil t)))
 
     (defun +reset-mixfmt-args ()
       (let* ((formatter-directory (locate-dominating-file default-directory ".formatter.exs"))
@@ -1868,7 +1868,10 @@
 	    (setq elixir-format-arguments (list "--dot-formatter" formatter-file))
 	  (setq elixir-format-arguments nil))))
 
-    (add-hook 'elixir-format-hook #'+reset-mixfmt-args))
+    (add-hook 'elixir-format-hook #'+reset-mixfmt-args)
+    :general
+    (local-leader
+      "," 'elixir-format))
 
   (use-package exunit
     :defer t
