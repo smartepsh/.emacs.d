@@ -1518,6 +1518,7 @@
      [mouse-1] 'org-roam-visit-thing)
 #+end_src
 * 页面内搜索
+配合 embark export 及 wgrep 可以做到集中修改的效果。注意，只能是 grep 模式的 export 才可以这么做，像 consult-line 之类的是不行的。
 #+begin_src emacs-lisp
   (use-package consult
     :defer t
@@ -1528,6 +1529,24 @@
      "C-d" 'consult-imenu)
     (common-leader
       "/" 'consult-ripgrep))
+
+  (use-package embark
+    :config
+    (add-to-list 'display-buffer-alist
+		 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+		   nil
+		   (window-parameters (mode-line-format . none))))
+    :general
+    (general-define-key
+     "s-." 'embark-act)
+    (general-define-key
+     :keymap 'minibuffer-mode-map
+     "C-." 'embark-export))
+
+  (use-package embark-consult
+    :after (embark consult))
+
+  (use-package wgrep)
 #+end_src
 * mini buffer 增强
   =ivy-rich= 经过几天试用，发现并不太方便，暂时关闭。
