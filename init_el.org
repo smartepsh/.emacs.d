@@ -1976,7 +1976,8 @@
     (global-lsp-bridge-mode)
     :config
     (setq acm-fetch-candidate-doc-delay 1
-	  acm-enable-doc nil)
+	  acm-enable-doc nil
+	  acm-snippet-insert-index 0)
     :general
     (general-define-key
      :keymaps 'acm-mode-map
