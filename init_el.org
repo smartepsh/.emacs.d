@@ -776,7 +776,13 @@
     :config
     (clear-spc
       :keymaps 'nov-mode-map))
-    #+end_src
+
+  (use-package nov-xwidget
+    :quelpa (nov-xwidget :fetcher github :repo "chenyanming/nov-xwidget" :branch "main")
+    :after nov
+    :config
+    (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files))
+#+end_src
 *** pdf(skim)
     #+begin_src emacs-lisp :tangle "~/.emacs.d/helpers/skim.el"
           ;;; Public Domain by Stian Haklev 2014
