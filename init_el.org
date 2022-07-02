@@ -840,22 +840,6 @@
 
       (provide 'skim)
     #+end_src
-*** citar
-#+begin_src emacs-lisp
-  (use-package citar
-    :config
-    (setq citar-bibliography `(,publication-bib ,videos-bib ,collections-bib)
-	  org-cite-global-bibliography citar-bibliography
-	  org-cite-insert-processor 'citar
-	  org-cite-follow-processor 'citar
-	  org-cite-activate-processor 'citar
-	  citar-at-point-function 'embark-act
-	  citar-open-note-functions '(orb-citar-edit-note))
-    :general
-    (general-define-key
-     :keymaps 'minibuffer-local-map
-     "M-b" 'citar-insert-preset))
-#+end_src
 *** TODO skim with org-ref
 设置更加具有交互性的 skim 行为。探索中。。。想法 [[https://emacs-china.org/t/org-ref-integration-with-skim-app-update/4614/14][源自于此]] ，但这里的代码并不能成功运行，而且他是利用 skim 笔记在页面中的索引做导航的，所以干脆改为根据 note id 做导航吧。
 #+begin_src emacs-lisp :tangle no
@@ -968,49 +952,6 @@
   (defun my-org-move-point-to-capture ()
     (cond ((org-at-heading-p) (org-beginning-of-line))
           (t (org-previous-visible-heading 1))))
-  (defun my-org-ref-find-entry-in-notes (key)
-    "Find or create bib note for KEY"
-    (let* ((entry (bibtex-completion-get-entry key)))
-      (widen)
-      (goto-char (point-min))
-      (unless (derived-mode-p 'org-mode)
-        (error
-         "Target buffer \"%s\" for jww/find-journal-tree should be in Org mode"
-         (current-buffer)))
-      (let* ((headlines (org-element-map
-                            (org-element-parse-buffer)
-                            'headline 'identity))
-             (keys (mapcar
-                    (lambda (hl) (org-element-property :CUSTOM_ID hl))
-                    headlines)))
-        ;; put new entry in notes if we don't find it.
-        (if (-contains? keys key)
-            (progn
-              (org-open-link-from-string (format "[[#%s]]" key))
-              (lambda nil
-                (cond ((org-at-heading-p)
-                       (org-beginning-of-line))
-                      (t (org-previous-visible-heading 1))))
-              )
-          ;; no entry found, so add one
-          (goto-char (point-max))
-          (insert (org-ref-reftex-format-citation
-                   entry (concat "\n" org-ref-note-title-format)))
-          (mapc (lambda (x)
-                  (save-restriction
-                    (save-excursion
-                      (funcall x))))
-                org-ref-create-notes-hook)
-          (org-open-link-from-string (format "[[#%s]]" key))
-          (lambda nil
-            (cond ((org-at-heading-p)
-                   (org-beginning-of-line))
-                  (t (org-previous-visible-heading 1))))
-          ))
-      ))
-  (defun private/move-point-to-capture-skim-annotation ()
-    (let* ((keystring (my-as-get-skim-bibtex-key)))
-      (my-org-ref-find-entry-in-notes keystring)))
 
   (add-hook 'org-capture-prepare-finalize-hook #'(lambda () (private/skim-org-link (org-id-get-create))))
 
@@ -1250,48 +1191,7 @@
   (use-package org-bullets
     :hook (org-mode . org-bullets-mode))
 #+end_src
-** TODO Org-ref
-     查阅相关资料后，对于我这种没有知识整理，文档输出的人废物来说，无用。。。
-     又发现想作到笔记的精确对应（按之前方案只能对应到页），几个成熟方案还是需要他。。。
-     这里有个问题，是默认从 calibredb 生成的 bibtex 文件的 key 包含有中括号，会影响 org-ref 的解析，所以需要注意更改导出的 key 格式。
 
-#+begin_src emacs-lisp
-  (setq publication-bib (concat base-directory "publication_catelog.bib")
-        videos-bib (concat base-directory "videos.bib")
-        collections-bib (concat base-directory "collections.bib"))
-
-  (defun goto-videos-bib ()
-    (interactive)
-    (find-file videos-bib))
-
-
-  (use-package org-ref
-    :after org
-    :init
-    (setq reftex-default-bibliography `(,publication-bib ,collections-bib ,videos-bib)
-          ;;org-ref-bibliography-notes (concat org-directory "ref-notes.org")
-          org-ref-default-bibliography `(,publication-bib ,collections-bib ,videos-bib)
-          ;;org-ref-pdf-directory private/book-directory
-          calibredb-ref-default-bibliography publication-bib
-          org-ref-get-pdf-filename-function 'org-ref-get-mendeley-filename)
-    (require 'bibtex)
-
-    (setq bibtex-autokey-year-length 4
-          bibtex-autokey-name-year-separator "-"
-          bibtex-autokey-year-title-separator "-"
-          bibtex-autokey-titleword-separator "-"
-          bibtex-autokey-titlewords 2
-          bibtex-autokey-titlewords-stretch 1
-          bibtex-autokey-titleword-length 5
-          org-ref-bibtex-hydra-key-binding (kbd "H-b"))
-
-    (setq org-ref-insert-link-function 'org-ref-insert-link-hydra/body
-          org-ref-insert-cite-function 'org-ref-cite-insert-ivy
-          org-ref-insert-label-function 'org-ref-insert-label-link
-          org-ref-insert-ref-function 'org-ref-insert-ref-link
-          org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body))))
-  ;; org-ref-completion-library 'org-ref-ivy-cite-completion))
-#+end_src
 ** Agenda
 #+begin_src emacs-lisp
   (defun org-refresh-agenda-files ()
@@ -1309,53 +1209,63 @@
       (find-file private/bookmark-file)))
 #+end_src
 ** Org-roam
+     查阅相关资料后，对于我这种没有知识整理，文档输出的人废物来说，org-ref 没什么大作用。。。
+     计划使用 citar 和 skim 构建一个基于 pdf 文件的笔记系统。
 #+begin_src emacs-lisp
+  (setq publication-bib (concat base-directory "publication_catelog.bib")
+	videos-bib (concat base-directory "videos.bib")
+	collections-bib (concat base-directory "collections.bib"))
+
+  (defun goto-videos-bib ()
+    (interactive)
+    (find-file videos-bib))
+
   (use-package emacsql-sqlite-builtin)
   (use-package org-roam
     :init
     (add-hook 'after-init-hook 'org-roam-setup)
     (setq org-roam-v2-ack t
-          org-roam-directory org-directory
-          org-roam-db-gc-threshold most-positive-fixnum
-          org-roam-db-location (concat org-directory "org-roam.db")
-          org-roam-dailies-directory "worklog/"
-          org-roam-database-connector 'sqlite-builtin)
+	  org-roam-directory org-directory
+	  org-roam-db-gc-threshold most-positive-fixnum
+	  org-roam-db-location (concat org-directory "org-roam.db")
+	  org-roam-database-connector 'sqlite-builtin)
 
     (require 'org-roam-protocol)
     :config
     (setq org-roam-node-display-template "${hierarchy:*}
   ${tags:20}")
     (setq org-roam-completion-everywhere t
-          org-roam-completion-system 'ivy
-          org-roam-capture-templates
-          '(("r" "bibliography reference" plain "%?"
-             :target
-             (file+head "references/${citekey}.org" "#+title: ${title\n}")
-             :unnarrowed t)))
+	  org-roam-capture-templates
+	  '(("r" "bibliography reference" plain "%?"
+	     :target
+	     (file+head "${citekey}.org" "#+title: ${title\n}")
+	     :unnarrowed t)))
     (setq org-roam-capture-ref-templates
-          '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))) ;;
-    (setq org-roam-dailies-capture-templates
-          '(("d" "dailies" entry "* %<%R> %?" :target (file+head "%<%Y%m%d-%W>.org" "#+title: %<%Y-%m-%d>\n"))))
-    ;; must after use-package org-roam
-    (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
-      "Return the file TITLE for the node."
-      (org-roam-get-keyword "TITLE" (org-roam-node-file node)))
-    (cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
-      "Return the hierarchy for the node."
-      (let ((title (org-roam-node-title node))
-            (olp (org-roam-node-olp node))
-            (level (org-roam-node-level node))
-            (filetitle (org-roam-node-filetitle node)))
-        (concat
-         (if (> level 0) (concat filetitle " > "))
-         (if (> level 1) (concat (string-join olp " > ") " > "))
-         title))))
-
+	  '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))) ;;
   (use-package org-roam-bibtex
     :hook (org-mode . org-roam-bibtex-mode)
     :after org-roam
     :init
-    (setq orb-roam-ref-format 'org-ref-v3))
+    (setq orb-roam-ref-format 'org-cite))
+
+  (use-package bibtex-completion
+    :init
+    (setq bibtex-completion-bibliography `(,publication-bib ,videos-bib ,collections-bib)))
+
+  (use-package citar
+    :config
+    (setq citar-bibliography `(,publication-bib ,videos-bib ,collections-bib)
+	  org-cite-global-bibliography citar-bibliography
+	  org-cite-insert-processor 'citar
+	  org-cite-follow-processor 'citar
+	  org-cite-activate-processor 'citar
+	  citar-at-point-function 'embark-act
+	  citar-open-note-functions '(orb-citar-edit-note)
+	  citar-notes-paths `(,org-directory))
+    :general
+    (general-define-key
+     :keymaps 'minibuffer-local-map
+     "M-b" 'citar-insert-preset))
 #+end_src
 
 ** Org-clock
@@ -1421,7 +1331,7 @@
     :quelpa (org-media-note :fetcher github :repo "yuchen-lea/org-media-note" :branch "master")
     ;; :quelpa (org-media-note :fetcher file :path "~/Kenton/org-media-note")
     :init
-    (setq org-media-note-use-org-ref t
+    (setq org-media-note-use-org-ref nil
           org-media-note-ref-key-field "Video_ID")
     :config
     (setq org-media-note-screenshot-image-dir (concat org-directory "images/org-media/")
@@ -1463,7 +1373,7 @@
      "C-c r" 'org-reveal
      "C-s-4" 'org-download-screenshot
      "H-v" 'org-media-note-hydra/body
-     "C-c ]" 'org-ref-insert-link)
+     "C-c ]" 'citar-insert-link)
 
     (general-define-key
      :prefix "C-c C-r"
@@ -1525,9 +1435,6 @@
      "d a" 'org-roam-alias-remove
      "d r" 'org-roam-ref-remove
      "d t" 'org-roam-tag-remove)
-    (general-define-key
-     :keymaps 'bibtex-mode-map
-     "H-b" 'org-ref-bibtex-hydra/body)
 
     (general-define-key
      :keymaps 'org-roam-mode-map
