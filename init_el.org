@@ -1833,7 +1833,6 @@
     :after evil-collection
     :init
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-    ;; (setq forge-add-default-bindings nil)
     :general
     ;;(clear-spc
     ;;:keymaps
@@ -1857,9 +1856,6 @@
     :defer t
     :hook (prog-mode . diff-hl-flydiff-mode))
 
-  ;; (use-package forge
-  ;;   :after magit)
-
   (use-package vc-msg
     :defer t
     :commands (vc-msg-show)
@@ -1877,10 +1873,6 @@
 		     (magit-find-file (plist-get info :id )
 				      (concat git-dir (plist-get info :filename))))))
 	       vc-msg-git-extra))))
-
-  ;; (use-package code-review
-  ;;   :defer t
-  ;;   :commands (code-review code-review-forge-pr-at-point))
 #+end_src
 
 * Programming Language
