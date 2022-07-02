@@ -840,6 +840,22 @@
 
       (provide 'skim)
     #+end_src
+*** citar
+#+begin_src emacs-lisp
+  (use-package citar
+    :config
+    (setq citar-bibliography `(,publication-bib ,videos-bib ,collections-bib)
+	  org-cite-global-bibliography citar-bibliography
+	  org-cite-insert-processor 'citar
+	  org-cite-follow-processor 'citar
+	  org-cite-activate-processor 'citar
+	  citar-at-point-function 'embark-act
+	  citar-open-note-functions '(orb-citar-edit-note))
+    :general
+    (general-define-key
+     :keymaps 'minibuffer-local-map
+     "M-b" 'citar-insert-preset))
+#+end_src
 *** TODO skim with org-ref
 设置更加具有交互性的 skim 行为。探索中。。。想法 [[https://emacs-china.org/t/org-ref-integration-with-skim-app-update/4614/14][源自于此]] ，但这里的代码并不能成功运行，而且他是利用 skim 笔记在页面中的索引做导航的，所以干脆改为根据 note id 做导航吧。
 #+begin_src emacs-lisp :tangle no
