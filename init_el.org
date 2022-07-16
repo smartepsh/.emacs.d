@@ -1855,7 +1855,7 @@
 	     :unnarrowed t)
 	    ("r" "bibliography reference" plain "%?"
 	     :target
-	     (file+head "${citekey}.org" "#+title: ${title}\n")
+	     (file+head "${citekey}.org" "#+title: ${title}\n#+filetags: :Note:")
 	     :unnarrowed t)))
     (setq org-roam-capture-ref-templates
 	  '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))))
