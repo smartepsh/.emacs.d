@@ -30,8 +30,13 @@
 ** 连接到 Center 服务器修改 ansible 脚本
 #+begin_src emacs-lisp
   (defun goto-ansible ()
-    (interactive)
-    (find-file "/sshx:192.168.2.54:"))
+      (interactive)
+      (find-file "/sshx:192.168.2.54:"))
+#+end_src
+
+** 莫名其妙的 shell 变化
+#+begin_src emacs-lisp
+  (setq shell-file-name "/bin/zsh")
 #+end_src
 
 ** 设置 gpg
