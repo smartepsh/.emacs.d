@@ -1831,11 +1831,29 @@
 
     (require 'org-roam-protocol)
     :config
+    ;; must after use-package org-roam
+    (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
+      "Return the file TITLE for the node."
+      (org-roam-get-keyword "TITLE" (org-roam-node-file node)))
+    (cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
+      "Return the hierarchy for the node."
+      (let ((title (org-roam-node-title node))
+	    (olp (org-roam-node-olp node))
+	    (level (org-roam-node-level node))
+	    (filetitle (org-roam-node-filetitle node)))
+	(concat
+	 (if (> level 0) (concat filetitle " > "))
+	 (if (> level 1) (concat (string-join olp " > ") " > "))
+	 title)))
     (setq org-roam-node-display-template "${hierarchy:*}
   ${tags:20}")
     (setq org-roam-completion-everywhere t
 	  org-roam-capture-templates
-	  '(("r" "bibliography reference" plain "%?"
+	  '(("w" "worklog" plain "** TODO @${who} ${title}%?"
+	     :target
+	     (file+olp "%(concat org-directory \"worklog/worklog.org\")" ("%<%Y>-W%<%W>/%(first-day-of-this-week-str)"))
+	     :unnarrowed t)
+	    ("r" "bibliography reference" plain "%?"
 	     :target
 	     (file+head "${citekey}.org" "#+title: ${title\n}")
 	     :unnarrowed t)))
@@ -1869,12 +1887,12 @@
 
 ** Org-clock
 #+begin_src emacs-lisp
-    (setq org-clock-clocked-in-display nil
-	  org-clock-mode-line-total 'current)
+  (setq org-clock-clocked-in-display nil
+	org-clock-mode-line-total 'current)
 #+end_src
 
 ** Org-pomodoro
-   番茄钟。但暂不使用。
+番茄钟。但暂不使用。
 #+begin_src emacs-lisp :tangle no
   (use-package org-pomodoro
     :commands org-pomodoro
