@@ -1992,22 +1992,6 @@
      "H-v" 'org-media-note-hydra/body
      "C-c ]" 'citar-insert-link)
 
-    (general-define-key
-     :prefix "C-c C-r"
-     "C-d" '(:ignore t :which-key "org-dailies")
-     "C-d C-t" 'org-roam-dailies-goto-today
-     "C-d C-d" 'org-roam-dailies-goto-date
-     "C-d C-p" 'org-roam-dailies-goto-previous-note
-     "C-d C-n" 'org-roam-dailies-goto-next-note
-     "C-f" 'org-roam-node-find)
-
-    (common-leader
-     "d" '(:ignore t :which-key "org-dailies")
-     "t" 'org-roam-dailies-goto-today
-     "d" 'org-roam-dailies-goto-date
-     "p" 'org-roam-dailies-goto-previous-note
-     "n" 'org-roam-dailies-goto-next-note)
-
     (common-leader
      "r" '(:ignore t :which-key "org-roam")
      "rf" 'org-roam-node-find
