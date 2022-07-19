@@ -1813,6 +1813,7 @@
   (first-day-of-this-week-str)
   (setq publication-bib (concat base-directory "publication_catelog.bib")
 	videos-bib (concat base-directory "videos.bib")
+	webpages-bib (concat base-directory "webpages.bib")
 	collections-bib (concat base-directory "collections.bib"))
 
   (defun goto-videos-bib ()
@@ -1868,11 +1869,11 @@
 
   (use-package bibtex-completion
     :init
-    (setq bibtex-completion-bibliography `(,publication-bib ,videos-bib ,collections-bib)))
+    (setq bibtex-completion-bibliography `(,publication-bib ,videos-bib ,webpages-bib ,collections-bib)))
 
   (use-package citar
     :config
-    (setq citar-bibliography `(,publication-bib ,videos-bib ,collections-bib)
+    (setq citar-bibliography `(,publication-bib ,videos-bib ,webpages-bib ,collections-bib)
 	  org-cite-global-bibliography citar-bibliography
 	  org-cite-insert-processor 'citar
 	  org-cite-follow-processor 'citar
