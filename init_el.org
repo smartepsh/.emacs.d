@@ -1168,7 +1168,7 @@
     ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
     (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
     (add-to-list 'org-export-backends 'md)
-    (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
+    (setq org-todo-keywords '((sequence "TODO(t/!)" "WAIT(w/!)" "DOING(i/!)" "|" "DONE(d/!)" "DELEGATED(g@)" "CANCELED(c@)"))
           ;; org-default-notes-file org-agenda-file
           org-archive-location (concat org-directory "Archived/" "%s_archive::")
           org-id-locations-file (concat org-directory ".org-id-locations")
