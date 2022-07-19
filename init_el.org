@@ -1852,7 +1852,8 @@
 	  '(("w" "worklog" plain "** TODO @${who} ${title}%?"
 	     :target
 	     (file+olp "%(concat org-directory \"worklog/worklog.org\")" ("%<%Y>-W%<%W>/%(first-day-of-this-week-str)"))
-	     :unnarrowed t)
+	     :unnarrowed t
+	     :immediate-finish t)
 	    ("r" "bibliography reference" plain "%?"
 	     :target
 	     (file+head "${citekey}.org" "#+title: ${title}\n#+filetags: :Note:")
