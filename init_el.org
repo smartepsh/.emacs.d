@@ -2512,6 +2512,11 @@
 * LSP
   尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
 #+begin_src emacs-lisp
+  (defun private/lsp-return ()
+    (interactive)
+    (acm-hide)
+    (newline))
+
   (use-package lsp-bridge
     :defer t
     :quelpa (lsp-bridge :fetcher github :repo "manateelazycat/lsp-bridge" :branch "master" :files ("*"))
@@ -2527,9 +2532,8 @@
      [remap evil-complete-next] 'acm-select-next
      [remap evil-complete-previous] 'acm-select-prev
      [remap yas-expand] 'acm-complete
-     "<return>" 'acm-hide
+     "<return>" 'private/lsp-return
      "<escape>" 'acm-hide)
-    :general
     (common-leader
       "." 'lsp-bridge-find-def
       "," 'lsp-bridge-return-from-def))
