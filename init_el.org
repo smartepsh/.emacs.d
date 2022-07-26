@@ -770,7 +770,6 @@
 	org-directory (concat base-directory "orgs/")
         ejira-org-directory (concat org-directory "worklog/"))
 #+end_src
-** Org-capture
 ** Ebook Reader
    org-mode 用来干嘛呢？对吧？
 *** epub
@@ -790,62 +789,62 @@
     (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files))
 #+end_src
 *** pdf(skim)
-    #+begin_src emacs-lisp :tangle "~/.emacs.d/helpers/skim.el"
-          ;;; Public Domain by Stian Haklev 2014
-          ;;; heavily under construction, mostly built for my own use, but
-          ;;; feel free to improve and make more general
-          ;;; I keep all my academic PDFs in the same directory, and want special
-          ;;; handling for them - eventually I'll check if the PDF is in that dir
-          ;;; and if not, I'll insert the whole path in the org-link etc.
+#+begin_src emacs-lisp :tangle "~/.emacs.d/helpers/skim.el"
+      ;;; Public Domain by Stian Haklev 2014
+      ;;; heavily under construction, mostly built for my own use, but
+      ;;; feel free to improve and make more general
+      ;;; I keep all my academic PDFs in the same directory, and want special
+      ;;; handling for them - eventually I'll check if the PDF is in that dir
+      ;;; and if not, I'll insert the whole path in the org-link etc.
 
-          ;;; based on https://github.com/houshuang/skim-emacs/blob/master/skim.el
+      ;;; based on https://github.com/houshuang/skim-emacs/blob/master/skim.el
 
-      (defun skim-page (&optional offset)
-        (interactive)
-        (when (not offset) (setq offset 1))
-        (do-applescript (format "
-          tell document 1 of application \"Skim\" to set a to index of current page
-          tell document 1 of application \"Skim\" to go to page (a + %d)
-          a" offset)))
+  (defun skim-page (&optional offset)
+    (interactive)
+    (when (not offset) (setq offset 1))
+    (do-applescript (format "
+      tell document 1 of application \"Skim\" to set a to index of current page
+      tell document 1 of application \"Skim\" to go to page (a + %d)
+      a" offset)))
 
-      (defun skim-page-absolute (offset)
-        (interactive)
-        (do-applescript (format "
-          tell document 1 of application \"Skim\" to set a to index of current page
-          tell document 1 of application \"Skim\" to go to page %d
-          a" offset)))
+  (defun skim-page-absolute (offset)
+    (interactive)
+    (do-applescript (format "
+      tell document 1 of application \"Skim\" to set a to index of current page
+      tell document 1 of application \"Skim\" to go to page %d
+      a" offset)))
 
-      (defun skim-goto (page)
-        (interactive "nPDF Page: ")
-        (skim-page-absolute page))
+  (defun skim-goto (page)
+    (interactive "nPDF Page: ")
+    (skim-page-absolute page))
 
-      (defun skim-current-page ()
-        (interactive)
-        (skim-page 0))
+  (defun skim-current-page ()
+    (interactive)
+    (skim-page 0))
 
-      (defun skim-current-file ()
-        (interactive)
-        (do-applescript "tell document 1 of application \"Skim\" to set a to name a"))
+  (defun skim-current-file ()
+    (interactive)
+    (do-applescript "tell document 1 of application \"Skim\" to set a to name a"))
 
-      (defun skim-next-page ()
-        (interactive)
-        (skim-page 1))
+  (defun skim-next-page ()
+    (interactive)
+    (skim-page 1))
 
-      (defun skim-prev-page ()
-        (interactive)
-        (skim-page -1))
+  (defun skim-prev-page ()
+    (interactive)
+    (skim-page -1))
 
-      (defun skim-kill-other-windows ()
-        (interactive)
-        (do-applescript "
-          tell application \"Skim\"
-            set mainID to id of front window
-            -- insert your code
-            close (every window whose id ≠ mainID)
-          end tell"))
+  (defun skim-kill-other-windows ()
+    (interactive)
+    (do-applescript "
+      tell application \"Skim\"
+	set mainID to id of front window
+	-- insert your code
+	close (every window whose id ≠ mainID)
+      end tell"))
 
-      (provide 'skim)
-    #+end_src
+  (provide 'skim)
+#+end_src
 *** TODO skim with org-ref
 设置更加具有交互性的 skim 行为。探索中。。。想法 [[https://emacs-china.org/t/org-ref-integration-with-skim-app-update/4614/14][源自于此]] ，但这里的代码并不能成功运行，而且他是利用 skim 笔记在页面中的索引做导航的，所以干脆改为根据 note id 做导航吧。
 #+begin_src emacs-lisp :tangle no
