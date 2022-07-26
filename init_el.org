@@ -2420,8 +2420,9 @@
 
     (add-hook 'elixir-format-hook #'+reset-mixfmt-args)
     :general
-    (local-leader
-      "," 'elixir-format))
+    (general-define-key
+     :keymaps '(elixir-mode)
+      "C-c C-c" 'elixir-format))
 
   (use-package exunit
     :defer t
