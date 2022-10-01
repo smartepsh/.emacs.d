@@ -120,16 +120,19 @@
      (fset 'yes-or-no-p 'y-or-n-p)
    #+end_src
 ** 编辑相关设置
-   #+begin_src emacs-lisp
-     (set-default-coding-systems 'utf-8-unix)
-     (add-hook 'before-save-hook 'delete-trailing-whitespace)
-     (setq tab-width 2
-	   indent-tabs-mode nil
-	   auto-save-default nil
-	   make-backup-files nil
-	   create-lockfiles nil
-	   x-select-enable-clipboard nil)
-   #+end_src
+#+begin_src emacs-lisp
+  (set-default-coding-systems 'utf-8-unix)
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  (setq auto-save-default nil
+   make-backup-files nil
+   create-lockfiles nil
+   x-select-enable-clipboard nil)
+
+  (add-hook 'prog-mode-hook (lambda () (setq indent-tabs-mode nil
+					tabs-width 2)))
+  (add-hook 'text-mode-hook (lambda () (setq indent-tabs-mode nil
+					tabs-width 2)))
+#+end_src
 ** 翻墙（虽然一般不怎么用）
    #+begin_src emacs-lisp
      (defun goproxy()
@@ -2510,7 +2513,6 @@
     :defer t
     :init
     (setq plantuml-default-exec-mode 'jar
-	  indent-tabs-mode nil
 	  plantuml-jar-path (concat private/config-directory "plantuml-1.2021.16.jar")))
 #+end_src
 
