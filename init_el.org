@@ -249,9 +249,9 @@
     (general-define-key
      :states 'insert
      "\C-d" 'delete-char)
-    ;; (general-define-key
-    ;;  "s-c" 'copy-to-clipboard
-    ;;  "s-v" 'paste-from-clipboard)
+    (general-define-key
+     "s-c" 'copy-to-clipboard
+     "s-v" 'paste-from-clipboard)
     (mapc #'evil-declare-ignore-repeat
           '(kill-this-buffer
             ido-kill-buffer
@@ -2212,7 +2212,10 @@
       "\M-c" 'calibredb-set-metadata--comments))
 #+end_src
 * 剪贴板
-#+begin_src emacs-lisp
+由于 evil 在 emacs 29 中的 bug, 导致无法使用 evil 的 + 寄存器。
+修复在此：https://github.com/emacs-evil/evil/pull/1677 。
+可以抛弃 simpleclip 了。
+#+begin_src emacs-lisp :tangle no
   (use-package simpleclip
     :defer
     :init
