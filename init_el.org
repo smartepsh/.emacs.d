@@ -457,7 +457,7 @@
 
 * 窗口管理
   因为 centaur tabs 有点问题，所以先禁止掉。
-  快捷键设置向 item 靠拢。
+  快捷键设置向 iterm 靠拢。
    #+begin_src emacs-lisp :tangle no
      (use-package centaur-tabs
        :defer t
@@ -2316,13 +2316,6 @@
     :defer t
     :hook (yas-minor-mode . yas-reload-all))
 #+end_src
-* prescient
-  #+begin_src emacs-lisp :tangle no
-    (use-package prescient
-      :after (ivy company)
-      :config
-      (setq prescient-filter-method 'regexp))
-  #+end_src
 * navigation
 #+begin_src emacs-lisp
   (use-package avy
@@ -2590,8 +2583,6 @@
 
   (use-package flyspell-correct
     :commands (flyspell-correct-wrapper)
-    :init
-    ;; (setq flyspell-correct-interface 'flyspell-correct-ivy)
     :general
     (general-define-key
      :keymaps 'flyspell-mode-map
