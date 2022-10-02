@@ -519,6 +519,7 @@
        :init
        (setq popper-display-control t
              popper-display-function 'display-buffer-in-child-frame
+             popper-mode-line nil
              popper-reference-buffers '("\\*Messages\\*" compilation-mode help-mode "\\*Help\\*" "magit:*" "worklog.org"))
        (popper-mode t)
        (popper-echo-mode t)
