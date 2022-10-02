@@ -490,30 +490,44 @@
        (setq eyebrowse-keymap-prefix "")
        :config
        (general-define-key
-	"H-1" 'eyebrowse-switch-to-window-config-1
-	"H-2" 'eyebrowse-switch-to-window-config-2
-	"H-3" 'eyebrowse-switch-to-window-config-3
-	"H-4" 'eyebrowse-switch-to-window-config-4
-	"H-5" 'eyebrowse-switch-to-window-config-5
-	"H-6" 'eyebrowse-switch-to-window-config-6
-	"H-7" 'eyebrowse-switch-to-window-config-7
-	"H-8" 'eyebrowse-switch-to-window-config-8
-	"H-9" 'eyebrowse-switch-to-window-config-9
-	"H-`" 'eyebrowse-rename-window-config
-	"H-q" 'eyebrowse-close-window-config
-	"s-t" 'eyebrowse-create-window-config))
+        "H-1" 'eyebrowse-switch-to-window-config-1
+        "H-2" 'eyebrowse-switch-to-window-config-2
+        "H-3" 'eyebrowse-switch-to-window-config-3
+        "H-4" 'eyebrowse-switch-to-window-config-4
+        "H-5" 'eyebrowse-switch-to-window-config-5
+        "H-6" 'eyebrowse-switch-to-window-config-6
+        "H-7" 'eyebrowse-switch-to-window-config-7
+        "H-8" 'eyebrowse-switch-to-window-config-8
+        "H-9" 'eyebrowse-switch-to-window-config-9
+        "H-`" 'eyebrowse-rename-window-config
+        "H-q" 'eyebrowse-close-window-config
+        "s-t" 'eyebrowse-create-window-config))
 
      (use-package switch-window
        :init
        (setq switch-window-auto-resize-window t
-	     switch-window-minibuffer-shortcut ?z)
+             switch-window-minibuffer-shortcut ?z)
        ;; switch-window-multiple-frames t)
        (general-define-key
-	"s-d" 'switch-window-then-split-right
-	"s-[" 'windmove-left
-	"s-]" 'windmove-right
-	"s-w" 'delete-window
-	"H-t" 'switch-window))
+        "s-d" 'switch-window-then-split-right
+        "s-[" 'windmove-left
+        "s-]" 'windmove-right
+        "s-w" 'delete-window
+        "H-t" 'switch-window))
+
+     (use-package popper
+       :init
+       (setq popper-display-control t
+             popper-display-function 'display-buffer-in-child-frame
+             popper-reference-buffers '("\\*Messages\\*" compilation-mode help-mode "\\*Help\\*" "magit:*" "worklog.org"))
+       (popper-mode t)
+       (popper-echo-mode t)
+       :general
+       (common-leader
+         "t" 'popper-toggle-latest)
+       (general-define-key
+        :keymaps 'popper-mode-map
+        "M-<right>" 'popper-cycle))
    #+end_src
 * 自动 revert
   #+begin_src emacs-lisp :tangle no
