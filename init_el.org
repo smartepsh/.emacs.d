@@ -5,10 +5,10 @@
 #+STARTUP: overview
 
 * 背景
-  =spacemacs= 入坑，经过大约三四年的使用，终于可以算是摸到了门槛。之前一直使用 =evil= 来模拟 vim 模式，随着使用的时间越长，依赖的插件越多，evil 带来的弊端也逐渐显现出来：
-  - 每一个插件除非有支持，不然都需要自定义按键，配合双 leader 系统，任务繁重。。。
-  - 对于不同的 mode-map 可能有相同的按键映射，emasc 采用 =1 major + n minor= 模式，很容易产生按键冲突
-  - 过重
+=spacemacs= 入坑，经过大约三四年的使用，终于可以算是摸到了门槛。之前一直使用 =evil= 来模拟 vim 模式，随着使用的时间越长，依赖的插件越多，evil 带来的弊端也逐渐显现出来：
+- 每一个插件除非有支持，不然都需要自定义按键，配合双 leader 系统，任务繁重。。。
+- 对于不同的 mode-map 可能有相同的按键映射，emasc 采用 =1 major + n minor= 模式，很容易产生按键冲突
+- 过重
 
   让我萌生了更换输入模式的想法。此时恰巧看到了[[https://emacs-china.org/t/meow/15679][猫态编辑：Meow - Emacs-general - Emacs China]] 这个模式，被描述吸引，决定尝试。
 
@@ -16,23 +16,23 @@
 
   Meow 尝试失败，退回 evil 模式，但使用 god-mode 作为辅助。
 ** 使用 org mode 记录配置
-   很多人使用 emacs 都是因为 org mode 入的坑，可见其厉害之处。本篇记录使用 =org-tangle= 将包含的 source block 依序拼接(=tangle=)为一个文件。这里默认会导出为 org 文件的同名文件，需要设置。
+很多人使用 emacs 都是因为 org mode 入的坑，可见其厉害之处。本篇记录使用 =org-tangle= 将包含的 source block 依序拼接(=tangle=)为一个文件。这里默认会导出为 org 文件的同名文件，需要设置。
 
-   #+begin_src emacs-lisp :tangle no
-     :PROPERTIES:
-     :header-args: :tangle "~/.emacs.d/init.el"
-     :END:
-   #+end_src
+#+begin_src emacs-lisp :tangle no
+  :PROPERTIES:
+  :header-args: :tangle "~/.emacs.d/init.el"
+  :END:
+#+end_src
 
-   此处我们直接输出配置到 =~/.emacs.d/init.el= 文件，意味着需要手动更新输出，新配置才可能生效。当然也可以直接更改此文件，但在下次导出时，会被覆盖，所以请不要这么做。
+此处我们直接输出配置到 =~/.emacs.d/init.el= 文件，意味着需要手动更新输出，新配置才可能生效。当然也可以直接更改此文件，但在下次导出时，会被覆盖，所以请不要这么做。
 
 * 基础设置
 
 ** 连接到 Center 服务器修改 ansible 脚本
 #+begin_src emacs-lisp
   (defun goto-ansible ()
-      (interactive)
-      (find-file "/sshx:192.168.2.54:"))
+    (interactive)
+    (find-file "/sshx:192.168.2.54:"))
 #+end_src
 
 ** 莫名其妙的 shell 变化
@@ -56,102 +56,102 @@
   (global-set-key (kbd "C-x C-e") 'evil/eval-last-sexp)
 #+end_src
 ** 窗口最大化
-   #+begin_src emacs-lisp
-     (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
-     (global-set-key (kbd "s-C-f") 'toggle-frame-fullscreen)
-     (global-set-key (kbd "s-M-f") 'toggle-frame-maximized)
-   #+end_src
+#+begin_src emacs-lisp
+  (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
+  (global-set-key (kbd "s-C-f") 'toggle-frame-fullscreen)
+  (global-set-key (kbd "s-M-f") 'toggle-frame-maximized)
+#+end_src
 
 ** 设置方法快速进入此文件
-   #+begin_src emacs-lisp
-     (defun goto-configuration-org ()
-       (interactive)
-       (find-file "~/.emacs.d/init_el.org"))
-   #+end_src
+#+begin_src emacs-lisp
+  (defun goto-configuration-org ()
+    (interactive)
+    (find-file "~/.emacs.d/init_el.org"))
+#+end_src
 ** 加速启动时间的技巧
-   通过设置最大垃圾回收大小，在启动过程中避免垃圾回收；在启动之后，设置为 300mb 以减少垃圾回收启动频率。
-   #+begin_src emacs-lisp
-     (setq gc-cons-threshold most-positive-fixnum)
-     (add-hook 'after-init-hook '(lambda () (setq gc-cons-threshold 5121024)))
-   #+end_src
+通过设置最大垃圾回收大小，在启动过程中避免垃圾回收；在启动之后，设置为 300mb 以减少垃圾回收启动频率。
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold most-positive-fixnum)
+  (add-hook 'after-init-hook '(lambda () (setq gc-cons-threshold 5121024)))
+#+end_src
 ** 计算启动时间
- #+begin_src emacs-lisp
-   (setq emacs-start-time (current-time))
-   (add-hook 'window-setup-hook '(lambda ()
-                                   (message
-                                    (format "Emacs startup in %.3f seconds"
-                                            (float-time
-                                             (time-subtract
-                                              (current-time)
-                                              emacs-start-time))))))
- #+end_src
+#+begin_src emacs-lisp
+  (setq emacs-start-time (current-time))
+  (add-hook 'window-setup-hook '(lambda ()
+                                  (message
+                                   (format "Emacs startup in %.3f seconds"
+                                           (float-time
+                                            (time-subtract
+                                             (current-time)
+                                             emacs-start-time))))))
+#+end_src
 ** 编译设置
- #+begin_src emacs-lisp
-   (setq comp-async-jobs-number 5
-         comp-deferred-compilation t
-         native-comp-async-report-warnings-errors nil)
- #+end_src
+#+begin_src emacs-lisp
+  (setq comp-async-jobs-number 5
+        comp-deferred-compilation t
+        native-comp-async-report-warnings-errors nil)
+#+end_src
 ** 系统及文件夹路径设置
- #+begin_src emacs-lisp
-   (setq private/cache-directory "~/.emacs.d/.cache/"
-	 private/system-is-mac (eq system-type 'darwin)
-	 private/config-directory "~/.emacs.d/"
-)
-   (add-to-list 'load-path (concat private/config-directory "helpers/"))
- #+end_src
+#+begin_src emacs-lisp
+  (setq private/cache-directory "~/.emacs.d/.cache/"
+        private/system-is-mac (eq system-type 'darwin)
+        private/config-directory "~/.emacs.d/"
+        )
+  (add-to-list 'load-path (concat private/config-directory "helpers/"))
+#+end_src
 ** 自定义文件及载入设置
- #+begin_src emacs-lisp
-   (setq custom-file "~/.emacs.d/custom.el")
-   (if (file-exists-p custom-file)
-       (load custom-file)
-     (message "no custom setting file!"))
- #+end_src
+#+begin_src emacs-lisp
+  (setq custom-file "~/.emacs.d/custom.el")
+  (if (file-exists-p custom-file)
+      (load custom-file)
+    (message "no custom setting file!"))
+#+end_src
 ** 当光标滚动超出屏幕的时候，不再使目标行居中
-  #+begin_src emacs-lisp
-    (setq scroll-conservatively 101
-          scroll-preserve-screen-position t)
-  #+end_src
+#+begin_src emacs-lisp
+  (setq scroll-conservatively 101
+        scroll-preserve-screen-position t)
+#+end_src
 ** 不再有提示音
-  #+begin_src emacs-lisp
-    (setq ring-bell-function 'ignore)
-  #+end_src
+#+begin_src emacs-lisp
+  (setq ring-bell-function 'ignore)
+#+end_src
 ** 替换 yes no
-   #+begin_src emacs-lisp
-     (fset 'yes-or-no-p 'y-or-n-p)
-   #+end_src
+#+begin_src emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+end_src
 ** 编辑相关设置
 #+begin_src emacs-lisp
   (set-default-coding-systems 'utf-8-unix)
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
   (setq auto-save-default nil
-   make-backup-files nil
-   create-lockfiles nil
-   x-select-enable-clipboard nil)
+        make-backup-files nil
+        create-lockfiles nil
+        x-select-enable-clipboard nil)
 
   (add-hook 'prog-mode-hook (lambda () (setq indent-tabs-mode nil
-					tabs-width 2)))
+                                             tabs-width 2)))
   (add-hook 'text-mode-hook (lambda () (setq indent-tabs-mode nil
-					tabs-width 2)))
+                                             tabs-width 2)))
 #+end_src
 ** 翻墙（虽然一般不怎么用）
-   #+begin_src emacs-lisp
-     (defun goproxy()
-       (interactive)
-       (setq url-proxy-services '(("no_proxy" . "^\\(localhost\\|10\\..*\\|192\\.168\\..*\\)")
-                                  ("http" . "192.168.50.111:8118")
-                                  ("https" . "192.168.50.111:8118"))))
+#+begin_src emacs-lisp
+  (defun goproxy()
+    (interactive)
+    (setq url-proxy-services '(("no_proxy" . "^\\(localhost\\|10\\..*\\|192\\.168\\..*\\)")
+                               ("http" . "192.168.50.111:8118")
+                               ("https" . "192.168.50.111:8118"))))
 
-     (defun disproxy()
-       (interactive)
-       (setq url-proxy-services nil))
-   #+end_src
+  (defun disproxy()
+    (interactive)
+    (setq url-proxy-services nil))
+#+end_src
 ** mac 修饰键配置
-   #+begin_src emacs-lisp
-     (setq ns-command-modifier 'super
-           ns-option-modifer 'meta
-           ns-right-option-modifier 'hyper
-           ns-right-command-modifier 'hyper)
-   #+end_src
+#+begin_src emacs-lisp
+  (setq ns-command-modifier 'super
+        ns-option-modifer 'meta
+        ns-right-option-modifier 'hyper
+        ns-right-command-modifier 'hyper)
+#+end_src
 ** 退出时不询问是否关闭进程
 #+begin_src emacs-lisp
   (setq confirm-kill-processes nil)
@@ -163,16 +163,16 @@
   ;; (assq-delete-all 'org package--builtin-versions)
 #+end_src
 * 包管理
-  我们使用 [[https://github.com/jwiegley/use-package][jwiegley/use-package]] 进行 melpa 包管理，同时配合 [[https://github.com/quelpa/quelpa][quelpa/quelpa]] 进行源码包管理（含 github），并使用 [[https://github.com/Silex/package-utils][Silex/package-utils]] 提供 helper 方便使用。
+我们使用 [[https://github.com/jwiegley/use-package][jwiegley/use-package]] 进行 melpa 包管理，同时配合 [[https://github.com/quelpa/quelpa][quelpa/quelpa]] 进行源码包管理（含 github），并使用 [[https://github.com/Silex/package-utils][Silex/package-utils]] 提供 helper 方便使用。
 
 #+begin_src emacs-lisp
   (setq package-native-compile t
-	use-package-expand-minimally t
-	use-package-always-ensure t
-	package-enable-at-startup nil
-	package-archives '(("melpa" . "https://melpa.org/packages/")
-			   ("nongnu"   . "https://elpa.nongnu.org/nongnu/")
-			   ("gnu"   . "https://elpa.gnu.org/packages/")))
+        use-package-expand-minimally t
+        use-package-always-ensure t
+        package-enable-at-startup nil
+        package-archives '(("melpa" . "https://melpa.org/packages/")
+                           ("nongnu"   . "https://elpa.nongnu.org/nongnu/")
+                           ("gnu"   . "https://elpa.gnu.org/packages/")))
   ;; This is only needed once, near the top of the file
   (eval-when-compile
     (require 'use-package))
@@ -182,7 +182,7 @@
 
   ;; disable update during quelpa initialized
   (setq quelpa-update-melpa-p nil
-	quelpa-checkout-melpa-p t)
+        quelpa-checkout-melpa-p t)
 
   ;; install quelpa
   (unless (package-installed-p 'quelpa)
@@ -208,11 +208,11 @@
     :defer t)
 #+end_src
 * 环境变量
-  #+begin_src emacs-lisp
-    (use-package exec-path-from-shell
-      :config
-      (exec-path-from-shell-initialize))
-  #+end_src
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :config
+    (exec-path-from-shell-initialize))
+#+end_src
 * 按键管理
 ** Evil
 经过 Meow 的试用，还是决定退回 evil 了。。。
@@ -267,7 +267,7 @@
 #+end_src
 
 ** 绑定
-  +meow 提供了一些全局的绑定方法，但基本均基于 normal state 或者 leader key ，无法根据 keymap 设置按键，故引入 general 。+
++meow 提供了一些全局的绑定方法，但基本均基于 normal state 或者 leader key ，无法根据 keymap 设置按键，故引入 general 。+
 #+begin_src emacs-lisp
   (use-package general
     :config
@@ -284,15 +284,15 @@
       :states '(insert motion normal emacs))
     (general-evil-setup)
     (general-auto-unbind-keys)
-       (general-create-definer clear-spc
-         :prefix-name "NOSPC"
-         "SPC" nil)
+    (general-create-definer clear-spc
+      :prefix-name "NOSPC"
+      "SPC" nil)
     (common-leader
       "fed" 'goto-configuration-org
       "SPC" 'execute-extended-command))
 #+end_src
 ** 提示
-  keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提供。
+keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提供。
 #+begin_src emacs-lisp
   (use-package which-key
     :after god-mode
@@ -302,7 +302,7 @@
     (which-key-enable-god-mode-support))
 #+end_src
 ** 按键及方法显示
-   [[https://github.com/lewang/command-log-mode][lewang/command-log-mode: log commands to buffer]]
+[[https://github.com/lewang/command-log-mode][lewang/command-log-mode: log commands to buffer]]
 #+begin_src emacs-lisp
   (use-package command-log-mode
     :defer t
@@ -376,22 +376,22 @@
   (use-package spaceline
     :init
     (setq powerline-image-apple-rgb t
-	  powerline-height 24
-	  spaceline-buffer-size-p nil
-	  spaceline-evil-state-p t
-	  spaceline-flycheck-error-p t
-	  spaceline-flycheck-warning-p t
-	  spaceline-flycheck-info-p t
-	  spaceline-minor-modes-p nil
-	  spaceline-anzu-p t
-	  spaceline-projectile-root-p nil
-	  spaceline-version-control-p nil
-	  spaceline-org-pomodoro-p nil
-	  powerline-default-separator 'box
-	  spaceline-separator-dir-left '(right . right)
-	  spaceline-separator-dir-right '(left . left)
-	  spaceline-highlight-face-func 'spaceline-highlight-face-evil-state
-	  spaceline-workspace-numbers-unicode t)
+          powerline-height 24
+          spaceline-buffer-size-p nil
+          spaceline-evil-state-p t
+          spaceline-flycheck-error-p t
+          spaceline-flycheck-warning-p t
+          spaceline-flycheck-info-p t
+          spaceline-minor-modes-p nil
+          spaceline-anzu-p t
+          spaceline-projectile-root-p nil
+          spaceline-version-control-p nil
+          spaceline-org-pomodoro-p nil
+          powerline-default-separator 'box
+          spaceline-separator-dir-left '(right . right)
+          spaceline-separator-dir-right '(left . left)
+          spaceline-highlight-face-func 'spaceline-highlight-face-evil-state
+          spaceline-workspace-numbers-unicode t)
     (add-hook 'after-init-hook #'spaceline-emacs-theme))
 #+end_src
 
@@ -406,20 +406,20 @@
   (use-package doom-themes
     :init
     (setq doom-themes-enable-bold t
-	  doom-themes-enable-italic t)
+          doom-themes-enable-italic t)
     (defun load-doom-theme (frame)
       (select-frame frame)
       (load-theme 'doom-one t))
     (if (daemonp)
-	(add-hook 'after-make-frame-functions 'load-doom-theme)
+        (add-hook 'after-make-frame-functions 'load-doom-theme)
       (load-theme 'doom-one t)))
 #+end_src
 
 ** 关闭滚动条和工具条
-   #+begin_src emacs-lisp
-     (scroll-bar-mode -1)
-     (tool-bar-mode -1)
-   #+end_src
+#+begin_src emacs-lisp
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+#+end_src
 
 ** 小猫咪 nyan-mode
 #+begin_src emacs-lisp
@@ -428,22 +428,22 @@
     (add-hook 'after-init-hook 'nyan-mode))
 #+end_src
 ** 彩色括号及高亮TODO
-   #+begin_src emacs-lisp
-     (use-package rainbow-delimiters
-       :hook (prog-mode . rainbow-delimiters-mode))
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
 
-     (use-package hl-todo
-       :hook (prog-mode . hl-todo-mode))
-   #+end_src
+  (use-package hl-todo
+    :hook (prog-mode . hl-todo-mode))
+#+end_src
 ** posframe
-   #+begin_src emacs-lisp
-     (use-package posframe
-       :defer t)
-   #+end_src
+#+begin_src emacs-lisp
+  (use-package posframe
+    :defer t)
+#+end_src
 ** 不显示欢迎界面
-   #+begin_src emacs-lisp
-     (setq inhibit-startup-screen t)
-   #+end_src
+#+begin_src emacs-lisp
+  (setq inhibit-startup-screen t)
+#+end_src
 ** 显示 region 中的空格和 tab
 本身是有个模式可以全局显示空格和 tab 的，但是平时也不怎么用不到，也丑，就先算了。。。现在发现了一个只针对 region 显示的，感觉应该挺好用的。。。
 
@@ -456,87 +456,87 @@
 #+end_src
 
 * 窗口管理
-  因为 centaur tabs 有点问题，所以先禁止掉。
-  快捷键设置向 iterm 靠拢。
-   #+begin_src emacs-lisp :tangle no
-     (use-package centaur-tabs
-       :defer t
-       :config
-       (general-define-key
-        "s-1" 'centaur-tabs-select-visible-tab
-        "s-2" 'centaur-tabs-select-visible-tab
-        "s-3" 'centaur-tabs-select-visible-tab
-        "s-4" 'centaur-tabs-select-visible-tab
-        "s-5" 'centaur-tabs-select-visible-tab
-        "s-6" 'centaur-tabs-select-visible-tab
-        "s-7" 'centaur-tabs-select-visible-tab
-        "s-t" 'centaur-tabs--create-new-tab)
-       (centaur-tabs-mode t)
-       (setq centaur-tabs-height 20
-             centaur-tabs-set-bar 'left
-             centaur-tabs-close-button "x"
-             centaur-tabs-set-close-button nil
-             ;;centaur-tabs--buffer-show-groups t
-             centaur-tabs-set-modified-marker t
-             ;;centaur-tabs-label-fixed-length 10
-             centaur-tabs-set-icons t))
-   #+end_src
+因为 centaur tabs 有点问题，所以先禁止掉。
+快捷键设置向 iterm 靠拢。
+#+begin_src emacs-lisp :tangle no
+  (use-package centaur-tabs
+    :defer t
+    :config
+    (general-define-key
+     "s-1" 'centaur-tabs-select-visible-tab
+     "s-2" 'centaur-tabs-select-visible-tab
+     "s-3" 'centaur-tabs-select-visible-tab
+     "s-4" 'centaur-tabs-select-visible-tab
+     "s-5" 'centaur-tabs-select-visible-tab
+     "s-6" 'centaur-tabs-select-visible-tab
+     "s-7" 'centaur-tabs-select-visible-tab
+     "s-t" 'centaur-tabs--create-new-tab)
+    (centaur-tabs-mode t)
+    (setq centaur-tabs-height 20
+          centaur-tabs-set-bar 'left
+          centaur-tabs-close-button "x"
+          centaur-tabs-set-close-button nil
+          ;;centaur-tabs--buffer-show-groups t
+          centaur-tabs-set-modified-marker t
+          ;;centaur-tabs-label-fixed-length 10
+          centaur-tabs-set-icons t))
+#+end_src
 
-   #+begin_src emacs-lisp
-     (use-package eyebrowse
-       :defer t
-       :init
-       (add-hook 'after-init-hook 'eyebrowse-mode)
-       (setq eyebrowse-keymap-prefix "")
-       :config
-       (general-define-key
-        "H-1" 'eyebrowse-switch-to-window-config-1
-        "H-2" 'eyebrowse-switch-to-window-config-2
-        "H-3" 'eyebrowse-switch-to-window-config-3
-        "H-4" 'eyebrowse-switch-to-window-config-4
-        "H-5" 'eyebrowse-switch-to-window-config-5
-        "H-6" 'eyebrowse-switch-to-window-config-6
-        "H-7" 'eyebrowse-switch-to-window-config-7
-        "H-8" 'eyebrowse-switch-to-window-config-8
-        "H-9" 'eyebrowse-switch-to-window-config-9
-        "H-`" 'eyebrowse-rename-window-config
-        "H-q" 'eyebrowse-close-window-config
-        "s-t" 'eyebrowse-create-window-config))
+#+begin_src emacs-lisp
+  (use-package eyebrowse
+    :defer t
+    :init
+    (add-hook 'after-init-hook 'eyebrowse-mode)
+    (setq eyebrowse-keymap-prefix "")
+    :config
+    (general-define-key
+     "H-1" 'eyebrowse-switch-to-window-config-1
+     "H-2" 'eyebrowse-switch-to-window-config-2
+     "H-3" 'eyebrowse-switch-to-window-config-3
+     "H-4" 'eyebrowse-switch-to-window-config-4
+     "H-5" 'eyebrowse-switch-to-window-config-5
+     "H-6" 'eyebrowse-switch-to-window-config-6
+     "H-7" 'eyebrowse-switch-to-window-config-7
+     "H-8" 'eyebrowse-switch-to-window-config-8
+     "H-9" 'eyebrowse-switch-to-window-config-9
+     "H-`" 'eyebrowse-rename-window-config
+     "H-q" 'eyebrowse-close-window-config
+     "s-t" 'eyebrowse-create-window-config))
 
-     (use-package switch-window
-       :init
-       (setq switch-window-auto-resize-window t
-             switch-window-minibuffer-shortcut ?z)
-       ;; switch-window-multiple-frames t)
-       (general-define-key
-        "s-d" 'switch-window-then-split-right
-        "s-[" 'windmove-left
-        "s-]" 'windmove-right
-        "s-w" 'delete-window
-        "H-t" 'switch-window))
+  (use-package switch-window
+    :init
+    (setq switch-window-auto-resize-window t
+          switch-window-minibuffer-shortcut ?z)
+    ;; switch-window-multiple-frames t)
+    (general-define-key
+     "s-d" 'switch-window-then-split-right
+     "s-[" 'windmove-left
+     "s-]" 'windmove-right
+     "s-w" 'delete-window
+     "H-t" 'switch-window))
 
-     (use-package popper
-       :init
-       (setq popper-display-control t
-             popper-display-function 'display-buffer-in-child-frame
-             popper-mode-line nil
-             popper-reference-buffers '("\\*Messages\\*" compilation-mode help-mode "\\*Help\\*" "worklog.org"))
-       (popper-mode t)
-       (popper-echo-mode t)
-       :general
-       (common-leader
-         "t" 'popper-toggle-latest)
-       (general-define-key
-        :keymaps 'popper-mode-map
-        "M-<right>" 'popper-cycle))
-   #+end_src
+  ;; (use-package popper
+  ;;   :init
+  ;;   (setq popper-display-control t
+  ;;         popper-display-function 'display-buffer-in-direction
+  ;;         popper-mode-line nil
+  ;;         popper-reference-buffers '("\\*Messages\\*" compilation-mode help-mode "\\*Help\\*" "worklog.org"))
+  ;;   (popper-mode t)
+  ;;   (popper-echo-mode t)
+  ;;   :general
+  ;;   (common-leader
+  ;;     "t" 'popper-toggle-latest)
+  ;;   (general-define-key
+  ;;    :keymaps 'popper-mode-map
+  ;;    "M-<right>" 'popper-cycle))
+#+end_src
 * 自动 revert
-  #+begin_src emacs-lisp :tangle no
-    (use-package autorevert
-      :defer t
-      :ensure nil
-      :hook (after-init . global-auto-revert-mode))
-  #+end_src
+#+begin_src emacs-lisp :tangle no
+  (use-package autorevert
+    :defer t
+    :ensure nil
+    :hook (after-init . global-auto-revert-mode))
+#+end_src
 * 字体及输入法（中文）
 #+begin_src c :tangle "~/.emacs.d/helpers/emacs-module.h"
 
@@ -604,19 +604,19 @@
 
     /* Function prototype for the module Lisp functions.  */
     typedef emacs_value (*emacs_subr) (emacs_env *env, ptrdiff_t nargs,
-				       emacs_value args[], void *data);
+                                       emacs_value args[], void *data);
 
     /* Possible Emacs function call outcomes.  */
     enum emacs_funcall_exit
       {
-	/* Function has returned normally.  */
-	emacs_funcall_exit_return = 0,
+        /* Function has returned normally.  */
+        emacs_funcall_exit_return = 0,
 
-	/* Function has signaled an error using `signal'.  */
-	emacs_funcall_exit_signal = 1,
+        /* Function has signaled an error using `signal'.  */
+        emacs_funcall_exit_signal = 1,
 
-	/* Function has exit using `throw'.  */
-	emacs_funcall_exit_throw = 2,
+        /* Function has exit using `throw'.  */
+        emacs_funcall_exit_throw = 2,
       };
 
     struct emacs_env_25
@@ -630,10 +630,10 @@
       /* Memory management.  */
 
       emacs_value (*make_global_ref) (emacs_env *env,
-				      emacs_value any_reference);
+                                      emacs_value any_reference);
 
       void (*free_global_ref) (emacs_env *env,
-			       emacs_value global_reference);
+                               emacs_value global_reference);
 
       /* Non-local exit handling.  */
 
@@ -647,38 +647,38 @@
        emacs_value *non_local_exit_data_out);
 
       void (*non_local_exit_signal) (emacs_env *env,
-				     emacs_value non_local_exit_symbol,
-				     emacs_value non_local_exit_data);
+                                     emacs_value non_local_exit_symbol,
+                                     emacs_value non_local_exit_data);
 
       void (*non_local_exit_throw) (emacs_env *env,
-				    emacs_value tag,
-				    emacs_value value);
+                                    emacs_value tag,
+                                    emacs_value value);
 
       /* Function registration.  */
 
       emacs_value (*make_function) (emacs_env *env,
-				    ptrdiff_t min_arity,
-				    ptrdiff_t max_arity,
-				    emacs_value (*function) (emacs_env *env,
-							     ptrdiff_t nargs,
-							     emacs_value args[],
-							     void *)
-				    EMACS_NOEXCEPT,
-				    const char *documentation,
-				    void *data);
+                                    ptrdiff_t min_arity,
+                                    ptrdiff_t max_arity,
+                                    emacs_value (*function) (emacs_env *env,
+                                                             ptrdiff_t nargs,
+                                                             emacs_value args[],
+                                                             void *)
+                                    EMACS_NOEXCEPT,
+                                    const char *documentation,
+                                    void *data);
 
       emacs_value (*funcall) (emacs_env *env,
-			      emacs_value function,
-			      ptrdiff_t nargs,
-			      emacs_value args[]);
+                              emacs_value function,
+                              ptrdiff_t nargs,
+                              emacs_value args[]);
 
       emacs_value (*intern) (emacs_env *env,
-			     const char *symbol_name);
+                             const char *symbol_name);
 
       /* Type conversion.  */
 
       emacs_value (*type_of) (emacs_env *env,
-			      emacs_value value);
+                              emacs_value value);
 
       bool (*is_not_nil) (emacs_env *env, emacs_value value);
 
@@ -693,30 +693,30 @@
       emacs_value (*make_float) (emacs_env *env, double value);
 
       /* Copy the content of the Lisp string VALUE to BUFFER as an utf8
-	 null-terminated string.
+         null-terminated string.
 
-	 SIZE must point to the total size of the buffer.  If BUFFER is
-	 NULL or if SIZE is not big enough, write the required buffer size
-	 to SIZE and return false.
+         SIZE must point to the total size of the buffer.  If BUFFER is
+         NULL or if SIZE is not big enough, write the required buffer size
+         to SIZE and return false.
 
-	 Note that SIZE must include the last null byte (e.g. "abc" needs
-	 a buffer of size 4).
+         Note that SIZE must include the last null byte (e.g. "abc" needs
+         a buffer of size 4).
 
-	 Return true if the string was successfully copied.  */
+         Return true if the string was successfully copied.  */
 
       bool (*copy_string_contents) (emacs_env *env,
-				    emacs_value value,
-				    char *buffer,
-				    ptrdiff_t *size_inout);
+                                    emacs_value value,
+                                    char *buffer,
+                                    ptrdiff_t *size_inout);
 
       /* Create a Lisp string from a utf8 encoded string.  */
       emacs_value (*make_string) (emacs_env *env,
-				  const char *contents, ptrdiff_t length);
+                                  const char *contents, ptrdiff_t length);
 
       /* Embedded pointer type.  */
       emacs_value (*make_user_ptr) (emacs_env *env,
-				    void (*fin) (void *) EMACS_NOEXCEPT,
-				    void *ptr);
+                                    void (*fin) (void *) EMACS_NOEXCEPT,
+                                    void *ptr);
 
       void *(*get_user_ptr) (emacs_env *env, emacs_value uptr);
       void (*set_user_ptr) (emacs_env *env, emacs_value uptr, void *ptr);
@@ -724,14 +724,14 @@
       void (*(*get_user_finalizer) (emacs_env *env, emacs_value uptr))
       (void *) EMACS_NOEXCEPT;
       void (*set_user_finalizer) (emacs_env *env,
-				  emacs_value uptr,
-				  void (*fin) (void *) EMACS_NOEXCEPT);
+                                  emacs_value uptr,
+                                  void (*fin) (void *) EMACS_NOEXCEPT);
 
       /* Vector functions.  */
       emacs_value (*vec_get) (emacs_env *env, emacs_value vec, ptrdiff_t i);
 
       void (*vec_set) (emacs_env *env, emacs_value vec, ptrdiff_t i,
-		       emacs_value val);
+                       emacs_value val);
 
       ptrdiff_t (*vec_size) (emacs_env *env, emacs_value vec);
     };
@@ -748,15 +748,15 @@
 
 #+begin_src emacs-lisp
   (setq private/rime-directory (concat private/config-directory "rime/")
-	rime-emacs-module-header-root (concat private/config-directory "helpers/"))
+        rime-emacs-module-header-root (concat private/config-directory "helpers/"))
 
   (use-package cnfonts
     :init
     (add-hook 'cnfonts-set-font-finish-hook '(lambda (fontsizes-list)
-					       (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)))
+                                               (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)))
     (add-hook 'after-init-hook 'cnfonts-enable)
     (setq cnfonts-use-face-font-rescale t
-	  cnfonts-default-fontsize 24)
+          cnfonts-default-fontsize 24)
     :config
     (general-define-key
      "s-=" 'cnfonts-increase-fontsize
@@ -768,29 +768,30 @@
     (default-input-method "rime")
     :init
     (setq rime-librime-root (concat private/rime-directory "dist/")
-	  rime-show-candidate 'posframe
-	  rime-posframe-style 'vertical
-	  rime-show-preedit 'inline
-	  rime-disable-predicates '(rime-predicate-hydra-p
-				    rime-predicate-prog-in-code-p
-				    rime-predicate-punctuation-after-ascii-p))
+          rime-show-candidate 'posframe
+          rime-posframe-style 'vertical
+          rime-show-preedit 'inline
+          rime-disable-predicates '(rime-predicate-hydra-p
+                                    rime-predicate-prog-in-code-p
+                                    rime-predicate-punctuation-after-ascii-p))
     (global-set-key (kbd "s-SPC") 'toggle-input-method)
     (general-define-key
      :keymaps 'rime-active-mode-map
      "M-j" 'rime-inline-ascii))
 #+end_src
+
 * Org Mode
-  算是重头戏了。。。我也是菜鸟，之前使用 evil 自定义按键，其实有些功能是很少用的。这次换为 =meow= 之后，使用原生快捷键看看效果。
+算是重头戏了。。。我也是菜鸟，之前使用 evil 自定义按键，其实有些功能是很少用的。这次换为 =meow= 之后，使用原生快捷键看看效果。
 ** org 根路径
-   真实路径在 icloud 中。
+真实路径在 icloud 中。
 #+begin_src emacs-lisp
   (setq base-directory  (file-truename "~/KentonBase/")
-	private/book-directory (concat base-directory "publications/")
-	org-directory (concat base-directory "orgs/")
+        private/book-directory (concat base-directory "publications/")
+        org-directory (concat base-directory "orgs/")
         ejira-org-directory (concat org-directory "worklog/"))
 #+end_src
 ** Ebook Reader
-   org-mode 用来干嘛呢？对吧？
+org-mode 用来干嘛呢？对吧？
 *** epub
 #+begin_src emacs-lisp
   (use-package nov
@@ -857,9 +858,9 @@
     (interactive)
     (do-applescript "
       tell application \"Skim\"
-	set mainID to id of front window
-	-- insert your code
-	close (every window whose id ≠ mainID)
+        set mainID to id of front window
+        -- insert your code
+        close (every window whose id ≠ mainID)
       end tell"))
 
   (provide 'skim)
@@ -877,165 +878,165 @@
   (defun private/get-skim-bibtex-key ()
     (interactive)
     (let* ((name (do-applescript
-		  (concat
-		   "tell application \"Skim\"\n"
-		   "set theDoc to front document\n"
-		   "set theTitle to (name of theDoc)\n"
-		   "end tell\n"
-		   "return theTitle as string\n")))
-	   (key (when (string-match "\\(.+\\).pdf" name) (match-string 1 name))))
+                  (concat
+                   "tell application \"Skim\"\n"
+                   "set theDoc to front document\n"
+                   "set theTitle to (name of theDoc)\n"
+                   "end tell\n"
+                   "return theTitle as string\n")))
+           (key (when (string-match "\\(.+\\).pdf" name) (match-string 1 name))))
       key))
 
   (private/get-skim-bibtex-key)
 #+end_src
 
 #+begin_src emacs-lisp :tangle no
-    (defun private/get-skim-link ()
-      "Generate the formatted skim link"
+  (defun private/get-skim-link ()
+    "Generate the formatted skim link"
+    (do-applescript
+     (concat
+      "tell application \"Skim\"\n"
+      "  set theDoc to front document\n"
+      "  set theTitle to (name of theDoc)\n"
+      "  set thePath to (path of theDoc)\n"
+      "  set thePage to (get index of current page of theDoc)\n"
+      "  set theNote to (active note of theDoc)\n"
+      "  set theSelection to selection of theDoc\n"
+      "  set theContent to (contents of theSelection) as string\n"
+      "  if theNote is not missing value then\n"
+      "    set theContent to (contents of (get text of theNote))\n"
+      "    set theNotePage to (get page of theNote)\n"
+      "    set thePage to (get index of theNotePage)\n"
+      "    set theNoteID to (get id of theNote)\n"
+      "  else\n"
+      "    if theContent is \"\" then\n"
+      "        set theNoteID to \"0000\"\n"
+      "    else\n"
+      "        tell theDoc\n"
+      "            set theNote to make new note with data theSelection with properties {type:underline note, color: red}\n"
+      "            set active note of theDoc to theNote\n"
+      "            set text of theNote to (contents of theSelection) as string\n"
+      "            set theNotePage to (get page of theNote)\n"
+      "            set thePage to (get index of theNotePage)\n"
+      "            set theNoteID to (get id of theNote)\n"
+      "        end tell\n"
+      "    end if\n"
+      "  end if\n"
+      "  set theLink to \"skim://\" & thePath & \"::\" & thePage & \";;\" & theNoteID \n"
+      "end tell\n"
+      "return theLink as string\n")))
+
+  (defun private/open-skim-link (uri)
+    "Visit page of pdf in Skim"
+    (let* ((note-id (when (string-match ";;\\(.+\\)\\'" uri) (match-string 1 uri)))
+           (page (when (string-match "::\\(.+\\);;" uri) (match-string 1 uri)))
+           (document (substring uri 0 (match-beginning 0))))
       (do-applescript
        (concat
-	"tell application \"Skim\"\n"
-	"  set theDoc to front document\n"
-	"  set theTitle to (name of theDoc)\n"
-	"  set thePath to (path of theDoc)\n"
-	"  set thePage to (get index of current page of theDoc)\n"
-	"  set theNote to (active note of theDoc)\n"
-	"  set theSelection to selection of theDoc\n"
-	"  set theContent to (contents of theSelection) as string\n"
-	"  if theNote is not missing value then\n"
-	"    set theContent to (contents of (get text of theNote))\n"
-	"    set theNotePage to (get page of theNote)\n"
-	"    set thePage to (get index of theNotePage)\n"
-	"    set theNoteID to (get id of theNote)\n"
-	"  else\n"
-	"    if theContent is \"\" then\n"
-	"        set theNoteID to \"0000\"\n"
-	"    else\n"
-	"        tell theDoc\n"
-	"            set theNote to make new note with data theSelection with properties {type:underline note, color: red}\n"
-	"            set active note of theDoc to theNote\n"
-	"            set text of theNote to (contents of theSelection) as string\n"
-	"            set theNotePage to (get page of theNote)\n"
-	"            set thePage to (get index of theNotePage)\n"
-	"            set theNoteID to (get id of theNote)\n"
-	"        end tell\n"
-	"    end if\n"
-	"  end if\n"
-	"  set theLink to \"skim://\" & thePath & \"::\" & thePage & \";;\" & theNoteID \n"
-	"end tell\n"
-	"return theLink as string\n")))
+        "tell application \"Skim\"\n"
+        "activate\n"
+        "set theDoc to open \"" document "\"\n"
+        "set thePage to (first page of theDoc where its index =\"" page "\")\n"
+        "try\n"
+        "  set theNote to (first note of thePage where its id = \"" note-id "\")\n"
+        "on error errMsg number errorNumber\n"
+        "  set theNote to 0\n"
+        "end try\n"
+        "if theNote is 0 then\n"
+        "    go document 1 to thePage\n"
+        "else\n"
+        "  set thePathList to (get path list of theNote)\n"
+        "  set thePoint to (first item of (first list of thePathList))\n"
+        "  go document 1 to thePage at thePoint\n"
+        "  set active note to theNote\n"
+        "end if\n"
+        "end tell"))))
 
-    (defun private/open-skim-link (uri)
-      "Visit page of pdf in Skim"
-      (let* ((note-id (when (string-match ";;\\(.+\\)\\'" uri) (match-string 1 uri)))
-	     (page (when (string-match "::\\(.+\\);;" uri) (match-string 1 uri)))
-	     (document (substring uri 0 (match-beginning 0))))
-	(do-applescript
-	 (concat
-	  "tell application \"Skim\"\n"
-	  "activate\n"
-	  "set theDoc to open \"" document "\"\n"
-	  "set thePage to (first page of theDoc where its index =\"" page "\")\n"
-	  "try\n"
-	  "  set theNote to (first note of thePage where its id = \"" note-id "\")\n"
-	  "on error errMsg number errorNumber\n"
-	  "  set theNote to 0\n"
-	  "end try\n"
-	  "if theNote is 0 then\n"
-	  "    go document 1 to thePage\n"
-	  "else\n"
-	  "  set thePathList to (get path list of theNote)\n"
-	  "  set thePoint to (first item of (first list of thePathList))\n"
-	  "  go document 1 to thePage at thePoint\n"
-	  "  set active note to theNote\n"
-	  "end if\n"
-	  "end tell"))))
+  (org-link-set-parameters "skim" :follow #'my-org-mac-skim-open)
 
-    (org-link-set-parameters "skim" :follow #'my-org-mac-skim-open)
+  (defadvice org-capture-finalize
+      (after org-capture-finalize-after activate)
+    "Advise capture-finalize to close the frame"
+    (if (equal "SA" (org-capture-get :key))
+        (do-applescript "tell application \"Skim\"\n    activate\nend tell")))
 
-    (defadvice org-capture-finalize
-	(after org-capture-finalize-after activate)
-      "Advise capture-finalize to close the frame"
-      (if (equal "SA" (org-capture-get :key))
-	  (do-applescript "tell application \"Skim\"\n    activate\nend tell")))
+  (defun private/clean-skim-page-link (link)
+    (let* ((link (replace-regexp-in-string "\n" " " link))
+           (link (replace-regexp-in-string "- " " " link)))
+      link))
 
-    (defun private/clean-skim-page-link (link)
-      (let* ((link (replace-regexp-in-string "\n" " " link))
-	     (link (replace-regexp-in-string "- " " " link)))
-	link))
-
-    (defun private/get-skim-page ()
-      (let* ((page (do-applescript
-		    (concat
-		     "tell application \"Skim\"\n"
-		     "set theDoc to front document\n"
-		     "set thePage to (get index of current page of theDoc)\n"
-		     "end tell\n"
-		     "return thePage as integer\n"))))
-	page))
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    (private/get-skim-page)
+  (defun private/get-skim-page ()
+    (let* ((page (do-applescript
+                  (concat
+                   "tell application \"Skim\"\n"
+                   "set theDoc to front document\n"
+                   "set thePage to (get index of current page of theDoc)\n"
+                   "end tell\n"
+                   "return thePage as integer\n"))))
+      page))
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  (private/get-skim-page)
 
 
-    (defun my-org-mac-skim-get-page ()
-      (interactive)
-      (message "Applescript: Getting Skim page link...")
-      (org-mac-paste-applescript-links (my-as-clean-skim-page-link (my-as-get-skim-page-link))))
+  (defun my-org-mac-skim-get-page ()
+    (interactive)
+    (message "Applescript: Getting Skim page link...")
+    (org-mac-paste-applescript-links (my-as-clean-skim-page-link (my-as-get-skim-page-link))))
 
-    (defun my-org-mac-skim-insert-page ()
-      (interactive)
-      (insert (my-org-mac-skim-get-page)))
-    (defun my-org-move-point-to-capture ()
-      (cond ((org-at-heading-p) (org-beginning-of-line))
-	    (t (org-previous-visible-heading 1))))
+  (defun my-org-mac-skim-insert-page ()
+    (interactive)
+    (insert (my-org-mac-skim-get-page)))
+  (defun my-org-move-point-to-capture ()
+    (cond ((org-at-heading-p) (org-beginning-of-line))
+          (t (org-previous-visible-heading 1))))
 
-    (add-hook 'org-capture-prepare-finalize-hook #'(lambda () (private/skim-org-link (org-id-get-create))))
+  (add-hook 'org-capture-prepare-finalize-hook #'(lambda () (private/skim-org-link (org-id-get-create))))
 
-    (defun private/skim-org-link (id)
-      (do-applescript (concat
-		       "tell application \"Skim\"\n"
-		       "set runstatus to \"not set\"\n"
-		       "set theDoc to front document\n"
-		       "try\n"
-		       "    set theNote to active note of theDoc\n"
-		       "end try\n"
-		       "if theNote is not missing value then\n"
-		       "    set newText to text of theNote\n"
-		       "    set startpoint to  (offset of \"org-id:{\" in newtext)\n"
-		       "    set endpoint to  (offset of \"}:org-id\" in newtext)\n"
-		       "    if (startpoint is equal to endpoint) and (endpoint is equal to 0) then\n"
-		       "        set newText to text of theNote & \"\norg-id:{\" & "
-		       (applescript-quote-string id)
-		       " & \"}:org-id\"\n"
-		       "        set text of theNote to newText\n"
-		       "        return \"set success\"\n"
-		       "    end if\n"
-		       "end if\n"
-		       "end tell\n"
-		       "return \"unset\"\n"
-		       )))
+  (defun private/skim-org-link (id)
+    (do-applescript (concat
+                     "tell application \"Skim\"\n"
+                     "set runstatus to \"not set\"\n"
+                     "set theDoc to front document\n"
+                     "try\n"
+                     "    set theNote to active note of theDoc\n"
+                     "end try\n"
+                     "if theNote is not missing value then\n"
+                     "    set newText to text of theNote\n"
+                     "    set startpoint to  (offset of \"org-id:{\" in newtext)\n"
+                     "    set endpoint to  (offset of \"}:org-id\" in newtext)\n"
+                     "    if (startpoint is equal to endpoint) and (endpoint is equal to 0) then\n"
+                     "        set newText to text of theNote & \"\norg-id:{\" & "
+                     (applescript-quote-string id)
+                     " & \"}:org-id\"\n"
+                     "        set text of theNote to newText\n"
+                     "        return \"set success\"\n"
+                     "    end if\n"
+                     "end if\n"
+                     "end tell\n"
+                     "return \"unset\"\n"
+                     )))
 
-    (defun applescript-quote-string (argument)
-      "Quote a string for passing as a string to AppleScript."
-      (if (or (not argument) (string-equal argument ""))
-	  "\"\""
-	;; Quote using double quotes, but escape any existing quotes or
-	;; backslashes in the argument with backslashes.
-	(let ((result "")
-	      (start 0)
-	      end)
-	  (save-match-data
-	    (if (or (null (string-match "[^\"\\]" argument))
-		    (< (match-end 0) (length argument)))
-		(while (string-match "[\"\\]" argument start)
-		  (setq end (match-beginning 0)
-			result (concat result (substring argument start end)
-				       "\\" (substring argument end (1+ end)))
-			start (1+ end))))
-	    (concat "\"" result (substring argument start) "\"")))))
+  (defun applescript-quote-string (argument)
+    "Quote a string for passing as a string to AppleScript."
+    (if (or (not argument) (string-equal argument ""))
+        "\"\""
+      ;; Quote using double quotes, but escape any existing quotes or
+      ;; backslashes in the argument with backslashes.
+      (let ((result "")
+            (start 0)
+            end)
+        (save-match-data
+          (if (or (null (string-match "[^\"\\]" argument))
+                  (< (match-end 0) (length argument)))
+              (while (string-match "[\"\\]" argument start)
+                (setq end (match-beginning 0)
+                      result (concat result (substring argument start end)
+                                     "\\" (substring argument end (1+ end)))
+                      start (1+ end))))
+          (concat "\"" result (substring argument start) "\"")))))
 #+end_src
 *** DONE 设置翻页快捷键
-    - State "DONE"       from "TODO"       [2021-11-14 Sun 21:55]
+  - State "DONE"       from "TODO"       [2021-11-14 Sun 21:55]
     检测当前是否有 nov buffer ，如果有，则执行 nov 翻页，否则执行 skim 翻页。
 
 #+begin_src emacs-lisp
@@ -1050,35 +1051,35 @@
   (defun reader/scroll-up (arg)
     (interactive "P")
     (let ((nov-window (nov-buffer-in-current))
-    (current-window (get-buffer-window)))
+          (current-window (get-buffer-window)))
       (if nov-window
-    (progn
-      (select-window nov-window)
-      (nov-scroll-up arg)
-      (select-window current-window))
-  (skim-next-page))))
+          (progn
+            (select-window nov-window)
+            (nov-scroll-up arg)
+            (select-window current-window))
+        (skim-next-page))))
 
   (defun reader/scroll-down (arg)
     (interactive "P")
     (let ((nov-window (nov-buffer-in-current))
-    (current-window (get-buffer-window)))
+          (current-window (get-buffer-window)))
       (if nov-window
-    (progn
-      (select-window nov-window)
-      (nov-scroll-down arg)
-      (select-window current-window))
-  (skim-prev-page))))
+          (progn
+            (select-window nov-window)
+            (nov-scroll-down arg)
+            (select-window current-window))
+        (skim-prev-page))))
 
   (defun reader/goto-pdf-first-page-or-nov-toc ()
     (interactive)
     (let ((nov-window (nov-buffer-in-current))
-    (current-window (get-buffer-window)))
+          (current-window (get-buffer-window)))
       (if nov-window
-    (progn
-      (select-window nov-window)
-      (nov-goto-toc)
-      (select-window current-window))
-  (skim-goto 1))))
+          (progn
+            (select-window nov-window)
+            (nov-goto-toc)
+            (select-window current-window))
+        (skim-goto 1))))
 
 #+end_src
 ** Helpers
@@ -1091,34 +1092,34 @@
     (interactive)
     (save-excursion
       (save-restriction
-	(org-narrow-to-subtree)
-	(let* ((beg (point-min))
-	       (end (point-max))
-	       (image-overlays (cl-intersection
-				org-inline-image-overlays
-				(overlays-in beg end)))
-	       (display-inline-images-local
-		(lambda ()
-		  (org-display-inline-images t t beg end)
-		  (setq image-overlays (cl-intersection
-					org-inline-image-overlays
-					(overlays-in beg end)))
-		  (if (and (org-called-interactively-p) image-overlays)
-		      (message "%d images displayed inline"
-			       (length image-overlays)))))
-	       (hide-inline-images-local
-		(lambda ()
-		  (org-remove-inline-images)
-		  (message "Inline image display turned off"))))
-	  (if state
-	      (pcase state
-		('subtree
-		 (funcall display-inline-images-local))
-		('folded
-		 (funcall hide-inline-images-local)))
-	    (if image-overlays
-		(funcall display-inline-images-local)
-	      (funcall hide-inline-images-local)))))))
+        (org-narrow-to-subtree)
+        (let* ((beg (point-min))
+               (end (point-max))
+               (image-overlays (cl-intersection
+                                org-inline-image-overlays
+                                (overlays-in beg end)))
+               (display-inline-images-local
+                (lambda ()
+                  (org-display-inline-images t t beg end)
+                  (setq image-overlays (cl-intersection
+                                        org-inline-image-overlays
+                                        (overlays-in beg end)))
+                  (if (and (org-called-interactively-p) image-overlays)
+                      (message "%d images displayed inline"
+                               (length image-overlays)))))
+               (hide-inline-images-local
+                (lambda ()
+                  (org-remove-inline-images)
+                  (message "Inline image display turned off"))))
+          (if state
+              (pcase state
+                ('subtree
+                 (funcall display-inline-images-local))
+                ('folded
+                 (funcall hide-inline-images-local)))
+            (if image-overlays
+                (funcall display-inline-images-local)
+              (funcall hide-inline-images-local)))))))
 #+end_src
 
 *** 循环展开 properties
@@ -1129,10 +1130,10 @@
     (save-excursion
       (goto-char (point-min))
       (while (re-search-forward
-	      "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
-	(let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
-	  (overlay-put ov_this 'display "")
-	  (overlay-put ov_this 'hidden-prop-drawer t))))
+              "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
+        (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
+          (overlay-put ov_this 'display "")
+          (overlay-put ov_this 'hidden-prop-drawer t))))
     (put 'org-toggle-properties-hide-state 'state 'hidden))
 
   (defun org-show-properties ()
@@ -1145,7 +1146,7 @@
     "Toggle visibility of property drawers."
     (interactive)
     (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
-	(org-show-properties)
+        (org-show-properties)
       (org-hide-properties)))
 #+end_src
 
@@ -1153,26 +1154,26 @@
 依赖于终端软件 =terminal-notifier= 。
 #+begin_src emacs-lisp
   (defun notify-osx (title message)
-  (call-process "terminal-notifier"
-                nil 0 nil
-                "-group" "Emacs"
-                "-title" title
-                "-sender" "org.gnu.Emacs"
-                "-mesage" message
-                "-activate" "org.gnu.Emacs"))
+    (call-process "terminal-notifier"
+                  nil 0 nil
+                  "-group" "Emacs"
+                  "-title" title
+                  "-sender" "org.gnu.Emacs"
+                  "-mesage" message
+                  "-activate" "org.gnu.Emacs"))
 #+end_src
 ** Org-babel
 *** elixir
-    #+begin_src emacs-lisp
-      (use-package ob-elixir :after org)
-      (use-package ox-gfm :after org)
-      (use-package ob-applescript :after org)
-      (use-package ob-racket
-        :quelpa (ob-racket :fetcher github :repo "hasu/emacs-ob-racket" :branch "master")
-        :init
-        (setq ob-racket-default-lang "sicp")
-        :after org)
-    #+end_src
+#+begin_src emacs-lisp
+  (use-package ob-elixir :after org)
+  (use-package ox-gfm :after org)
+  (use-package ob-applescript :after org)
+  (use-package ob-racket
+    :quelpa (ob-racket :fetcher github :repo "hasu/emacs-ob-racket" :branch "master")
+    :init
+    (setq ob-racket-default-lang "sicp")
+    :after org)
+#+end_src
 
 ** 本体
 
@@ -1223,7 +1224,7 @@
 #+end_src
 
 ** 美观
-   有时候反而觉得原始状态挺好看。。。而且这个插件极度影响性能。。。所以先禁止掉。
+有时候反而觉得原始状态挺好看。。。而且这个插件极度影响性能。。。所以先禁止掉。
 #+begin_src emacs-lisp :tangle no
   (use-package org-bullets
     :hook (org-mode . org-bullets-mode))
@@ -1236,13 +1237,13 @@
     (setq org-agenda-files (directory-files (concat org-directory "worklog/") t ".org")))
 #+end_src
 ** Bookmark
-   使用 org 文件做了一个收藏夹。
+使用 org 文件做了一个收藏夹。
 #+begin_src emacs-lisp
   (setq private/bookmark-file (concat org-directory "bookmarks.org"))
   (defun open-bookmarks ()
     (interactive)
     (if (buffer-live-p "bookmarks.org")
-	(pop-to-buffer "bookmarks.org")
+        (pop-to-buffer "bookmarks.org")
       (find-file private/bookmark-file)))
 #+end_src
 ** Date Calculation
@@ -1292,10 +1293,10 @@
   (defconst date-calc-eopoc (+ date-calc-year-of-epoc date-calc-century-of-epoc) "reference year (epoc)")
 
   (defconst date-calc-days-in-year-list '((0 0 31 59 90 120 151 181 212 243 273 304 334 365)
-					  (0 0 31 60 91 121 152 182 213 244 274 305 335 366)))
+                                          (0 0 31 60 91 121 152 182 213 244 274 305 335 366)))
 
   (defconst date-calc-days-in-month-list '((0 31 28 31 30 31 30 31 31 30 31 30 31)
-					   (0 31 29 31 30 31 30 31 31 30 31 30 31)))
+                                           (0 31 29 31 30 31 30 31 31 30 31 30 31)))
 
   (defconst date-calc-languages 11)
   (defconst date-calc-language 1)
@@ -1383,16 +1384,16 @@
   (defun date-calc-iso-lc (char)
     (let ((int (char-int char)))
       (if (or (and (>= int #x41) (<= int #x5a))
-	      (and (>= int #xc0) (<= int #xd6))
-	      (and (>= int #xd8) (<= int #xde)))
-	  (+ int #x20))))
+              (and (>= int #xc0) (<= int #xd6))
+              (and (>= int #xd8) (<= int #xde)))
+          (+ int #x20))))
 
   (defun date-calc-iso-uc (char)
     (let ((int (char-int char)))
       (if (or (and (>= int #x61) (<= int #x7a))
-	      (and (>= int #xe0) (<= int #xf6))
-	      (and (>= int #xf8) (<= int #xfe)))
-	  (- int #x20))))
+              (and (>= int #xe0) (<= int #xf6))
+              (and (>= int #xf8) (<= int #xfe)))
+          (- int #x20))))
 
   (defun date-calc-year-to-days (year)
     (let ((days (* year 365)))
@@ -1402,27 +1403,27 @@
 
   (defun date-calc-scan9 (str len idx neg)
     (if (and (stringp str)
-	     (>= idx 0)
-	     (< idx len))
-	(date-calc-is-digit (logxor neg (aref str idx)))
+             (>= idx 0)
+             (< idx len))
+        (date-calc-is-digit (logxor neg (aref str idx)))
       nil))
 
   (defun date-calc-scanx (str len idx neg)
     (if (and (stringp str)
-	     (>= idx 0)
-	     (< idx len))
-	(date-calc-is-alnum (logxor neg (aref str idx)))))
+             (>= idx 0)
+             (< idx len))
+        (date-calc-is-alnum (logxor neg (aref str idx)))))
 
-  ;(defalias string-to-int date-calc-string-to-number)
+                                          ;(defalias string-to-int date-calc-string-to-number)
 
   (defun date-calc-center (string width)
     "return a string that is WIDTH long with string centered in it"
     (let ((pad (- width (length string)))
-	  (lpad (/ pad 2))
-	  (rpad (- pad (/ pad 2))))
+          (lpad (/ pad 2))
+          (rpad (- pad (/ pad 2))))
       (if (<= pad 0)
-	  string
-	(concat (make-string lpad " ") string (make-string rpad " ")))))
+          string
+        (concat (make-string lpad " ") string (make-string rpad " ")))))
 
   (defun date-calc-blank (width)
     (make-string width "\n"))
@@ -1431,13 +1432,13 @@
     "Normalize the values of the TIME list.  TIME should be of the form (dd dh dm ds).  Returns a list of the same form."
     (let ((quot (/ ds 60)))
       (setq ds (- ds (* quot 60))
-	    dm (+ dm quot)
-	    quot (/ dm 60))
+            dm (+ dm quot)
+            quot (/ dm 60))
       (setq dm (- dm (* quot 60))
-	    dh (+ dh quot)
-	    quot (/ dh 24))
+            dh (+ dh quot)
+            quot (/ dh 24))
       (setq dh (- dh (* quot 24))
-	    dd (+ dd quot))
+            dd (+ dd quot))
       (list dd dh dm ds)))
 
   (defun date-calc-normalize-ranges (dd dh dm ds)
@@ -1457,17 +1458,17 @@
       (setq ds (- ds (* quot 86400)))
       (setq dd (+ dd quot))
       (if (not (= dd 0))
-	  (if (> dd 0)
-	      (if (< ds 0)
-		  (setq ds (+ ds 86400)
-			dd (1- dd)))
-	    (if (> ds 0)
-		(setq ds (- ds 86400)
-		      dd (1+ dd)))))
+          (if (> dd 0)
+              (if (< ds 0)
+                  (setq ds (+ ds 86400)
+                        dd (1- dd)))
+            (if (> ds 0)
+                (setq ds (- ds 86400)
+                      dd (1+ dd)))))
       (setq dh 0 dm 0)
       (if (not (= ds 0))
-	  (date-calc-normalize-time dd dh dm ds)
-	(list dd dh dm ds))))
+          (date-calc-normalize-time dd dh dm ds)
+        (list dd dh dm ds))))
 
   (defun date-calc-valid-year (year) (>= year 1))
   (defun date-calc-valid-month (month) (and month (>= month 1) (<= month 12)))
@@ -1475,44 +1476,44 @@
   (defun date-calc-leap-year (year)
     "This function returns 1 if the given YEAR is a leap year and 0 otherwise."
     (if (or (and (zerop (% year 4))
-		 (not (zerop (% year 100))))
-	    (zerop (% year 400)))
-	1 0))
+                 (not (zerop (% year 100))))
+            (zerop (% year 400)))
+        1 0))
 
   (defun date-calc-days-in-month (year month)
     "This function returns the number of days in the given MONTH of the given YEAR."
     (if (and (date-calc-valid-year year)
-	     (date-calc-valid-month month))
-	(car (nthcdr month
-		     (car (nthcdr (date-calc-leap-year year) date-calc-days-in-month-list))))))
+             (date-calc-valid-month month))
+        (car (nthcdr month
+                     (car (nthcdr (date-calc-leap-year year) date-calc-days-in-month-list))))))
 
   (defun date-calc-days-in-year (year &optional month)
     "This function returns the number of days in the given YEAR.  If MONTH is [1..12], return the number of days in that YEAR as of the first of that MONTH."
     (car (nthcdr (if (date-calc-valid-month month) month 13)
-		 (car (nthcdr (date-calc-leap-year year) date-calc-days-in-year-list)))))
+                 (car (nthcdr (date-calc-leap-year year) date-calc-days-in-year-list)))))
 
   (defun date-calc-check-date (year month day)
     "This function returns true if the given three numerical values YEAR MONTH DAY constitute a valid
       date, and false otherwise."
     (and (date-calc-valid-year year)
-	 (date-calc-valid-month month)
-	 (>= day 1)
-	 (<= day (date-calc-days-in-month year month))))
+         (date-calc-valid-month month)
+         (>= day 1)
+         (<= day (date-calc-days-in-month year month))))
 
   (defun date-calc-check-time (hour min sec)
     "    This function returns true if the given three numerical values HOUR MIN SEC constitute a valid
       time, and false otherwise."
-      (and (>= hour 0) (< hour 24)
-	   (>= min 0) (< min 60)
-	   (>= sec 0) (< sec 60)))
+    (and (>= hour 0) (< hour 24)
+         (>= min 0) (< min 60)
+         (>= sec 0) (< sec 60)))
 
   (defun date-calc-day-of-year (year month day)
     "This function returns the sum of the number of days in the months starting with January up to and including MONTH in
       the given year YEAR."
     (let ((leap (date-calc-leap-year year)))
       (if (date-calc-check-date year month day)
-	  (+ day (car (nthcdr month (car (nthcdr leap date-calc-days-in-year-list)))))
-	0)))
+          (+ day (car (nthcdr month (car (nthcdr leap date-calc-days-in-year-list)))))
+        0)))
 
   (defun date-calc-date-to-days (year month day)
     "This function returns the (absolute) number of the day of the given date, where counting starts at the 1st of January
@@ -1527,9 +1528,9 @@
       Caesar, who had instituted it in Roman times. The Julian calendar was less precise because it had too many leap years
       compared to the true mean length of a year, and because rulers often changed it arbitrarily, in order to lengthen their
       own reign, for instance."
-  (if (date-calc-check-date year month day)
-	(+ (date-calc-year-to-days (1- year))
-	   (date-calc-day-of-year year month day))
+    (if (date-calc-check-date year month day)
+        (+ (date-calc-year-to-days (1- year))
+           (date-calc-day-of-year year month day))
       0))
 
   (defun date-calc-day-of-week (year month day)
@@ -1552,58 +1553,58 @@
 
     (let ((days (date-calc-date-to-days year month day)))
       (unless (= days 0)
-	(setq days (1- days))
-	(setq days (% days 7))
-	(setq days (1+ days)))
+        (setq days (1- days))
+        (setq days (% days 7))
+        (setq days (1+ days)))
       days))
 
   (defun date-calc-weeks-in-year (year)
     "This function returns the number of weeks in the given YEAR, i.e., either 52 or 53."
     (if (or (= 4 (date-calc-day-of-week year 1 1))
-	    (= 4 (date-calc-day-of-week year 12 31)))
-	53 52))
+            (= 4 (date-calc-day-of-week year 12 31)))
+        53 52))
 
   (defun date-calc-week-number (year month day)
     "This function returns the number of the week the given date lies in.  If the given date lies in the LAST week of the PREVIOUS year, \"0\" is returned."
     (let* ((first (1- (date-calc-day-of-week year 1 1)))
-	   (week (/ (+ first (date-calc-delta-days year 1 1 year month day)) 7)))
+           (week (/ (+ first (date-calc-delta-days year 1 1 year month day)) 7)))
       (if (< first 4)
-	  (1+ week)
-	week)))
+          (1+ week)
+        week)))
 
   (defun date-calc-week-of-year (year month day)
     "return '(WEEK YEAR) where WEEK is the week number of YEAR"
     (let (week)
       (if (not (date-calc-check-date year month day))
-	  nil
-	(setq week (date-calc-week-number year month day))
-	(if (= week 0)
-	    (setq week (date-calc-weeks-in-year (1- year)))
-	  (if (> week (date-calc-weeks-in-year year))
-	      (setq week 1 year (1+ year))))
-	(list week year))))
+          nil
+        (setq week (date-calc-week-number year month day))
+        (if (= week 0)
+            (setq week (date-calc-weeks-in-year (1- year)))
+          (if (> week (date-calc-weeks-in-year year))
+              (setq week 1 year (1+ year))))
+        (list week year))))
 
   (defun date-calc-monday-of-week (week year)
     "return '(YEAR MONTH DAY) where MONTH and DAY correspond to the Monday of WEEK in YEAR"
     (let ((first (1- (date-calc-day-of-week year 1 1))))
       (if (< first 4)
-	  (setq week (1- week)))
+          (setq week (1- week)))
       (date-calc-add-delta-days year 1 1 (- (* week 7) first))))
 
   (defun date-calc-nth-weekday-of-month-year (year month dow n)
     "This function returns the (year month day) of the N-th day of week DOW in the given MONTH and YEAR; such as, for example, the 3rd Thursday of a given month and year."
     (let ((first (date-calc-day-of-week year month 1))
-	  delta date)
+          delta date)
       (if (or (not (date-calc-check-date year month 1))
-	      (< dow 1) (> dow 7)
-	      (< n 1) (> n 5))
-	  nil				; params not valid, error
-	(if (< dow first)
-	    (setq dow (+ dow 7)))		;the first occurance of dow is in the second week
-	(setq delta (+ (- dow first) (* (1- n) 7)))
-	(setq date (date-calc-add-delta-days year month 1 delta))
-	(if (= month (cadr date))
-	    date))))
+              (< dow 1) (> dow 7)
+              (< n 1) (> n 5))
+          nil				; params not valid, error
+        (if (< dow first)
+            (setq dow (+ dow 7)))		;the first occurance of dow is in the second week
+        (setq delta (+ (- dow first) (* (1- n) 7)))
+        (setq date (date-calc-add-delta-days year month 1 delta))
+        (if (= month (cadr date))
+            date))))
 
   (defun date-calc-delta-days (year1 month1 day1 year2 month2 day2)
     "This function returns the difference in days between the two given dates. The result is positive if the two dates are in chronological order, i.e., if date #1 comes chronologically BEFORE date #2, and negative if the order of the two dates is reversed."
@@ -1613,171 +1614,171 @@
   (defun date-calc-delta-hms (hour1 min1 sec1 hour2 min2 sec2)
     "This function returns the difference in days, hours, minutes and seconds between the two given times."
     (let* ((ss (if (and (date-calc-check-time hour1 min1 sec1)
-			(date-calc-check-time hour2 min2 sec2))
-		   (- (+ sec2 (* 60 (+ min2 (* 60 hour2))))
-		      (+ sec1 (* 60 (+ min1 (* 60 hour1)))))))
-	   (l (date-calc-normalize-signs 0 0 0 ss)))
+                        (date-calc-check-time hour2 min2 sec2))
+                   (- (+ sec2 (* 60 (+ min2 (* 60 hour2))))
+                      (+ sec1 (* 60 (+ min1 (* 60 hour1)))))))
+           (l (date-calc-normalize-signs 0 0 0 ss)))
       l))
 
   (defun date-calc-delta-dhms (year1 month1 day1 hour1 min1 sec1
-				     year2 month2 day2 hour2 min2 sec2)
+                                     year2 month2 day2 hour2 min2 sec2)
     "This function returns the difference in days, hours, minutes and seconds between the two given dates with times."
     (let ((dd (date-calc-delta-days year1 month1 day1 year2 month2 day2))
-	  (dhms (date-calc-delta-hms hour1 min1 sec1 hour2 min2 sec2)))
+          (dhms (date-calc-delta-hms hour1 min1 sec1 hour2 min2 sec2)))
       (if (> (length dhms) 0)
-	  (setcar dhms (+ (aref dmhs 0) dd)))
+          (setcar dhms (+ (aref dmhs 0) dd)))
       dhms))
 
   (defun date-calc-delta-ymd (year1 month1 day1 year2 month2 day2)
     "This function returns the difference between the two dates"
     (let ((yy (- year2 year1))
-	  (mm (- month2 month1))
-	  (dd (- day2 day1)))
+          (mm (- month2 month1))
+          (dd (- day2 day1)))
       (if (and (date-calc-check-date year1 month1 day1)
-	       (date-calc-check-date year2 month2 day2))
-	(list yy mm dd)
-	nil)))
+               (date-calc-check-date year2 month2 day2))
+          (list yy mm dd)
+        nil)))
 
   (defun date-calc-delta-ymdhms (year1 month1 day1 hour1 min1 sec1
-				       year2 month2 day2 hour2 min2 sec2)
+                                       year2 month2 day2 hour2 min2 sec2)
     "This function is based on the function date-calc-delta-ymd above but additionally calculates the time difference. When a carry over from the time difference occurs, the delta day value is adjusted accordingly, thus giving the correct total date/time difference."
     (let* ((dymd (date-calc-delta-ymd year1 month1 day1 year2 month2 day2))
-	   (dd (if (> (length dymd) 0) (caddr dymd)))
-	   (dhms (date-calc-delta-hms hour1 min1 sec1 hour2 min2 sec2)))
+           (dd (if (> (length dymd) 0) (caddr dymd)))
+           (dhms (date-calc-delta-hms hour1 min1 sec1 hour2 min2 sec2)))
       (if (and dymd dhms dd)
-	  (list (car dymd) (cadr dymd) (+ dd (car dhms)) (cadr dhms) (caddr dhms) (cadddr dhms))
-	nil)))
+          (list (car dymd) (cadr dymd) (+ dd (car dhms)) (cadr dhms) (caddr dhms) (cadddr dhms))
+        nil)))
 
   (defun date-calc-normalize-dhms (day hour min sec)
     "This function takes four arbitrary values for days, hours, minutes and seconds (which may have different signs) and renormalizes them so that the values for hours, minutes and seconds will lie in the ranges [-23..23], [-59..59] and [-59..59], respectively, and so that all four values have the same sign (or are zero)."
     (let* ((dhms (date-calc-normalize-ranges day hour min sec))
-	   (dd (if dhms (car dhms)))
-	   (dh (if dhms (cadr dhms)))
-	   (dm (if dhms (caddr dhms)))
-	   (ds (if dhms (cadddr dhms))))
+           (dd (if dhms (car dhms)))
+           (dh (if dhms (cadr dhms)))
+           (dm (if dhms (caddr dhms)))
+           (ds (if dhms (cadddr dhms))))
       (if ds
-	  (setq ds (+ ds (* 60 (+ dm (* 60 dh))))))
+          (setq ds (+ ds (* 60 (+ dm (* 60 dh))))))
       (if dhms
-	  (date-calc-normalize-signs dd dh dm ds))))
+          (date-calc-normalize-signs dd dh dm ds))))
 
   (defun date-calc-add-delta-days (year month day delta)
     "This function returns (year month day) such that it is YEAR MONTH DAY plus DELTA days"
     (let ((days (date-calc-date-to-days year month day))
-	  leap)
+          leap)
       (unless (and (not days) (> delta days))
-	(setq days (+ days delta))
-	(setq year (floor (/ days 365.2425)))
-	(setq day (- days (date-calc-year-to-days year)))
-	(if (< day 1)
-	    (setq day (- days (date-calc-year-to-days (1- year))))
-	  (setq year (1+ year)))
-	(setq leap (date-calc-leap-year year))
-	(if (> day (date-calc-days-in-year year))
-	    (setq* day (- day (dat-calc-days-in-year year))
-		  year (1+ year)
-		  leap (date-calc-leap-year year)))
-	(setq month 12)
-	(while (and (date-calc-valid-month month)
-		    (not (date-calc-check-date year month day)))
-	  (if (> day (date-calc-days-in-year year month))
-	      (setq day (- day (date-calc-days-in-year year month))))
-	  (unless (date-calc-check-date year month day)
-	    (setq month (1- month)))))
+        (setq days (+ days delta))
+        (setq year (floor (/ days 365.2425)))
+        (setq day (- days (date-calc-year-to-days year)))
+        (if (< day 1)
+            (setq day (- days (date-calc-year-to-days (1- year))))
+          (setq year (1+ year)))
+        (setq leap (date-calc-leap-year year))
+        (if (> day (date-calc-days-in-year year))
+            (setq* day (- day (dat-calc-days-in-year year))
+                   year (1+ year)
+                   leap (date-calc-leap-year year)))
+        (setq month 12)
+        (while (and (date-calc-valid-month month)
+                    (not (date-calc-check-date year month day)))
+          (if (> day (date-calc-days-in-year year month))
+              (setq day (- day (date-calc-days-in-year year month))))
+          (unless (date-calc-check-date year month day)
+            (setq month (1- month)))))
       (if (date-calc-check-date year month day)
-	  (list year month day))))
+          (list year month day))))
 
   (defun date-calc-add-delta-dhms (year month day hour min sec dd dh dm ds)
     "This function serves to add a days, hours, minutes and seconds offset to a given date and time, in order to answer questions like \"today and now plus 7 days but minus 5 hours and then plus 30 minutes, what date and time gives that?\""
     (let* ((dhms (date-calc-normalize-ranges dd dh dm ds))
-	   (dd (if dhms (car dhms)))
-	   (dh (if dhms (cadr dhms)))
-	   (dm (if dhms (caddr dhms)))
-	   (ds (if dhms (cadddr dhms))))
+           (dd (if dhms (car dhms)))
+           (dh (if dhms (cadr dhms)))
+           (dm (if dhms (caddr dhms)))
+           (ds (if dhms (cadddr dhms))))
       (unless (not (and dhms
-			(date-calc-check-date year month day)
-			(date-calc-check-time hour min sec)))
-	(setq ds (+ ds (* 60 (+ dm (* 60 dh)))
-		    (+ sec (* 60 (+ min (* 60 hour))))))
-	(while (< ds 0)
-	  (setq ds (= ds 86400)
-		dd (1- dd)))
-	(if (> ds 0)
-	    (setq dh 0 dm 0
-		dmhs (date-calc-normalize-time dd dh dm ds)
-		dd (if dhms (car dhms))
-		hour (if dhms (cadr dhms))
-		min (if dhms (caddr dhms))
-		sec (if dhms (cadddr dhms)))
-	  (setq hour 0 min 0 sec 0))
-	(append (date-calc-add-delta-days year month day dd) (list hour min sec)))))
+                        (date-calc-check-date year month day)
+                        (date-calc-check-time hour min sec)))
+        (setq ds (+ ds (* 60 (+ dm (* 60 dh)))
+                    (+ sec (* 60 (+ min (* 60 hour))))))
+        (while (< ds 0)
+          (setq ds (= ds 86400)
+                dd (1- dd)))
+        (if (> ds 0)
+            (setq dh 0 dm 0
+                  dmhs (date-calc-normalize-time dd dh dm ds)
+                  dd (if dhms (car dhms))
+                  hour (if dhms (cadr dhms))
+                  min (if dhms (caddr dhms))
+                  sec (if dhms (cadddr dhms)))
+          (setq hour 0 min 0 sec 0))
+        (append (date-calc-add-delta-days year month day dd) (list hour min sec)))))
 
   (defun date-calc-add-year-month (year month dy dm)
     "This function returns (year month) as the YEAR and MONTH plus the delta DY year and delta DM month"
     (let (quot)
       (unless (not (or (date-check-valid-year year)
-		       (date-check-valid-month month)))
-	(unless (= dm 0)
-	  (setq dm (+ dm (1- month)))
-	  (setq quot (/ dm 12)
-		dm (- (* quot 12)))
-	  (if (< dm 0)
-	      (setq dm (+ dm 12)
-		    quot (1- quot)))
-	  (setq month (1+ month)
-		dy (+ dy quot)))
-	(unless (= dy 0)
-	  (setq dy (+ dy year)
-		year dy))
-	(unless (< year 1)
-	  (list year month)))))
+                       (date-check-valid-month month)))
+        (unless (= dm 0)
+          (setq dm (+ dm (1- month)))
+          (setq quot (/ dm 12)
+                dm (- (* quot 12)))
+          (if (< dm 0)
+              (setq dm (+ dm 12)
+                    quot (1- quot)))
+          (setq month (1+ month)
+                dy (+ dy quot)))
+        (unless (= dy 0)
+          (setq dy (+ dy year)
+                year dy))
+        (unless (< year 1)
+          (list year month)))))
 
   (defun date-calc-add-delta-ym (year month day dy dm)
     "This function can be used to add a year and/or month offset to a given date."
     (let* ((dym (if (date-calc-check-date year month day)
-		   (date-calc-add-year-month year month dy dm)))
-	   (dd (if dym (date-calc-days-in-month year month))))
+                    (date-calc-add-year-month year month dy dm)))
+           (dd (if dym (date-calc-days-in-month year month))))
       (if (and dd (> day dd))
-	  (setq day dd))
+          (setq day dd))
       (if dym
-	  (list (car dym) (cadr dym) day))))
+          (list (car dym) (cadr dym) day))))
 
   (defun date-calc-add-delta-ymd (year month day dy dm dd)
     "This function serves to add a years, months and days offset to a given date."
     (let ((dym (if (date-calc-check-date year month day)
-		   (date-calc-add-year-month year month dy dm))))
+                   (date-calc-add-year-month year month dy dm))))
       (unless (not dym)
-	(setq dd (+ dd (1- day))
-	      day 1)
-	(if (not (= dd 0))
-	    (date-calc-add-delta-days (car dym) (cadr dym) day dd)
-	  (list (car dym) (cadr dym) day)))))
+        (setq dd (+ dd (1- day))
+              day 1)
+        (if (not (= dd 0))
+            (date-calc-add-delta-days (car dym) (cadr dym) day dd)
+          (list (car dym) (cadr dym) day)))))
 
   (defun date-calc-add-delta-ymdhms (year month day hour min sec dyear dmonth dday dh dm ds)
     "This function is the same as date-calc-add-delta-ymd except that a time offset may be given in addition to the year, month and day offset"
     (let* ((dym (if (and (date-calc-check-date year month day)
-			 (date-calc-check-time hour min sec))
-		    (date-calc-add-year-month year month dyear dmonth))))
+                         (date-calc-check-time hour min sec))
+                    (date-calc-add-year-month year month dyear dmonth))))
       (unless (not dym)
-	(setq dday (+ dday (1- day))
-	      day 1)
-	(date-calc-add-delta-dhms (car dym) (cadr dym) day hour min sec dday dh dm ds))))
+        (setq dday (+ dday (1- day))
+              day 1)
+        (date-calc-add-delta-dhms (car dym) (cadr dym) day hour min sec dday dh dm ds))))
 
   (defun date-calc-system-clock (gmt &optional time)
     "This function returns (year month day hour min sec doy dow dst) based on current system clock.  If GMT is non-nil, them gmtime is returned instead of localtime.  Month is a value between 1 and 12; day is between 1 and 31, hour is between 0 and 23, min and sec is between 0 and 59, doy is between 1 and 366, dow is between 1 and 7 and dst is either -1 (for info not available), 0 (dst not in effect), or 1 (dst is in effect)."
     (let* ((system-time (decode-time time))
-	   (year (if system-time (nth 5 system-time)))
-	   (month (if system-time (nth 4 system-time)))
-	   (day (if system-time (nth 3 system-time)))
-	   (zone (if system-time (/ (nth 9 system-time) 84600)))
-	   (hour (if system-time (nth 2 system-time)))
-	   (minute (if system-time (nth 1 system-time)))
-	   (second (if system-time (car system-time)))
-	   (doy (if system-time (date-calc-date-to-days year month day)))
-	   (dow (if system-time (date-calc-day-of-week year month day)))
-	   (dst (if system-time (nth 7 system-time))))
+           (year (if system-time (nth 5 system-time)))
+           (month (if system-time (nth 4 system-time)))
+           (day (if system-time (nth 3 system-time)))
+           (zone (if system-time (/ (nth 9 system-time) 84600)))
+           (hour (if system-time (nth 2 system-time)))
+           (minute (if system-time (nth 1 system-time)))
+           (second (if system-time (car system-time)))
+           (doy (if system-time (date-calc-date-to-days year month day)))
+           (dow (if system-time (date-calc-day-of-week year month day)))
+           (dst (if system-time (nth 7 system-time))))
       (if gmt
-	  (append (date-calc-add-delta-dhms year month day hour min sec 0 0 zone 0) doy dow dst)
-	  (list year month day hour min sec doy dow dst))))
+          (append (date-calc-add-delta-dhms year month day hour min sec 0 0 zone 0) doy dow dst)
+        (list year month day hour min sec doy dow dst))))
 
   (defun date-calc-gmtime (&optional time)
     (date-calc-system-clock t time))
@@ -1807,18 +1808,18 @@
 
   (defun date-calc-mktime (year month day hour min sec)
     (let* ((now (current-time))
-	  (ton (date-calc-today-and-now))
-	  (delta (date-calc-delta-ymdhms year month day hour min sec
-					 (car ton) (cadr ton) (caddr ton)
-					 (cadddr ton) (caddddr ton) (cadddddr ton))))))
+           (ton (date-calc-today-and-now))
+           (delta (date-calc-delta-ymdhms year month day hour min sec
+                                          (car ton) (cadr ton) (caddr ton)
+                                          (cadddr ton) (caddddr ton) (cadddddr ton))))))
 
   (defun date-calc-first-day-of-this-week ()
     (let* ((time (decode-time))
-	   (day (nth 3 time))
-	   (month (nth 4 time))
-	   (year (nth 5 time))
-	   (week-and-year (date-calc-week-of-year year month day))
-	   (week (nth 0 week-and-year)))
+           (day (nth 3 time))
+           (month (nth 4 time))
+           (year (nth 5 time))
+           (week-and-year (date-calc-week-of-year year month day))
+           (week (nth 0 week-and-year)))
       (date-calc-monday-of-week week year)))
 
   (provide 'date-calc)
@@ -1826,26 +1827,26 @@
 #+end_src
 
 ** Org-roam
-     查阅相关资料后，对于我这种没有知识整理，文档输出的人废物来说，org-ref 没什么大作用。。。
-     计划使用 citar 和 skim 构建一个基于 pdf 文件的笔记系统。
+查阅相关资料后，对于我这种没有知识整理，文档输出的人废物来说，org-ref 没什么大作用。。。
+计划使用 citar 和 skim 构建一个基于 pdf 文件的笔记系统。
 #+begin_src emacs-lisp
   (require 'date-calc)
 
   (defun prefix-zero (number)
     (if (< number 10)
-	(concat "0" (number-to-string number))
+        (concat "0" (number-to-string number))
       (number-to-string number)))
   (defun first-day-of-this-week-str ()
     (let* ((first-day (date-calc-first-day-of-this-week))
-	   (month (nth 1 first-day))
-	   (day (nth 2 first-day)))
+           (month (nth 1 first-day))
+           (day (nth 2 first-day)))
       (concat (prefix-zero month) "-" (prefix-zero day))))
 
   (first-day-of-this-week-str)
   (setq publication-bib (concat base-directory "publication_catelog.bib")
-	videos-bib (concat base-directory "videos.bib")
-	webpages-bib (concat base-directory "webpages.bib")
-	collections-bib (concat base-directory "collections.bib"))
+        videos-bib (concat base-directory "videos.bib")
+        webpages-bib (concat base-directory "webpages.bib")
+        collections-bib (concat base-directory "collections.bib"))
 
   (defun goto-videos-bib ()
     (interactive)
@@ -1856,10 +1857,10 @@
     :init
     (add-hook 'after-init-hook 'org-roam-setup)
     (setq org-roam-v2-ack t
-	  org-roam-directory org-directory
-	  org-roam-db-gc-threshold most-positive-fixnum
-	  org-roam-db-location (concat org-directory "org-roam.db")
-	  org-roam-database-connector 'sqlite-builtin)
+          org-roam-directory org-directory
+          org-roam-db-gc-threshold most-positive-fixnum
+          org-roam-db-location (concat org-directory "org-roam.db")
+          org-roam-database-connector 'sqlite-builtin)
 
     (require 'org-roam-protocol)
     :config
@@ -1870,28 +1871,33 @@
     (cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
       "Return the hierarchy for the node."
       (let ((title (org-roam-node-title node))
-	    (olp (org-roam-node-olp node))
-	    (level (org-roam-node-level node))
-	    (filetitle (org-roam-node-filetitle node)))
-	(concat
-	 (if (> level 0) (concat filetitle " > "))
-	 (if (> level 1) (concat (string-join olp " > ") " > "))
-	 title)))
+            (olp (org-roam-node-olp node))
+            (level (org-roam-node-level node))
+            (filetitle (org-roam-node-filetitle node)))
+        (concat
+         (if (> level 0) (concat filetitle " > "))
+         (if (> level 1) (concat (string-join olp " > ") " > "))
+         title)))
     (setq org-roam-node-display-template "${hierarchy:*}
   ${tags:20}")
     (setq org-roam-completion-everywhere t
-	  org-roam-capture-templates
-	  '(("w" "worklog" plain "** TODO @${who} ${title}%?"
-	     :target
-	     (file+olp "%(concat org-directory \"worklog/worklog.org\")" ("%<%Y>-W%<%W>/%(first-day-of-this-week-str)"))
-	     :unnarrowed t
-	     :immediate-finish t)
-	    ("r" "bibliography reference" plain "%?"
-	     :target
-	     (file+head "${citekey}.org" "#+title: ${title}\n#+filetags: :Note:\n#+citation: [cite:@${citekey}]")
-	     :unnarrowed t)))
+          org-roam-capture-templates
+          '(("w" "worklog" plain "** TODO @${who} ${title}%?"
+             :target
+             (file+olp "%(concat org-directory \"worklog/worklog.org\")" ("%<%Y>-W%<%W>/%(first-day-of-this-week-str)"))
+             :unnarrowed t
+             :immediate-finish t)
+            ("n" "new node" plain "%?"
+             :target
+             (file+head "${slug}.org" "#+title: ${title}\n")
+             :unnarrowed t
+             :immediate-finish t)
+            ("r" "bibliography reference" plain "%?"
+             :target
+             (file+head "${citekey}.org" "#+title: ${title}\n#+filetags: :Note:\n#+citation: [cite:@${citekey}]")
+             :unnarrowed t)))
     (setq org-roam-capture-ref-templates
-	  '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))))
+          '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))))
   (use-package org-roam-bibtex
     :hook (org-mode . org-roam-bibtex-mode)
     :after org-roam
@@ -1901,28 +1907,28 @@
   (use-package bibtex-completion
     :init
     (setq bibtex-completion-bibliography `(,publication-bib ,videos-bib ,webpages-bib ,collections-bib)
-	  bibtex-completion-pdf-field "file"))
+          bibtex-completion-pdf-field "file"))
 
   (use-package citar
     :config
     (setq citar-bibliography `(,publication-bib ,videos-bib ,webpages-bib ,collections-bib)
-	  org-cite-global-bibliography citar-bibliography
-	  org-cite-insert-processor 'citar
-	  org-cite-follow-processor 'citar
-	  org-cite-activate-processor 'citar
-	  citar-at-point-function 'embark-act
-	  citar-open-note-functions '(orb-citar-edit-note)
-	  citar-notes-paths `(,org-directory))
+          org-cite-global-bibliography citar-bibliography
+          org-cite-insert-processor 'citar
+          org-cite-follow-processor 'citar
+          org-cite-activate-processor 'citar
+          citar-at-point-function 'embark-act
+          citar-open-note-functions '(orb-citar-edit-note)
+          citar-notes-paths `(,org-directory))
     :general
     (general-define-key
      :keymaps 'minibuffer-local-map
      "M-b" 'citar-insert-preset))
-  #+end_src
+#+end_src
 
 ** Org-clock
 #+begin_src emacs-lisp
   (setq org-clock-clocked-in-display nil
-	org-clock-mode-line-total 'current)
+        org-clock-mode-line-total 'current)
 #+end_src
 
 ** Org-pomodoro
@@ -1932,17 +1938,17 @@
     :commands org-pomodoro
     :config
     (add-hook 'org-pomodoro-finished-hook
-	      (lambda()
-		(notify-osx "Pomodoro completed!" "Time for a break.")))
+              (lambda()
+                (notify-osx "Pomodoro completed!" "Time for a break.")))
     (add-hook 'org-pomodoro-break-finished-hook
-	      (lambda()
-		(notify-osx "Pomodoro Short Break Finished!" "Ready for Another?")))
+              (lambda()
+                (notify-osx "Pomodoro Short Break Finished!" "Ready for Another?")))
     (add-hook 'org-pomodoro-long-break-finished-hook
-	      (lambda()
-		(notify-osx "Pomodoro Long Break Finished!" "Ready for Another?")))
+              (lambda()
+                (notify-osx "Pomodoro Long Break Finished!" "Ready for Another?")))
     (add-hook 'org-pomodoro-killed-hook
-	      (lambda()
-		(notify-osx "Pomodoro Killed!" "One does not simply kill a pomodoro!"))))
+              (lambda()
+                (notify-osx "Pomodoro Killed!" "One does not simply kill a pomodoro!"))))
 #+end_src
 ** Org-download
 #+begin_src emacs-lisp
@@ -1950,12 +1956,12 @@
     :after org
     :config
     (setq org-download-method 'directory
-	  org-image-actual-width nil
-	  org-download-screenshot-method "screencapture -i %s"
-	  org-download-display-inline-images 'posframe
-	  ;; disable DOWNLOAD link
-	  org-download-annotate-function (lambda (_link) "")
-	  org-download-image-attr-list '("#+ATTR_HTML: :width 70% :align center"))
+          org-image-actual-width nil
+          org-download-screenshot-method "screencapture -i %s"
+          org-download-display-inline-images 'posframe
+          ;; disable DOWNLOAD link
+          org-download-annotate-function (lambda (_link) "")
+          org-download-image-attr-list '("#+ATTR_HTML: :width 70% :align center"))
     (setq-default org-download-image-dir (concat org-directory "images/")))
 #+end_src
 ** Toc-org
@@ -2016,64 +2022,64 @@
 #+RESULTS:
 
 ** KeyBindings
-   整体规划 org-mode 的按键。涉及到默认按键更改、全局按键、org-mode 按键。
+整体规划 org-mode 的按键。涉及到默认按键更改、全局按键、org-mode 按键。
 #+begin_src emacs-lisp
-    (general-define-key
-     :keymaps 'org-mode-map
-     "C-c C-r" nil
-     "C-c r" 'org-reveal
-     "C-s-4" 'org-download-screenshot
-     "H-v" 'org-media-note-hydra/body
-     "C-c ]" 'citar-insert-link)
+  (general-define-key
+   :keymaps 'org-mode-map
+   "C-c C-r" nil
+   "C-c r" 'org-reveal
+   "C-s-4" 'org-download-screenshot
+   "H-v" 'org-media-note-hydra/body
+   "C-c ]" 'citar-insert-link)
 
-    (common-leader
-     "r" '(:ignore t :which-key "org-roam")
-     "rf" 'org-roam-node-find
-     "rr" 'org-roam-buffer-toggle)
+  (common-leader
+    "r" '(:ignore t :which-key "org-roam")
+    "rf" 'org-roam-node-find
+    "rr" 'org-roam-buffer-toggle)
 
-    (local-leader
-     :keymaps 'org-mode-map
-     "i" '(:ignore t :which-key "insert")
-     "ii" 'org-roam-node-insert
-     "ia" 'org-roam-alias-add
-     "ir" 'org-roam-ref-add
-     "it" 'org-roam-tag-add
-     "l" '(:ignore t :which-key "link")
-     ;; "lr" 'org-mac-skim-insert-page ;; skim
-     ;; "ls"  'org-mac-safari-insert-frontmost-url ;; internet
-     ;; "lf"  'org-mac-finder-insert-selected ;; finder
-     "ll" 'org-store-link
-     "li" 'org-insert-last-stored-link)
+  (local-leader
+    :keymaps 'org-mode-map
+    "i" '(:ignore t :which-key "insert")
+    "ii" 'org-roam-node-insert
+    "ia" 'org-roam-alias-add
+    "ir" 'org-roam-ref-add
+    "it" 'org-roam-tag-add
+    "l" '(:ignore t :which-key "link")
+    ;; "lr" 'org-mac-skim-insert-page ;; skim
+    ;; "ls"  'org-mac-safari-insert-frontmost-url ;; internet
+    ;; "lf"  'org-mac-finder-insert-selected ;; finder
+    "ll" 'org-store-link
+    "li" 'org-insert-last-stored-link)
 
-    (general-define-key
-     :keymaps 'org-mode-map
-     "M-o" 'reader/goto-pdf-first-page-or-nov-toc
-     "M-n" 'reader/scroll-up
-     "M-p" 'reader/scroll-down)
+  (general-define-key
+   :keymaps 'org-mode-map
+   "M-o" 'reader/goto-pdf-first-page-or-nov-toc
+   "M-n" 'reader/scroll-up
+   "M-p" 'reader/scroll-down)
 
-    (general-define-key
-     :keymaps 'nov-mode-map
-     "M-n" 'nov-scroll-up
-     "M-p" 'nov-scroll-down)
+  (general-define-key
+   :keymaps 'nov-mode-map
+   "M-n" 'nov-scroll-up
+   "M-p" 'nov-scroll-down)
 
-    (general-define-key
-     :keymaps 'org-mode-map
-     :prefix "C-c C-r"
-     "r" 'org-roam-buffer-toggle
-     "C-i" 'org-roam-node-insert
-     "g" 'org-roam-graph
-     "i" '(:ignore t :which-key "add property")
-     "i a" 'org-roam-alias-add
-     "i r" 'org-roam-ref-add
-     "i t" 'org-roam-tag-add
-     "d" '(:ignore t :which-key "remove property")
-     "d a" 'org-roam-alias-remove
-     "d r" 'org-roam-ref-remove
-     "d t" 'org-roam-tag-remove)
+  (general-define-key
+   :keymaps 'org-mode-map
+   :prefix "C-c C-r"
+   "r" 'org-roam-buffer-toggle
+   "C-i" 'org-roam-node-insert
+   "g" 'org-roam-graph
+   "i" '(:ignore t :which-key "add property")
+   "i a" 'org-roam-alias-add
+   "i r" 'org-roam-ref-add
+   "i t" 'org-roam-tag-add
+   "d" '(:ignore t :which-key "remove property")
+   "d a" 'org-roam-alias-remove
+   "d r" 'org-roam-ref-remove
+   "d t" 'org-roam-tag-remove)
 
-    (general-define-key
-     :keymaps 'org-roam-mode-map
-     [mouse-1] 'org-roam-visit-thing)
+  (general-define-key
+   :keymaps 'org-roam-mode-map
+   [mouse-1] 'org-roam-visit-thing)
 #+end_src
 * 页面内搜索
 配合 embark export 及 wgrep 可以做到集中修改的效果。注意，只能是 grep 模式的 export 才可以这么做，像 consult-line 之类的是不行的。
@@ -2091,9 +2097,9 @@
   (use-package embark
     :config
     (add-to-list 'display-buffer-alist
-		 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-		   nil
-		   (window-parameters (mode-line-format . none))))
+                 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                   nil
+                   (window-parameters (mode-line-format . none))))
     :general
     (general-define-key
      "s-." 'embark-act)
@@ -2107,9 +2113,9 @@
   (use-package wgrep)
 #+end_src
 * mini buffer 增强
-  =ivy-rich= 经过几天试用，发现并不太方便，暂时关闭。
-  注意，需要在安装完成后，手动调用 =all-the-icons-install= 。
-  使用 =vertico= 替换 =ivy= 。
+=ivy-rich= 经过几天试用，发现并不太方便，暂时关闭。
+注意，需要在安装完成后，手动调用 =all-the-icons-install= 。
+使用 =vertico= 替换 =ivy= 。
 #+begin_src emacs-lisp
   (use-package vertico
     :init
@@ -2135,17 +2141,17 @@
   (use-package orderless
     :init
     (setq completion-styles '(orderless basic)
-	  completion-category-defaults nil
-	  completion-category-overrides '((file (styles partial-completion)))))
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 
 * Restart Emacs
-  由于暂时采用 server client 启动方式，故不再需要 restart emacs 。
-    #+begin_src emacs-lisp :tangle no
-      (use-package restart-emacs
-        :defer t
-        :commands (restart-emacs))
-  #+end_src
+由于暂时采用 server client 启动方式，故不再需要 restart emacs 。
+#+begin_src emacs-lisp :tangle no
+  (use-package restart-emacs
+    :defer t
+    :commands (restart-emacs))
+#+end_src
 * calibredb
 #+begin_src emacs-lisp
   (use-package calibredb
@@ -2249,48 +2255,48 @@
 #+end_src
 * 使用 Server Client 方式启动 emacs
 ** 开机启动
-   新建 plist 文件如下，然后使用 =launchctl start gnu.emacs.daemon= 激活。
-   #+begin_src xml :tangle no
-     <!-- save in ~/Library/LaunchAgents/gnu.emacs.daemon.plist-->
-     <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-            "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-         <plist version="1.0">
-          <dict>
-            <key>Label</key>
-            <string>gnu.emacs.daemon</string>
-            <key>ProgramArguments</key>
-            <array>
-              <string>/usr/local/bin/emacs</string>
-              <string>--daemon=kenton</string>
-            </array>
-           <key>RunAtLoad</key>
-           <true/>
-           <key>ServiceDescription</key>
-           <string>Gnu Emacs Daemon</string>
-          </dict>
-        </plist>
-   #+end_src
+新建 plist 文件如下，然后使用 =launchctl start gnu.emacs.daemon= 激活。
+#+begin_src xml :tangle no
+  <!-- save in ~/Library/LaunchAgents/gnu.emacs.daemon.plist-->
+  <?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+  <plist version="1.0">
+    <dict>
+      <key>Label</key>
+      <string>gnu.emacs.daemon</string>
+      <key>ProgramArguments</key>
+      <array>
+        <string>/usr/local/bin/emacs</string>
+        <string>--daemon=kenton</string>
+      </array>
+      <key>RunAtLoad</key>
+      <true/>
+      <key>ServiceDescription</key>
+      <string>Gnu Emacs Daemon</string>
+    </dict>
+  </plist>
+#+end_src
 ** 启动 frame
-   使用 alfred workflow ，通过执行脚本的方式启动 frame 。注意，这个 frame 并没有初始化的时间。
-   #+begin_src shell :tangle no
-     /usr/local/bin/emacsclient --socket-name=kenton --no-wait -c
-   #+end_src
+使用 alfred workflow ，通过执行脚本的方式启动 frame 。注意，这个 frame 并没有初始化的时间。
+#+begin_src shell :tangle no
+  /usr/local/bin/emacsclient --socket-name=kenton --no-wait -c
+#+end_src
 ** 关闭 frame
-   这里有一个问题，默认的 =s-q= 快捷键是关闭 emacs ，这个行为会关闭 server ，影响我们这里的机制，所以需要重新定义。
-   #+begin_src emacs-lisp
-     (general-define-key
-      "s-q" 'delete-frame)
-   #+end_src
+这里有一个问题，默认的 =s-q= 快捷键是关闭 emacs ，这个行为会关闭 server ，影响我们这里的机制，所以需要重新定义。
+#+begin_src emacs-lisp
+  (general-define-key
+   "s-q" 'delete-frame)
+#+end_src
 * 自动补全
-  =smartparens= 暂时没有找到如何更改包裹，只找到另一个插件[[https://github.com/cute-jumper/embrace.el][embrace]] ，但暂时先不考虑。
-  可以开始考虑 embrace 了。。。
+=smartparens= 暂时没有找到如何更改包裹，只找到另一个插件[[https://github.com/cute-jumper/embrace.el][embrace]] ，但暂时先不考虑。
+可以开始考虑 embrace 了。。。
 #+begin_src emacs-lisp
   (use-package corfu
     :init
     (setq completion-cycyle-threshold 3
-	    corfu-auto-prefix 1
-	    tab-always-indent 'complete)
+          corfu-auto-prefix 1
+          tab-always-indent 'complete)
     (global-corfu-mode)
     (defun corfu-quit-esc ()
       (interactive)
@@ -2337,12 +2343,12 @@
     :commands (avy-goto-char-2 avy-goto-line)
     :config
     (setq avy-all-windows nil
-	  avy-background t)
+          avy-background t)
     :general
     (common-leader
-     "j" '(ignore t :which-key "jumping")
-     "jj" 'avy-goto-char-2
-     "jl" 'avy-goto-line))
+      "j" '(ignore t :which-key "jumping")
+      "jj" 'avy-goto-char-2
+      "jl" 'avy-goto-line))
 #+end_src
 * Projectile
 默认 projectile 是对大小写敏感的，但 MacOS 默认并不敏感，所以可能会出现 projectile 里有两条一个大写一个小写的两条记录指向同一个项目，好难受。。。从 github 发现一个方法可以清理一下，注意，需要先 clear 所有记录才可以。
@@ -2351,11 +2357,11 @@
     "Return a list of known projects except the current one (if present)."
     (if (projectile-project-p)
 
-	(->> projectile-known-projects
-	     (--reduce-from
-	      (if (-contains? (-map 's-downcase acc) (s-downcase it)) acc (cons it acc))
-	      (list (abbreviate-file-name (projectile-project-root))))
-	     (-sort 'string-lessp))
+        (->> projectile-known-projects
+             (--reduce-from
+              (if (-contains? (-map 's-downcase acc) (s-downcase it)) acc (cons it acc))
+              (list (abbreviate-file-name (projectile-project-root))))
+             (-sort 'string-lessp))
 
       projectile-known-projects))
 
@@ -2363,8 +2369,8 @@
     :init
     (add-hook 'after-init-hook 'projectile-mode)
     (setq project-cache-file "~/.emacs.d/projectile.cache"
-	  project-know-projects-file "~/.emacs.d/projectile-bookmarks.eld"
-	  projectile-project-search-path '("~/Kenton/"))
+          project-know-projects-file "~/.emacs.d/projectile-bookmarks.eld"
+          projectile-project-search-path '("~/Kenton/"))
     :config
     (projectile-discover-projects-in-search-path)
     (projectile-relevant-known-projects)
@@ -2416,22 +2422,22 @@
     :init
     (eval-after-load 'vc-msg-git
       '(progn
-	 ;; show code of commit
-	 (setq vc-msg-git-show-commit-function 'magit-show-commit)
-	 ;; open file of certain revision
-	 (push '("m"
-		 "[m]agit-find-file"
-		 (lambda ()
-		   (let* ((info vc-msg-previous-commit-info)
-			  (git-dir (locate-dominating-file default-directory ".git")))
-		     (magit-find-file (plist-get info :id )
-				      (concat git-dir (plist-get info :filename))))))
-	       vc-msg-git-extra))))
+         ;; show code of commit
+         (setq vc-msg-git-show-commit-function 'magit-show-commit)
+         ;; open file of certain revision
+         (push '("m"
+                 "[m]agit-find-file"
+                 (lambda ()
+                   (let* ((info vc-msg-previous-commit-info)
+                          (git-dir (locate-dominating-file default-directory ".git")))
+                     (magit-find-file (plist-get info :id )
+                                      (concat git-dir (plist-get info :filename))))))
+               vc-msg-git-extra))))
 #+end_src
 
 * Programming Language
 ** Elixir
-   虽说是主力语言，但配置并不算多。
+虽说是主力语言，但配置并不算多。
 #+begin_src emacs-lisp
   (use-package elixir-mode
     :defer t
@@ -2441,27 +2447,27 @@
 
     (defun +reset-mixfmt-args ()
       (let* ((formatter-directory (locate-dominating-file default-directory ".formatter.exs"))
-	     (formatter-file (concat formatter-directory ".formatter.exs")))
-	(if formatter-directory
-	    (setq elixir-format-arguments (list "--dot-formatter" formatter-file))
-	  (setq elixir-format-arguments nil))))
+             (formatter-file (concat formatter-directory ".formatter.exs")))
+        (if formatter-directory
+            (setq elixir-format-arguments (list "--dot-formatter" formatter-file))
+          (setq elixir-format-arguments nil))))
 
     (add-hook 'elixir-format-hook #'+reset-mixfmt-args)
     :general
     (general-define-key
      :keymaps '(elixir-mode)
-      "C-c C-c" 'elixir-format))
+     "C-c C-c" 'elixir-format))
 
   (use-package exunit
     :defer t
     :after elixir-mode
     :config
     :commands (exunit-verify-all
-	       exunit-verify
-	       exunit-verify-all-in-umbrella
-	       exunit-verify-single
-	       exunit-rerun
-	       exunit-toggle-file-and-test)
+               exunit-verify
+               exunit-verify-all-in-umbrella
+               exunit-verify-single
+               exunit-rerun
+               exunit-toggle-file-and-test)
     :general
     (general-define-key
      :keymaps '(exunit-compilation-mode-map)
@@ -2477,16 +2483,16 @@
 ** AppleScript
 做点自动化的操作，还是有好处的。只是又和 mac 加深了绑定。。。
 #+begin_src emacs-lisp
-    (use-package apples-mode
-      :defer t
-      :general
-      (general-define-key
-       :keymaps 'apples-mode-map
-       "C-c C-c" 'apples-run-region/buffer))
+  (use-package apples-mode
+    :defer t
+    :general
+    (general-define-key
+     :keymaps 'apples-mode-map
+     "C-c C-c" 'apples-run-region/buffer))
 #+end_src
 
 ** Haskell
-   感觉函数式编程绕不开 Haskell ，所以尝试下。
+感觉函数式编程绕不开 Haskell ，所以尝试下。
 #+begin_src emacs-lisp
   (use-package haskell-mode
     :defer t
@@ -2500,13 +2506,13 @@
   ;;       :defer t)
 #+end_src
 ** Common Lisp
-   #+begin_src emacs-lisp
-     (use-package sly
-       :defer t
-       :init
-       (setq inferior-lisp-program "/Users/smartepsh/.asdf/shims/sbcl"
-	     org-babel-lisp-eval-fn 'sly-eval))
-   #+end_src
+#+begin_src emacs-lisp
+  (use-package sly
+    :defer t
+    :init
+    (setq inferior-lisp-program "/Users/smartepsh/.asdf/shims/sbcl"
+          org-babel-lisp-eval-fn 'sly-eval))
+#+end_src
 ** Racket
 学习 SICP 。MIT-Scheme 无法在 M1 上安装，打算尝试走偏门，Racket + SICP 包。
 #+begin_src emacs-lisp
@@ -2521,7 +2527,7 @@
     :defer t
     :init
     (setq plantuml-default-exec-mode 'jar
-	  plantuml-jar-path (concat private/config-directory "plantuml-1.2021.16.jar")))
+          plantuml-jar-path (concat private/config-directory "plantuml-1.2021.16.jar")))
 #+end_src
 
 #+RESULTS:
@@ -2532,13 +2538,13 @@
   (use-package web-mode
     :init
     (setq web-mode-markup-indent-offset 2
-	  web-mode-css-indent-offset 2
-	  web-mode-code-indent-offset 2
-	  web-mode-comment-style 2))
+          web-mode-css-indent-offset 2
+          web-mode-code-indent-offset 2
+          web-mode-comment-style 2))
 #+end_src
 
 * LSP
-  尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
+尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
 #+begin_src emacs-lisp
   (defun private/lsp-return ()
     (interactive)
@@ -2552,8 +2558,8 @@
     (global-lsp-bridge-mode)
     :config
     (setq acm-fetch-candidate-doc-delay 1
-	  acm-enable-doc nil
-	  acm-snippet-insert-index 0)
+          acm-enable-doc nil
+          acm-snippet-insert-index 0)
     :general
     (general-define-key
      :keymaps 'acm-mode-map
@@ -2567,7 +2573,7 @@
       "," 'lsp-bridge-return-from-def))
 #+end_src
 * FlySpell 拼写错误检查
-  在 [[https://www.emacswiki.org/emacs/FlySpell][我的Wiki： Fly Spell]] 找到了自建词典的使用方法，见 =flyspell-learn-work-at-point= 方法。该方法会将收录的新词保存在 =~/.hunspell_en_US= 文件内，我会将该文件链接到 =.emacs.d= 项目中，方便同步。
+在 [[https://www.emacswiki.org/emacs/FlySpell][我的Wiki： Fly Spell]] 找到了自建词典的使用方法，见 =flyspell-learn-work-at-point= 方法。该方法会将收录的新词保存在 =~/.hunspell_en_US= 文件内，我会将该文件链接到 =.emacs.d= 项目中，方便同步。
 #+begin_src emacs-lisp
   (use-package flyspell
     :ensure-system-package hunspell
@@ -2578,23 +2584,23 @@
     (setq flyspell-issue-welcome-flag nil)
     :config
     (setq ispell-program-name (executable-find "hunspell")
-	  ispell-dictionary "en_US"
-	  ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)))
+          ispell-dictionary "en_US"
+          ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)))
     (global-set-key (kbd "C-c s") 'flyspell-learn-word-at-point)
 
     (defun flyspell-learn-word-at-point ()
       "Takes the highlighted word at point -- nominally a misspelling -- and inserts it into the personal/private dictionary, such that it is known and recognized as a valid word in the future."
       (interactive)
       (let ((current-location (point))
-	    (word (flyspell-get-word)))
-	(when (consp word)
-	  (flyspell-do-correct
-	   'save nil
-	   (car word)
-	   current-location
-	   (cadr word)
-	   (caddr word)
-	   current-location)))))
+            (word (flyspell-get-word)))
+        (when (consp word)
+          (flyspell-do-correct
+           'save nil
+           (car word)
+           current-location
+           (cadr word)
+           (caddr word)
+           current-location)))))
 
   (use-package flyspell-correct
     :commands (flyspell-correct-wrapper)
@@ -2606,93 +2612,93 @@
      "C-'" 'flyspell-learn-word-at-point))
 #+end_src
 * 资源管理器
-  使用默认的 dired 足矣。
-  #+begin_src emacs-lisp
-    (use-package dired
-      :ensure nil
-      :ensure-system-package (gls . coreutils)
-      :commands (dired-jump dired-jump-other-window)
-      :init
-      (setq dired-dwim-target t
-	    dired-listing-switches "-alh"
-	    insert-directory-program "gls"
-	    dired-use-ls-dired t)
-      :general
+使用默认的 dired 足矣。
+#+begin_src emacs-lisp
+  (use-package dired
+    :ensure nil
+    :ensure-system-package (gls . coreutils)
+    :commands (dired-jump dired-jump-other-window)
+    :init
+    (setq dired-dwim-target t
+          dired-listing-switches "-alh"
+          insert-directory-program "gls"
+          dired-use-ls-dired t)
+    :general
     ;;(clear-spc
-      ;;:keymaps 'dired-mode-map)
-      (common-leader
-       "fd" 'dired-jump
-       "fD" 'dired-jump-other-window))
-  #+end_src
+    ;;:keymaps 'dired-mode-map)
+    (common-leader
+      "fd" 'dired-jump
+      "fD" 'dired-jump-other-window))
+#+end_src
 * 书签
 #+begin_src emacs-lisp
-(use-package bm
-  :init
-  ;; restore on load (even before you require bm)
-  (setq bm-restore-repository-on-load t)
-  :config
-  ;; Allow cross-buffer 'next'
-  (setq bm-cycle-all-buffers t)
-  ;; where to store persistant files
-  (setq bm-repository-file "~/.emacs.d/bms")
-  ;; save bookmarks
-  (setq-default bm-buffer-persistence t)
-  ;; Loading the repository from file when on start up.
-  (add-hook 'after-init-hook 'bm-repository-load)
-  ;; Saving bookmarks
-  (add-hook 'kill-buffer-hook #'bm-buffer-save)
-  ;; Saving the repository to file when on exit.
-  ;; kill-buffer-hook is not called when Emacs is killed, so we
-  ;; must save all bookmarks first.
-  (add-hook 'kill-emacs-hook #'(lambda nil
-				 (bm-buffer-save-all)
-				 (bm-repository-save)))
-  ;; The `after-save-hook' is not necessary to use to achieve persistence,
-  ;; but it makes the bookmark data in repository more in sync with the file
-  ;; state.
-  (add-hook 'after-save-hook #'bm-buffer-save)
-  ;; Restoring bookmarks
-  (add-hook 'find-file-hooks   #'bm-buffer-restore)
-  (add-hook 'after-revert-hook #'bm-buffer-restore)
-  ;; The `after-revert-hook' is not necessary to use to achieve persistence,
-  ;; but it makes the bookmark data in repository more in sync with the file
-  ;; state. This hook might cause trouble when using packages
-  ;; that automatically reverts the buffer (like vc after a check-in).
-  ;; This can easily be avoided if the package provides a hook that is
-  ;; called before the buffer is reverted (like `vc-before-checkin-hook').
-  ;; Then new bookmarks can be saved before the buffer is reverted.
-  ;; Make sure bookmarks is saved before check-in (and revert-buffer)
-  (add-hook 'vc-before-checkin-hook #'bm-buffer-save)
-  :custom-face
-  (bm-persistent-face ((t (:background "blue violet" :foreground "White"))))
-  :general
-  (general-define-key
-    :keymaps 'bm-show-mode-map
-    "<RET>" 'bm-show-goto-bookmark
-    "<return>" 'bm-show-goto-bookmark)
-  (common-leader
-    "b" '(:ignore t :which-key "bookmarks")
-    "ba" 'bm-bookmark-annotate
-    "bb" 'bm-toggle
-    "bj" 'bm-next
-    "bk" 'bm-previous
-    "bl" 'bm-show-all
-    "bc" 'bm-remove-all-current-buffer
-    "bn" 'bm-lifo-next
-    "bp" 'bm-lifo-previous))
+  (use-package bm
+    :init
+    ;; restore on load (even before you require bm)
+    (setq bm-restore-repository-on-load t)
+    :config
+    ;; Allow cross-buffer 'next'
+    (setq bm-cycle-all-buffers t)
+    ;; where to store persistant files
+    (setq bm-repository-file "~/.emacs.d/bms")
+    ;; save bookmarks
+    (setq-default bm-buffer-persistence t)
+    ;; Loading the repository from file when on start up.
+    (add-hook 'after-init-hook 'bm-repository-load)
+    ;; Saving bookmarks
+    (add-hook 'kill-buffer-hook #'bm-buffer-save)
+    ;; Saving the repository to file when on exit.
+    ;; kill-buffer-hook is not called when Emacs is killed, so we
+    ;; must save all bookmarks first.
+    (add-hook 'kill-emacs-hook #'(lambda nil
+                                   (bm-buffer-save-all)
+                                   (bm-repository-save)))
+    ;; The `after-save-hook' is not necessary to use to achieve persistence,
+    ;; but it makes the bookmark data in repository more in sync with the file
+    ;; state.
+    (add-hook 'after-save-hook #'bm-buffer-save)
+    ;; Restoring bookmarks
+    (add-hook 'find-file-hooks   #'bm-buffer-restore)
+    (add-hook 'after-revert-hook #'bm-buffer-restore)
+    ;; The `after-revert-hook' is not necessary to use to achieve persistence,
+    ;; but it makes the bookmark data in repository more in sync with the file
+    ;; state. This hook might cause trouble when using packages
+    ;; that automatically reverts the buffer (like vc after a check-in).
+    ;; This can easily be avoided if the package provides a hook that is
+    ;; called before the buffer is reverted (like `vc-before-checkin-hook').
+    ;; Then new bookmarks can be saved before the buffer is reverted.
+    ;; Make sure bookmarks is saved before check-in (and revert-buffer)
+    (add-hook 'vc-before-checkin-hook #'bm-buffer-save)
+    :custom-face
+    (bm-persistent-face ((t (:background "blue violet" :foreground "White"))))
+    :general
+    (general-define-key
+     :keymaps 'bm-show-mode-map
+     "<RET>" 'bm-show-goto-bookmark
+     "<return>" 'bm-show-goto-bookmark)
+    (common-leader
+      "b" '(:ignore t :which-key "bookmarks")
+      "ba" 'bm-bookmark-annotate
+      "bb" 'bm-toggle
+      "bj" 'bm-next
+      "bk" 'bm-previous
+      "bl" 'bm-show-all
+      "bc" 'bm-remove-all-current-buffer
+      "bn" 'bm-lifo-next
+      "bp" 'bm-lifo-previous))
 #+end_src
 * 错误检查
-  lsp-mode 推荐使用 flycheck ，那我们尝试简单配置一下。使用 posframe 显示信息。
-  #+begin_src emacs-lisp
-    (use-package flycheck
-      :defer t
-      :init
-      (add-hook 'prog-mode-hook 'flycheck-mode)
-      (add-hook 'flycheck-mode-hook 'flycheck-posframe-mode))
+lsp-mode 推荐使用 flycheck ，那我们尝试简单配置一下。使用 posframe 显示信息。
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :defer t
+    :init
+    (add-hook 'prog-mode-hook 'flycheck-mode)
+    (add-hook 'flycheck-mode-hook 'flycheck-posframe-mode))
 
-    (use-package flycheck-posframe
-      :after flycheck)
-  #+end_src
+  (use-package flycheck-posframe
+    :after flycheck)
+#+end_src
 * Jira
 #+begin_src emacs-lisp
   (use-package dash-functional)
