@@ -3,14 +3,13 @@
 # key: hugo
 # --
 
-#+HUGO_BASE_DIR: ~/Kenton/kenton.wang/
-#+HUGO_SECTION: $1/posts
-#+TITLE: $2
-#+DATE: `(format-time-string "%Y-%m-%d")`
-#+HUGO_AUTO_SET_LASTMOD: t
-#+HUGO_TAGS: $3
-#+HUGO_CATEGORIES: $4
-#+EXPORT_FILE_NAME $5
-#+HUGO_DRAFT: false
+:EXPORT_HUGO_SECTION: $1/$2
+:TITLE: $3
+:EXPORT_DATE: `(format-time-string "%Y-%m-%d")`
+:HUGO_AUTO_SET_LASTMOD: t
+:HUGO_TAGS: [$4]
+:HUGO_CATEGORIES: $5
+:EXPORT_FILE_NAME: $6
+:HUGO_DRAFT: false
 
 $0

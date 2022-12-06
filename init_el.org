@@ -1973,7 +1973,9 @@ org-mode 用来干嘛呢？对吧？
 ** ox-hugo
 #+begin_src emacs-lisp
   (use-package ox-hugo
-    :after ox)
+    :after ox
+    :init
+    (setq org-hugo-base-dir "~/Kenton/kenton.wang/"))
 #+end_src
 ** org-pandoc-import
 #+begin_src emacs-lisp
