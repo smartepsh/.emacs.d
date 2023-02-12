@@ -1972,10 +1972,15 @@ org-mode 用来干嘛呢？对吧？
 #+end_src
 ** ox-hugo
 #+begin_src emacs-lisp
-  (use-package ox-hugo
-    :after ox
-    :init
-    (setq org-hugo-base-dir "~/Kenton/kenton.wang/"))
+      (use-package ox-hugo
+        :after ox
+        :init
+        (setq org-hugo-base-dir "~/Kenton/kenton.wang/")
+        :config
+        (defun insert-mermaid ()
+          (interactive)
+          (yas-expand "<mermaid"))
+        )
 #+end_src
 ** org-pandoc-import
 #+begin_src emacs-lisp
