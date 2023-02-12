@@ -2577,7 +2577,7 @@ org-mode 用来干嘛呢？对吧？
      "<escape>" 'acm-hide)
     (common-leader
       "." 'lsp-bridge-find-def
-      "," 'lsp-bridge-return-from-def))
+      "," 'lsp-bridge-find-def-return))
 #+end_src
 * FlySpell 拼写错误检查
 在 [[https://www.emacswiki.org/emacs/FlySpell][我的Wiki： Fly Spell]] 找到了自建词典的使用方法，见 =flyspell-learn-work-at-point= 方法。该方法会将收录的新词保存在 =~/.hunspell_en_US= 文件内，我会将该文件链接到 =.emacs.d= 项目中，方便同步。
