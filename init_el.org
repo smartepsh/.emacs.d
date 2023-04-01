@@ -455,6 +455,25 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
     (whitespace4r-mode))
 #+end_src
 
+** mini buffer 弹出显示
+功能来源于 nvim 的 telescope 包。
+#+begin_src emacs-lisp
+  (use-package mini-frame
+    :hook (after-init . mini-frame-mode)
+    :config
+    (setq mini-frame-color-shift-step 1
+          mini-frame-show-parameters '(
+                                       (top . 0.3)
+                                       (width . 0.9)
+                                       (left . 0.5)
+                                       (alpha . 90)
+                                       (chlid-frame-border-width . 1)
+                                       ))
+    :custom-face
+    (child-frame-border ((t (:background "gray58"))))
+  )
+#+end_src
+
 * 窗口管理
 因为 centaur tabs 有点问题，所以先禁止掉。
 快捷键设置向 iterm 靠拢。
