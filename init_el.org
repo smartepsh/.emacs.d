@@ -458,6 +458,11 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
 * 窗口管理
 因为 centaur tabs 有点问题，所以先禁止掉。
 快捷键设置向 iterm 靠拢。
+#+begin_src emacs-lisp
+  ;; emacs 根据这个设置判断是水平还是垂直划分窗口，默认为 160 。设置较小的值使其尽可能的默认垂直划分窗口
+  (setq split-width-threshold 30)
+#+end_src
+
 #+begin_src emacs-lisp :tangle no
   (use-package centaur-tabs
     :defer t
