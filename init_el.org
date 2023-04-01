@@ -2571,7 +2571,7 @@ org-mode 用来干嘛呢？对吧？
     :config
     (setq acm-fetch-candidate-doc-delay 1
           acm-enable-doc nil
-          acm-snippet-insert-index 0)
+          acm-completion-backend-merge-order '("template-first-part-candidates" "mode-first-part-candidates" "tabnine-candidates" "template-second-part-candidates" "mode-second-part-candidates"))
     :general
     (general-define-key
      :keymaps 'acm-mode-map
