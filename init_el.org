@@ -2304,27 +2304,27 @@ org-mode 用来干嘛呢？对吧？
 =smartparens= 暂时没有找到如何更改包裹，只找到另一个插件[[https://github.com/cute-jumper/embrace.el][embrace]] ，但暂时先不考虑。
 可以开始考虑 embrace 了。。。
 #+begin_src emacs-lisp
-  (use-package corfu
-    :init
-    (setq completion-cycyle-threshold 3
-          corfu-auto-prefix 1
-          tab-always-indent 'complete)
-    (global-corfu-mode)
-    (defun corfu-quit-esc ()
-      (interactive)
-      (corfu-quit)
-      (evil-normal-state))
+  ;; (use-package corfu
+  ;;   :init
+  ;;   (setq completion-cycyle-threshold 3
+  ;;         corfu-auto-prefix 1
+  ;;         tab-always-indent 'complete)
+  ;;   (global-corfu-mode)
+  ;;   (defun corfu-quit-esc ()
+  ;;     (interactive)
+  ;;     (corfu-quit)
+  ;;     (evil-normal-state))
 
-    (defun corfu-quit-ret ()
-      (interactive)
-      (corfu-quit)
-      (evil-ret))
-    :config
-    (general-define-key
-     :keymaps 'corfu-map
-     :states 'insert
-     "<return>" 'corfu-quit-ret
-     "<escape>" 'corfu-quit-esc))
+  ;;   (defun corfu-quit-ret ()
+  ;;     (interactive)
+  ;;     (corfu-quit)
+  ;;     (evil-ret))
+  ;;   :config
+  ;;   (general-define-key
+  ;;    :keymaps 'corfu-map
+  ;;    :states 'insert
+  ;;    "<return>" 'corfu-quit-ret
+  ;;    "<escape>" 'corfu-quit-esc))
 
   ;; (use-package corfu-doc
   ;;   :hook
