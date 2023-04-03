@@ -219,14 +219,14 @@
 #+begin_src emacs-lisp
   (use-package evil
     :init
-    (setq evil-shift-width 2
-          evil-flash-delay 1
+    (setq evil-flash-delay 1
           evil-undo-system 'undo-redo
           evil-want-integration t
           evil-want-keybinding nil
           evil-cross-lines t)
     (evil-mode)
     :config
+    (setq evil-shift-width 2)
     (evil-set-initial-state 'calibredb-search-mode 'emacs)
     (evil-set-initial-state 'custom-mode 'emacs)
     (evil-set-initial-state 'code-review-mode 'emacs)
