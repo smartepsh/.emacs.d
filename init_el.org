@@ -457,9 +457,8 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
 
 ** mini buffer 弹出显示
 功能来源于 nvim 的 telescope 包。
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package mini-frame
-    :hook (after-init . mini-frame-mode)
     :config
     (setq mini-frame-color-shift-step 1
           mini-frame-show-parameters '(
@@ -467,7 +466,7 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
                                        (width . 0.9)
                                        (left . 0.5)
                                        (alpha . 90)
-                                       (chlid-frame-border-width . 1)
+                                       (chlid-frame-border-width . 0)
                                        ))
     :custom-face
     (child-frame-border ((t (:background "gray58"))))
