@@ -14,6 +14,9 @@ did_relaunch=$1
 ASDF_DIR=${ASDF_DIR:-"${HOME}/.asdf"}
 
 asdf_vm="${ASDF_DIR}/asdf.sh"
+
+>&2 echo "Looking for ASDF install in $asdf_vm"
+
 if test -f "${asdf_vm}"
 then
   # asdf-vm does not support the plain posix shell. Figure out
@@ -22,15 +25,20 @@ then
     "")
       if which bash >/dev/null
       then
+        >&2 echo "ASDF found, relaunching in bash shell"
         exec "$(which bash)" "$0" relaunch
       elif which zsh >/dev/null
       then
+        >&2 echo "ASDF found, relaunching in zsh shell"
         exec "$(which zsh)" "$0" relaunch
+      else
+        >&2 echo "ASDF found, but could not locate ASDF compatible shell"
       fi
       ;;
     *)
       # We have an arg2, so we got relaunched. Therefore, we're running in a
       # shell that supports asdf-vm.
+      >&2 echo "Sourcing ASDF"
       .  "${asdf_vm}"
       ;;
   esac
@@ -44,6 +52,7 @@ fi
 els_setup="${XDG_CONFIG_HOME:-$HOME/.config}/elixir_ls/setup.sh"
 if test -f "${els_setup}"
 then
+  >&2 echo "Running setup script $els_setup"
   .  "${els_setup}"
 fi
 
@@ -68,6 +77,9 @@ else
   SCRIPTPATH=${ELS_INSTALL_PREFIX}
 fi
 
-export ERL_LIBS="$SCRIPTPATH:$ERL_LIBS"
+export MIX_ENV=prod
+# Mix.install prints to stdout and reads from stdin
+# we need to make sure it doesn't interfere with LSP/DAP
+echo "" | elixir "$SCRIPTPATH/quiet_install.exs" >/dev/null || exit 1
 
-exec elixir --erl "+sbwt none +sbwtdcpu none +sbwtdio none"  -e "$ELS_SCRIPT"
+exec elixir $ELS_ELIXIR_OPTS --erl "-kernel standard_io_encoding latin1 +sbwt none +sbwtdcpu none +sbwtdio none $ELS_ERL_OPTS" "$SCRIPTPATH/launch.exs"
