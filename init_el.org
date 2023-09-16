@@ -1253,12 +1253,21 @@ org-mode 用来干嘛呢？对吧？
     :hook (org-mode . org-bullets-mode))
 #+end_src
 
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :init
+    (global-org-modern-mode)
+    :config
+    (setq org-modern-hide-stars " "))
+#+end_src
+
 ** Agenda
 #+begin_src emacs-lisp
   (defun org-refresh-agenda-files ()
     (interactive)
     (setq org-agenda-files (directory-files (concat org-directory "worklog/") t ".org")))
 #+end_src
+
 ** Bookmark
 使用 org 文件做了一个收藏夹。
 #+begin_src emacs-lisp
@@ -2265,24 +2274,6 @@ org-mode 用来干嘛呢？对吧？
       "\M-T" 'calibredb-set-metadata--title
       "\M-c" 'calibredb-set-metadata--comments))
 #+end_src
-* 剪贴板
-由于 evil 在 emacs 29 中的 bug, 导致无法使用 evil 的 + 寄存器。
-修复在此：https://github.com/emacs-evil/evil/pull/1677 。
-可以抛弃 simpleclip 了。
-#+begin_src emacs-lisp :tangle no
-  (use-package simpleclip
-    :defer
-    :init
-    (defun private/paste ()
-      (interactive)
-      (right-char)
-      (simpleclip-paste))
-    :general
-    (general-define-key
-     "s-c" 'simpleclip-copy
-     "s-x" 'simpleclip-cut
-     "s-v" 'private/paste))
-#+end_src
 * 使用 Server Client 方式启动 emacs
 ** 开机启动
 新建 plist 文件如下，然后使用 =launchctl start gnu.emacs.daemon= 激活。
@@ -2739,4 +2730,21 @@ lsp-mode 推荐使用 flycheck ，那我们尝试简单配置一下。使用 pos
           ejira-projects '("CORE"))
     :config
     (require 'ejira-agenda))
+#+end_src
+* 已废弃
+** 剪贴板（废弃）
+由于 evil 在 emacs 29 中的 bug, 导致无法使用 evil 的 + 寄存器。 [[https://github.com/emacs-evil/evil/pull/1677][已修复]] 。
+#+begin_src emacs-lisp :tangle no
+  (use-package simpleclip
+    :defer
+    :init
+    (defun private/paste ()
+      (interactive)
+      (right-char)
+      (simpleclip-paste))
+    :general
+    (general-define-key
+     "s-c" 'simpleclip-copy
+     "s-x" 'simpleclip-cut
+     "s-v" 'private/paste))
 #+end_src
