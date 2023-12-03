@@ -63,8 +63,7 @@
     (setq base-directory  (file-truename "~/KentonBase/")
           private/book-directory (concat base-directory "publications/")
           org-directory (concat base-directory "notes/")
-          old-org-directory (concat base-directory "old-archives/")
-          ejira-org-directory (concat org-directory "worklog/"))
+          old-org-directory (concat base-directory "old-archives/"))
 #+end_src
 
 为老的记录做个存档，进入该文件夹后依然可以进行搜索。
@@ -512,13 +511,6 @@ org-mode 用来干嘛呢？对吧？
     )
 #+end_src
 
-** Agenda
-#+begin_src emacs-lisp
-  (defun org-refresh-agenda-files ()
-    (interactive)
-    (setq org-agenda-files (directory-files (concat org-directory "worklog/") t ".org")))
-#+end_src
-
 ** Bookmark
 使用 org 文件做了一个收藏夹。
 #+begin_src emacs-lisp
@@ -586,16 +578,19 @@ org-mode 用来干嘛呢？对吧？
     (setq org-roam-completion-everywhere t
           org-roam-capture-templates
           '(
-            ("w" "worklog" plain "** TODO ${title}%?"
+            ("e" "immediate worklog" plain "** TODO ${title}\n:PROPERTIES:\n :ID: %(org-id-uuid)\n:END:\n"
              :target
              (file+olp "%(concat org-directory \"worklog.org\")" ("%<%Y>-W%<%W>/%(first-day-of-this-week-str)"))
              :unnarrowed t
              :immediate-finish t)
-            ("f" "fleeting" plain "** TODO ${title}%?"
+            ("w" "worklog" plain "** TODO ${title}\n:PROPERTIES:\n :ID: %(org-id-uuid)\n:END:\n %?"
+             :target
+             (file+olp "%(concat org-directory \"worklog.org\")" ("%<%Y>-W%<%W>/%(first-day-of-this-week-str)"))
+             :unnarrowed t)
+            ("f" "fleeting" plain "** TODO ${title}\n:PROPERTIES:\n :ID: %(org-id-uuid)\n:END:\n %?"
              :target
              (file+olp "%(concat org-directory \"fleeting.org\")" ("%<%Y>-W%<%W>/%(first-day-of-this-week-str)"))
-             :unnarrowed t
-             :immediate-finish t)
+             :unnarrowed t)
             ("n" "new node" plain "%?"
              :target
              (file+head "${slug}.org" "#+title: ${title}\n")
