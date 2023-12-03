@@ -1,0 +1,1051 @@
+#+title: config
+#+STARTUP: overview
+
+* 背景介绍
+
+=spacemacs= 入坑，至今 202309 大约已经 6 年左右，经历过屡次配置调整，也在 Linux 下进行过相关体验，所以计划本次重新调整配置文件及组织形式。也趁机将主分支从 master 切换至 main 。
+
+* 使用 org-mode 进行配置管理
+需要在入口文件 =~/.emacs.d/init.el= 使用如下代码。
+该文件会进入 .gitignore ，不受 git 管理。理由是会有一些临时配置会影响该文件，眼不见为净。
+#+begin_src emacs-lisp :tangle no
+  ;;; init-file --- Summary
+  ;;; Commentary: nothing
+
+  ;;; Code:
+  (require 'org)
+  (org-babel-load-file
+   (expand-file-name "config.org" user-emacs-directory))
+
+  (provide 'init)
+  ;;; init.el ends here
+#+end_src
+
+** 系统及文件夹路径设置
+#+begin_src emacs-lisp
+  (setq private/cache-directory "~/.emacs.d/.cache/"
+        private/system-is-mac (eq system-type 'darwin)
+        private/config-directory "~/.emacs.d/"
+        custom-file (concat private/config-directory "custom.el")
+        )
+  (if (file-exists-p custom-file)
+      (load custom-file)
+    (message "no custom setting file!"))
+#+end_src
+
+* 包管理
+我们使用 [[https://github.com/jwiegley/use-package][jwiegley/use-package]] 进行 melpa 包管理，同时配合 [[https://github.com/quelpa/quelpa][quelpa/quelpa]] 进行源码包管理（含 github），并使用 [[https://github.com/Silex/package-utils][Silex/package-utils]] 提供 helper 方便使用。
+
+#+begin_src emacs-lisp
+  (setq package-native-compile t
+        use-package-expand-minimally t
+        use-package-always-ensure t
+        package-enable-at-startup nil
+        package-archives '(("melpa" . "https://melpa.org/packages/")
+                           ("nongnu"   . "https://elpa.nongnu.org/nongnu/")
+                           ("gnu"   . "https://elpa.gnu.org/packages/")))
+
+  ;; This is only needed once, near the top of the file
+  (eval-when-compile
+    (require 'use-package))
+
+  (use-package quelpa
+    :init
+    ;; disable update during quelpa initialized
+    (setq quelpa-update-melpa-p nil
+          quelpa-checkout-melpa-p t))
+
+  (use-package quelpa-use-package
+    :config
+    (quelpa-use-package-activate-advice))
+
+  (use-package package-utils
+    :defer t)
+#+end_src
+* 基础配置
+** 加速启动时间的技巧
+通过设置最大垃圾回收大小，在启动过程中避免垃圾回收；在启动之后，设置为 300mb 以减少垃圾回收启动频率。
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold most-positive-fixnum)
+  (add-hook 'after-init-hook '(lambda () (setq gc-cons-threshold 31457280)))
+#+end_src
+** 编译设置
+#+begin_src emacs-lisp
+  (setq comp-async-jobs-number 5
+        comp-deferred-compilation t
+        native-comp-async-report-warnings-errors nil)
+#+end_src
+** 设置方法快速进入此文件
+#+begin_src emacs-lisp
+  (defun goto-configuration-org ()
+    (interactive)
+    (find-file "~/.emacs.d/config.org"))
+#+end_src
+** gpg
+#+begin_src emacs-lisp
+  (setq epa-pinentry-mode 'loopback)
+#+end_src
+
+** 窗口最大化
+#+begin_src emacs-lisp
+  (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
+  (global-set-key (kbd "s-C-f") 'toggle-frame-fullscreen)
+  (global-set-key (kbd "s-M-f") 'toggle-frame-maximized)
+#+end_src
+
+** 当光标滚动超出屏幕的时候，不再使目标行居中
+#+begin_src emacs-lisp
+  (setq scroll-conservatively 101
+        scroll-preserve-screen-position t)
+#+end_src
+** 不再有提示音
+#+begin_src emacs-lisp
+  (setq ring-bell-function 'ignore)
+#+end_src
+** 替换 yes no
+#+begin_src emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+end_src
+** 编辑相关设置
+#+begin_src emacs-lisp
+  (set-default-coding-systems 'utf-8-unix)
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  (setq auto-save-default nil
+        make-backup-files nil
+        create-lockfiles nil
+        x-select-enable-clipboard nil)
+
+  (setq-default indent-tabs-mode nil)
+  (setq-default tabs-width 2)
+#+end_src
+** 翻墙（虽然一般不怎么用）
+#+begin_src emacs-lisp
+  (defun goproxy()
+    (interactive)
+    (setq url-proxy-services '(("no_proxy" . "^\\(localhost\\|10\\..*\\|192\\.168\\..*\\)")
+                               ("http" . "192.168.50.111:8118")
+                               ("https" . "192.168.50.111:8118"))))
+
+  (defun disproxy()
+    (interactive)
+    (setq url-proxy-services nil))
+#+end_src
+** mac 修饰键配置
+#+begin_src emacs-lisp
+  (setq ns-command-modifier 'super
+        ns-option-modifer 'meta
+        ns-right-option-modifier 'hyper
+        ns-right-command-modifier 'hyper)
+#+end_src
+** 退出时不询问是否关闭进程
+#+begin_src emacs-lisp
+  (setq confirm-kill-processes nil)
+#+end_src
+** 不再弹出选择窗口
+#+begin_src emacs-lisp
+  (setq use-dialog-box nil)
+#+end_src
+
+* 辅助代码、方法
+有一些辅助方法，之前存在于本文件中，但一般此类代码更新频率较低、代码量大，所以独立抽出文件管理。
+
+此处整体进行 tangle ，除特殊目标，tangle 均在 helpers 目录下。
+
+#+begin_src emacs-lisp
+  (setq helpers-directory (concat private/config-directory "helpers/"))
+  (org-babel-tangle-file (concat helpers-directory "helpers.org"))
+  (add-to-list 'load-path helpers-directory)
+#+end_src
+
+* 环境变量
+#+begin_src emacs-lisp
+  (setq shell-file-name "/bin/zsh")
+  (use-package exec-path-from-shell
+    :config
+    (exec-path-from-shell-initialize))
+
+#+end_src
+* 外观
+** modeline
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :config
+    (setq doom-modeline-buffer-encoding nil
+          doom-modeline-mode-alist nil
+          inhibit-compacting-font-caches t
+          mode-line-percent-position nil
+          doom-modeline-buffer-modification-icon nil
+          doom-modeline-buffer-file-name-style 'file-name
+          doom-modeline-workspace-name t
+          doom-modeline-env-version nil
+          doom-modeline-modal nil
+          doom-modeline-modal-icon nil
+          doom-modeline-lsp nil
+          doom-modeline-time-icon t)
+    (doom-modeline-def-modeline 'my-modeline
+      '(major-mode matches bar buffer-info selection-info)
+      '(input-method buffer-position))
+    (add-hook 'doom-modeline-mode-hook '(lambda () (doom-modeline-set-modeline 'my-modeline 'default)))
+    ;; (doom-modeline-set-modeline 'my-modeline)
+    (column-number-mode t)
+    (doom-modeline-mode t))
+  ;; (use-package spaceline
+  ;;   :init
+  ;;   (setq powerline-image-apple-rgb t
+  ;;         powerline-height 24
+  ;;         spaceline-buffer-size-p nil
+  ;;         spaceline-evil-state-p t
+  ;;         spaceline-flycheck-error-p t
+  ;;         spaceline-flycheck-warning-p t
+  ;;         spaceline-flycheck-info-p t
+  ;;         spaceline-minor-modes-p nil
+  ;;         spaceline-anzu-p t
+  ;;         spaceline-projectile-root-p nil
+  ;;         spaceline-version-control-p nil
+  ;;         spaceline-org-pomodoro-p nil
+  ;;         powerline-default-separator 'box
+  ;;         spaceline-separator-dir-left '(right . right)
+  ;;         spaceline-separator-dir-right '(left . left)
+  ;;         spaceline-highlight-face-func 'spaceline-highlight-face-evil-state
+  ;;         spaceline-workspace-numbers-unicode t)
+  ;;   (add-hook 'after-init-hook 'spaceline-emacs-theme))
+#+end_src
+
+** theme
+#+begin_src emacs-lisp
+  (use-package doom-themes
+    :init
+    (setq doom-themes-enable-bold t
+          doom-themes-enable-italic t)
+    (defun load-doom-theme (frame)
+      (select-frame frame)
+      (load-theme 'doom-one t))
+    (if (daemonp)
+        (add-hook 'after-make-frame-functions 'load-doom-theme)
+      (load-theme 'doom-one t)))
+
+  (use-package ef-themes
+    :config
+    (setq ef-themes-to-toggle '(ef-summer ef-winter)))
+#+end_src
+
+** 关闭滚动条和工具条
+#+begin_src emacs-lisp
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+#+end_src
+
+** 小猫咪 nyan-mode
+#+begin_src emacs-lisp
+  (use-package nyan-mode
+    :init
+    (add-hook 'after-init-hook 'nyan-mode))
+#+end_src
+** 彩色括号及高亮TODO
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
+
+  (use-package hl-todo
+    :hook (prog-mode . hl-todo-mode))
+#+end_src
+** posframe
+#+begin_src emacs-lisp
+  (use-package posframe
+    :defer t)
+#+end_src
+** 不显示欢迎界面
+#+begin_src emacs-lisp
+  (setq inhibit-startup-screen t)
+#+end_src
+** 显示 region 中的空格和 tab
+本身是有个模式可以全局显示空格和 tab 的，但是平时也不怎么用不到，也丑，就先算了。。。现在发现了一个只针对 region 显示的，感觉应该挺好用的。。。
+
+发现他会影响 evil 的粘贴行为，导致 =yy= + =p= 会在光标处粘贴，而非另起新行，所以先移除。
+#+begin_src emacs-lisp :tangle no
+  (use-package whitespace4r
+    :quelpa (whitespace4r :fetcher github :repo "twlz0ne/whitespace4r.el" :branch "main")
+    :init
+    (whitespace4r-mode))
+#+end_src
+
+** mini buffer 弹出显示
+功能来源于 nvim 的 telescope 包。
+#+begin_src emacs-lisp :tangle no
+  (use-package mini-frame
+    :config
+    (setq mini-frame-color-shift-step 1
+          mini-frame-show-parameters '(
+                                       (top . 0.3)
+                                       (width . 0.9)
+                                       (left . 0.5)
+                                       (alpha . 90)
+                                       (chlid-frame-border-width . 0)
+                                       ))
+    :custom-face
+    (child-frame-border ((t (:background "gray58"))))
+    )
+#+end_src
+
+* 按键管理
+** Evil
+经过 Meow 的试用，还是决定退回 evil 了。。。
+#+begin_src emacs-lisp
+  (use-package evil
+    :init
+    (setq evil-flash-delay 1
+          evil-undo-system 'undo-redo
+          evil-want-keybinding nil
+          evil-want-integration t
+          evil-cross-lines t)
+    (evil-mode)
+    :config
+    (setq evil-shift-width 2)
+    (evil-set-initial-state 'calibredb-search-mode 'emacs)
+    (evil-set-initial-state 'custom-mode 'emacs)
+    (evil-set-initial-state 'code-review-mode 'emacs)
+    (with-eval-after-load 'evil-maps (define-key evil-motion-state-map (kbd "TAB") nil))
+    (defun copy-to-clipboard()
+      "Copies selection to x-clipboard."
+      (interactive)
+      (if (display-graphic-p)
+          (progn
+            (if (use-region-p)
+                (progn
+                  (evil-yank (region-beginning) (region-end) t (evil-use-register ?+))
+                  (message "Yanked region to clipboard!")
+                  (deactivate-mark))
+              (message "No region active; can't yank to clipboard!"))
+            )))
+
+    (defun paste-from-clipboard ()
+      "Pastes from x-clipboard."
+      (interactive)
+      (evil-paste-from-register (evil-use-register ?+)))
+
+    (general-define-key
+     :states 'insert
+     "\C-d" 'delete-char)
+    (general-define-key
+     "s-c" 'copy-to-clipboard
+     "s-v" 'paste-from-clipboard)
+    (mapc 'evil-declare-ignore-repeat
+          '(kill-this-buffer
+            ido-kill-buffer
+            save-buffer
+            split-window-below
+            split-window-below-and-focus
+            split-window-right
+            split-window-right-and-focus
+            switch-window)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package evil-anzu
+    :init
+    (global-anzu-mode +1)
+    (setq anzu-cons-mode-line-p nil))
+#+end_src
+** 绑定
++meow 提供了一些全局的绑定方法，但基本均基于 normal state 或者 leader key ，无法根据 keymap 设置按键，故引入 general 。+
+#+begin_src emacs-lisp
+  (use-package general
+    :config
+    (general-create-definer common-leader
+      :prefix-name "SPC"
+      :keymaps 'override
+      :non-normal-prefix "C-SPC"
+      :prefix "SPC"
+      :states '(insert motion normal emacs))
+    (general-create-definer local-leader
+      :prefix-name "leader"
+      :non-normal-prefix "C-,"
+      :prefix ","
+      :states '(insert motion normal emacs))
+    (general-evil-setup)
+    (general-auto-unbind-keys)
+    (general-create-definer clear-spc
+      :prefix-name "NOSPC"
+      "SPC" nil)
+    (common-leader
+      "fed" 'goto-configuration-org
+      "SPC" 'execute-extended-command))
+#+end_src
+** 提示
+keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提供。
+#+begin_src emacs-lisp
+  (use-package which-key
+    :after god-mode
+    :init
+    (add-hook 'after-init-hook 'which-key-mode)
+    :config
+    (which-key-enable-god-mode-support))
+#+end_src
+** 按键及方法显示
+[[https://github.com/lewang/command-log-mode][lewang/command-log-mode: log commands to buffer]]
+#+begin_src emacs-lisp
+  (use-package command-log-mode
+    :defer t
+    :commands (command-log-mode))
+#+end_src
+
+** 注释
+#+begin_src emacs-lisp
+  (use-package evil-nerd-commenter
+    :commands (evilnc-comment-or-uncomment-lines)
+    :config
+    (evilnc-default-hotkeys)
+    :general
+    (common-leader
+      "gc" 'evilnc-comment-or-uncomment-lines))
+#+end_src
+
+** 其他 Evil 相关
+#+begin_src emacs-lisp
+  (use-package evil-matchit
+    :hook (prog-mode . evil-matchit-mode))
+
+  (use-package evil-surround
+    :after evil
+    :config (global-evil-surround-mode t)
+    :general
+    (general-define-key
+     :states 'motion
+     "s" 'evil-surround-region))
+
+  (use-package evil-embrace
+    :after evil-surround
+    :config
+    (evil-embrace-enable-evil-surround-integration))
+
+  (use-package evil-visualstar
+    :after evil
+    :init
+    (global-evil-visualstar-mode)
+    :config
+    (setq evil-visualstar/persistent t))
+
+  (use-package evil-collection
+    :after evil
+    :config
+    (evil-collection-init))
+#+end_src
+
+** 快捷键辅助 god-mode
+#+begin_src emacs-lisp
+  (use-package god-mode
+    :config
+    (setq god-mode-alist '((nil . "C-") ("m" . "M-") ("G" . "C-M-")))
+    (evil-define-key 'god global-map "<escape>" 'evil-god-state-bail))
+
+  (defun private/god-start ()
+    (interactive)
+    (evil-execute-in-god-state)
+    (god-mode-self-insert))
+
+  (use-package evil-god-state
+    :general
+    (common-leader
+      "c" 'private/god-start
+      "x" 'private/god-start
+      "m" 'private/god-start
+      "G" 'private/god-start))
+#+end_src
+* 其他独立配置
+所有配置都放在同一个 org 文件中确实比较不方便阅读，所以会抽出一个文件夹存放其他配置文件并读取。
+
+由于采用 server 模式运行 emacs ，所以启动时间不在考虑范围之内。
+
+** 路径
+#+begin_src emacs-lisp
+  (setq private/sub-config-directory (concat private/config-directory "configs/"))
+  (add-to-list 'load-path private/sub-config-directory)
+#+end_src
+
+** 知识库
+
+#+begin_src emacs-lisp
+  (org-babel-load-file (concat private/sub-config-directory "base.org"))
+#+end_src
+
+* Programming
+** 协作编程
+#+begin_src emacs-lisp
+  (use-package crdt
+    :defer t
+    :config
+    (setq crdt-ask-for-name nil))
+#+end_src
+
+** LSP
+尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
+#+begin_src emacs-lisp
+  (defun private/lsp-return ()
+    (interactive)
+    (acm-hide)
+    (newline))
+
+  (use-package lsp-bridge
+    :defer t
+    :quelpa (lsp-bridge :fetcher github :repo "manateelazycat/lsp-bridge" :branch "master" :files ("*"))
+    :init
+    (global-lsp-bridge-mode)
+    :config
+    (setq acm-fetch-candidate-doc-delay 1
+          acm-enable-doc nil
+          acm-completion-backend-merge-order '("template-first-part-candidates" "mode-first-part-candidates" "tabnine-candidates" "template-second-part-candidates" "mode-second-part-candidates"))
+    :general
+    (general-define-key
+     :keymaps 'acm-mode-map
+     [remap evil-complete-next] 'acm-select-next
+     [remap evil-complete-previous] 'acm-select-prev
+     [remap yas-expand] 'acm-complete
+     "<return>" 'private/lsp-return
+     "<escape>" 'acm-hide)
+    (common-leader
+      "." 'lsp-bridge-find-def
+      "," 'lsp-bridge-find-def-return))
+#+end_src
+** Language
+*** Elixir
+虽说是主力语言，但配置并不算多。
+#+begin_src emacs-lisp
+  (use-package elixir-mode
+    :defer t
+    :config
+    ;; (add-hook 'elixir-mode-hook
+    ;; 	    (lambda() (add-hook 'before-save-hook 'elixir-format nil t)))
+
+    (defun +reset-mixfmt-args ()
+      (let* ((formatter-directory (locate-dominating-file default-directory ".formatter.exs"))
+             (formatter-file (concat formatter-directory ".formatter.exs")))
+        (if formatter-directory
+            (setq elixir-format-arguments (list "--dot-formatter" formatter-file))
+          (setq elixir-format-arguments nil))))
+
+    ;; (add-hook 'elixir-format-hook '+reset-mixfmt-args)
+    :general
+    (general-define-key
+     :keymaps '(elixir-mode)
+     "C-c C-c" 'elixir-format))
+
+  (use-package exunit
+    :defer t
+    :after elixir-mode
+    :config
+    :commands (exunit-verify-all
+               exunit-verify
+               exunit-verify-all-in-umbrella
+               exunit-verify-single
+               exunit-rerun
+               exunit-toggle-file-and-test)
+    :general
+    (general-define-key
+     :keymaps '(exunit-compilation-mode-map)
+     "SPC" nil)
+    (local-leader
+      "t" '(:ignore t :which-key "test")
+      "ta" 'exunit-verify-all
+      "tt" 'exunit-verify-single
+      "tb" 'exunit-verify
+      "tr" 'exunit-rerun
+      "tf" 'exunit-toggle-file-and-test))
+#+end_src
+*** AppleScript
+做点自动化的操作，还是有好处的。只是又和 mac 加深了绑定。。。
+#+begin_src emacs-lisp
+  (use-package apples-mode
+    :defer t
+    :general
+    (general-define-key
+     :keymaps 'apples-mode-map
+     "C-c C-c" 'apples-run-region/buffer))
+#+end_src
+
+*** Haskell
+感觉函数式编程绕不开 Haskell ，所以尝试下。
+#+begin_src emacs-lisp
+  (use-package haskell-mode
+    :defer t
+    :init
+    ;; (add-hook 'haskell-mode-hook 'lsp)
+    ;;       (add-hook 'haskell-literate-mode-hook 'lsp)
+    :config
+    (setq haskell-process-type 'stack-ghci))
+
+  ;;     (use-package lsp-haskell
+  ;;       :defer t)
+#+end_src
+*** Common Lisp
+#+begin_src emacs-lisp
+  (use-package sly
+    :defer t
+    :init
+    (setq inferior-lisp-program "/Users/smartepsh/.asdf/shims/sbcl"
+          org-babel-lisp-eval-fn 'sly-eval))
+#+end_src
+*** Racket
+学习 SICP 。MIT-Scheme 无法在 M1 上安装，打算尝试走偏门，Racket + SICP 包。
+#+begin_src emacs-lisp
+  (use-package racket-mode
+    :defer t)
+#+end_src
+
+*** PlantUML
+#+begin_src emacs-lisp
+  (use-package plantuml-mode
+    :mode ("\\.plantuml\\'" . plantuml-mode)
+    :defer t
+    :init
+    (setq plantuml-default-exec-mode 'jar
+          plantuml-jar-path (concat private/config-directory "plantuml-1.2021.16.jar")))
+#+end_src
+
+*** Web
+#+begin_src emacs-lisp
+  (use-package web-mode
+    :init
+    (setq web-mode-markup-indent-offset 2
+          web-mode-css-indent-offset 2
+          web-mode-code-indent-offset 2
+          web-mode-comment-style 2))
+#+end_src
+
+* 资源管理器
+使用默认的 dired 足矣。
+#+begin_src emacs-lisp
+  (use-package dired
+    :ensure nil
+    ;; :ensure-system-package (gls . coreutils)
+    :commands (dired-jump dired-jump-other-window)
+    :init
+    (setq dired-dwim-target t
+          dired-listing-switches "-alh"
+          insert-directory-program "gls"
+          dired-use-ls-dired t)
+    :general
+    ;;(clear-spc
+    ;;:keymaps 'dired-mode-map)
+    (common-leader
+      "fd" 'dired-jump
+      "fD" 'dired-jump-other-window))
+#+end_src
+
+* Magit
+#+begin_src emacs-lisp
+  (use-package magit
+    :commands (magit-status magit-blame)
+    :after evil-collection
+    :init
+    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+    :general
+    ;;(clear-spc
+    ;;:keymaps
+    ;;'(magit-mode-map
+    ;;magit-status-mode-map
+    ;;magit-diff-mode-map
+    ;;magit-process-mode-map
+    ;;magit-blame-read-only-mode-map
+    ;;magit-log-mode-map
+    ;;git-rebase-mode-map))
+    (common-leader
+      "gs" 'magit-status
+      "gb" 'magit-blame
+      "gi" 'vc-msg-show)
+
+    (general-nmap
+      :keymaps 'magit-mode-map
+      "s-<return>" 'magit-diff-visit-file-other-window))
+
+  (use-package diff-hl
+    :defer t
+    :hook (prog-mode . diff-hl-flydiff-mode))
+
+  (use-package vc-msg
+    :defer t
+    :commands (vc-msg-show)
+    :init
+    (eval-after-load 'vc-msg-git
+      '(progn
+         ;; show code of commit
+         (setq vc-msg-git-show-commit-function 'magit-show-commit)
+         ;; open file of certain revision
+         (push '("m"
+                 "[m]agit-find-file"
+                 (lambda ()
+                   (let* ((info vc-msg-previous-commit-info)
+                          (git-dir (locate-dominating-file default-directory ".git")))
+                     (magit-find-file (plist-get info :id )
+                                      (concat git-dir (plist-get info :filename))))))
+               vc-msg-git-extra))))
+#+end_src
+
+* 使用 Server Client 方式启动 emacs
+** 开机启动
+新建 plist 文件如下，然后使用 =launchctl start gnu.emacs.daemon= 激活。
+#+begin_src xml :tangle no
+  <!-- save in ~/Library/LaunchAgents/gnu.emacs.daemon.plist-->
+  <?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+  <plist version="1.0">
+    <dict>
+      <key>Label</key>
+      <string>gnu.emacs.daemon</string>
+      <key>ProgramArguments</key>
+      <array>
+        <string>/usr/local/bin/emacs</string>
+        <string>--daemon=kenton</string>
+      </array>
+      <key>RunAtLoad</key>
+      <true/>
+      <key>ServiceDescription</key>
+      <string>Gnu Emacs Daemon</string>
+    </dict>
+  </plist>
+#+end_src
+** 启动 frame
+使用 alfred workflow ，通过执行脚本的方式启动 frame 。注意，这个 frame 并没有初始化的时间。
+#+begin_src shell :tangle no
+  /usr/local/bin/emacsclient --socket-name=kenton --no-wait -c
+#+end_src
+** 关闭 frame
+这里有一个问题，默认的 =s-q= 快捷键是关闭 emacs ，这个行为会关闭 server ，影响我们这里的机制，所以需要重新定义。
+#+begin_src emacs-lisp
+  (general-define-key
+   "s-q" 'delete-frame)
+#+end_src
+
+* mini buffer 增强
+=ivy-rich= 经过几天试用，发现并不太方便，暂时关闭。
+注意，需要在安装完成后，手动调用 =all-the-icons-install= 。
+使用 =vertico= 替换 =ivy= 。
+#+begin_src emacs-lisp
+  (use-package vertico
+    :init
+    (vertico-mode)
+    :general
+    (common-leader
+      "ff" 'find-file
+      "fb" 'consult-buffer)
+    (general-define-key
+     :keymaps 'vertico-map
+     "?" 'minibuffer-completion-help
+     "M-RET" 'minibuffer-force-complete-and-exit
+     "M-TAB" 'minibuffer-complete))
+
+  (use-package marginalia
+    :init
+    (marginalia-mode t))
+
+  (use-package savehist
+    :init
+    (savehist-mode))
+
+  (use-package orderless
+    :init
+    (setq completion-styles '(orderless basic)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+
+* 页面内搜索
+配合 embark export 及 wgrep 可以做到集中修改的效果。注意，只能是 grep 模式的 export 才可以这么做，像 consult-line 之类的是不行的。
+#+begin_src emacs-lisp
+  (use-package consult
+    :defer t
+    :commands (consult-line consult-imenu consult-org-heading)
+    :general
+    (general-define-key
+     "C-s" 'consult-line
+     "C-d" 'consult-imenu)
+    (common-leader
+      "/" 'consult-ripgrep))
+
+  (use-package embark
+    :config
+    (add-to-list 'display-buffer-alist
+                 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                   nil
+                   (window-parameters (mode-line-format . none))))
+    :general
+    (general-define-key
+     "s-." 'embark-act)
+    (general-define-key
+     :keymap 'minibuffer-mode-map
+     "C-." 'embark-export))
+
+  (use-package embark-consult
+    :after (embark consult))
+
+  (use-package wgrep)
+#+end_src
+
+* 自动补全
+#+begin_src emacs-lisp
+  (use-package smartparens
+    :hook (prog-mode . smartparens-mode)
+    :hook (org-mode . smartparens-mode))
+
+  (use-package yasnippet
+    :defer t
+    :hook (prog-mode . yas-minor-mode)
+    :hook (org-mode . yas-minor-mode))
+
+  (use-package yasnippet-snippets
+    :defer t
+    :hook (yas-minor-mode . yas-reload-all))
+#+end_src
+
+* Projectile
+默认 projectile 是对大小写敏感的，但 MacOS 默认并不敏感，所以可能会出现 projectile 里有两条一个大写一个小写的两条记录指向同一个项目，好难受。。。从 github 发现一个方法可以清理一下，注意，需要先 clear 所有记录才可以。
+#+begin_src emacs-lisp
+  (defun projectile-relevant-known-projects ()
+    "Return a list of known projects except the current one (if present)."
+    (if (projectile-project-p)
+
+        (->> projectile-known-projects
+             (--reduce-from
+              (if (-contains? (-map 's-downcase acc) (s-downcase it)) acc (cons it acc))
+              (list (abbreviate-file-name (projectile-project-root))))
+             (-sort 'string-lessp))
+
+      projectile-known-projects))
+
+  (use-package projectile
+    :init
+    (add-hook 'after-init-hook 'projectile-mode)
+    (setq project-cache-file "~/.emacs.d/projectile.cache"
+          project-know-projects-file "~/.emacs.d/projectile-bookmarks.eld"
+          projectile-project-search-path '("~/Kenton/"))
+    :config
+    (projectile-discover-projects-in-search-path)
+    (projectile-relevant-known-projects)
+    :general
+    (common-leader
+      "pf" 'projectile-find-file
+      "pl" 'projectile-switch-project))
+#+end_src
+
+* 字体及输入法（中文）
+#+begin_src emacs-lisp
+  (setq private/rime-directory (concat private/config-directory "rime/")
+        rime-emacs-module-header-root (concat private/config-directory "helpers/"))
+
+  ;; run nerd-icons-install-fonts to install fonts for doom modeline
+  (use-package all-the-icons-nerd-fonts
+    :defer t)
+
+  (use-package cnfonts
+    :init
+    ;; (add-hook 'cnfonts-set-font-finish-hook '(lambda (fontsizes-list)
+    ;;                                            (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)))
+    (add-hook 'after-init-hook 'cnfonts-enable)
+    (setq cnfonts-use-face-font-rescale t
+          cnfonts-default-fontsize 26)
+    :config
+    (general-define-key
+     "s-=" 'cnfonts-increase-fontsize
+     "s--" 'cnfonts-decrease-fontsize))
+
+  (use-package rime
+    :defer t
+    :custom
+    (default-input-method "rime")
+    :init
+    (setq rime-librime-root (concat private/rime-directory "dist/")
+          rime-show-candidate 'posframe
+          rime-posframe-style 'vertical
+          rime-posframe-properties '(:internal-border-width 0)
+          rime-show-preedit 'inline
+          rime-disable-predicates '(rime-predicate-hydra-p
+                                    rime-predicate-prog-in-code-p
+                                    rime-predicate-punctuation-after-ascii-p))
+    (global-set-key (kbd "s-SPC") 'toggle-input-method)
+    (general-define-key
+     :keymaps 'rime-mode-map
+     "C-`" 'rime-send-keybinding)
+    (general-define-key
+     :keymaps 'rime-active-mode-map
+     "M-j" 'rime-inline-ascii))
+#+end_src
+
+* 窗口管理
+快捷键设置向 iterm 靠拢。
+#+begin_src emacs-lisp
+  ;; emacs 根据这个设置判断是水平还是垂直划分窗口，默认为 160 。设置较小的值使其尽可能的默认垂直划分窗口
+  (setq split-width-threshold 130)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package eyebrowse
+    :defer t
+    :init
+    (add-hook 'after-init-hook 'eyebrowse-mode)
+    (setq eyebrowse-keymap-prefix "")
+    :config
+    (general-define-key
+     "H-1" 'eyebrowse-switch-to-window-config-1
+     "H-2" 'eyebrowse-switch-to-window-config-2
+     "H-3" 'eyebrowse-switch-to-window-config-3
+     "H-4" 'eyebrowse-switch-to-window-config-4
+     "H-5" 'eyebrowse-switch-to-window-config-5
+     "H-6" 'eyebrowse-switch-to-window-config-6
+     "H-7" 'eyebrowse-switch-to-window-config-7
+     "H-8" 'eyebrowse-switch-to-window-config-8
+     "H-9" 'eyebrowse-switch-to-window-config-9
+     "H-`" 'eyebrowse-rename-window-config
+     "H-q" 'eyebrowse-close-window-config
+     "s-t" 'eyebrowse-create-window-config))
+
+  (use-package switch-window
+    :init
+    (setq switch-window-auto-resize-window t
+          switch-window-minibuffer-shortcut ?z)
+    ;; switch-window-multiple-frames t)
+    (general-define-key
+     "s-d" 'switch-window-then-split-right
+     "s-[" 'windmove-left
+     "s-]" 'windmove-right
+     "s-w" 'delete-window
+     "H-t" 'switch-window))
+#+end_src
+* Restart Emacs
+由于暂时采用 server client 启动方式，故不再需要 restart emacs 。
+#+begin_src emacs-lisp :tangle no
+  (use-package restart-emacs
+    :defer t
+    :commands (restart-emacs))
+#+end_src
+* 书签
+#+begin_src emacs-lisp
+  (use-package bm
+    :init
+    ;; restore on load (even before you require bm)
+    (setq bm-restore-repository-on-load t)
+    :config
+    ;; Allow cross-buffer 'next'
+    (setq bm-cycle-all-buffers t)
+    ;; where to store persistant files
+    (setq bm-repository-file "~/.emacs.d/bms")
+    ;; save bookmarks
+    (setq-default bm-buffer-persistence t)
+    ;; Loading the repository from file when on start up.
+    (add-hook 'after-init-hook 'bm-repository-load)
+    ;; Saving bookmarks
+    (add-hook 'kill-buffer-hook 'bm-buffer-save)
+    ;; Saving the repository to file when on exit.
+    ;; kill-buffer-hook is not called when Emacs is killed, so we
+    ;; must save all bookmarks first.
+    (add-hook 'kill-emacs-hook '(lambda nil
+                                   (bm-buffer-save-all)
+                                   (bm-repository-save)))
+    ;; The `after-save-hook' is not necessary to use to achieve persistence,
+    ;; but it makes the bookmark data in repository more in sync with the file
+    ;; state.
+    (add-hook 'after-save-hook 'bm-buffer-save)
+    ;; Restoring bookmarks
+    (add-hook 'find-file-hooks   'bm-buffer-restore)
+    (add-hook 'after-revert-hook 'bm-buffer-restore)
+    ;; The `after-revert-hook' is not necessary to use to achieve persistence,
+    ;; but it makes the bookmark data in repository more in sync with the file
+    ;; state. This hook might cause trouble when using packages
+    ;; that automatically reverts the buffer (like vc after a check-in).
+    ;; This can easily be avoided if the package provides a hook that is
+    ;; called before the buffer is reverted (like `vc-before-checkin-hook').
+    ;; Then new bookmarks can be saved before the buffer is reverted.
+    ;; Make sure bookmarks is saved before check-in (and revert-buffer)
+    (add-hook 'vc-before-checkin-hook 'bm-buffer-save)
+    :custom-face
+    (bm-persistent-face ((t (:background "blue violet" :foreground "White"))))
+    :general
+    (general-define-key
+     :keymaps 'bm-show-mode-map
+     "<RET>" 'bm-show-goto-bookmark
+     "<return>" 'bm-show-goto-bookmark)
+    (common-leader
+      "b" '(:ignore t :which-key "bookmarks")
+      "ba" 'bm-bookmark-annotate
+      "bb" 'bm-toggle
+      "bj" 'bm-next
+      "bk" 'bm-previous
+      "bl" 'bm-show-all
+      "bc" 'bm-remove-all-current-buffer
+      "bn" 'bm-lifo-next
+      "bp" 'bm-lifo-previous))
+#+end_src
+* 编辑相关
+** 页面内跳转
+#+begin_src emacs-lisp
+  (use-package avy
+    :commands (avy-goto-char-2 avy-goto-line)
+    :config
+    (setq avy-all-windows nil
+          avy-background t)
+    :general
+    (common-leader
+      "j" '(ignore t :which-key "jumping")
+      "jj" 'avy-goto-char-2
+      "jl" 'avy-goto-line))
+#+end_src
+
+** FlySpell 拼写错误检查
+在 [[https://www.emacswiki.org/emacs/FlySpell][我的Wiki： Fly Spell]] 找到了自建词典的使用方法，见 =flyspell-learn-work-at-point= 方法。该方法会将收录的新词保存在 =~/.hunspell_en_US= 文件内，我会将该文件链接到 =.emacs.d= 项目中，方便同步。
+#+begin_src emacs-lisp
+  (use-package flyspell
+    :ensure-system-package hunspell
+    :hook (text-mode . flyspell-mode)
+    :hook (prog-mode . flyspell-prog-mode)
+    :init
+    (setenv "LANG" "en_US")
+    (setq flyspell-issue-welcome-flag nil)
+    :config
+    (setq ispell-program-name (executable-find "hunspell")
+          ispell-dictionary "en_US"
+          ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)))
+    (global-set-key (kbd "C-c s") 'flyspell-learn-word-at-point)
+
+    (defun flyspell-learn-word-at-point ()
+      "Takes the highlighted word at point -- nominally a misspelling -- and inserts it into the personal/private dictionary, such that it is known and recognized as a valid word in the future."
+      (interactive)
+      (let ((current-location (point))
+            (word (flyspell-get-word)))
+        (when (consp word)
+          (flyspell-do-correct
+           'save nil
+           (car word)
+           current-location
+           (cadr word)
+           (caddr word)
+           current-location)))))
+
+  (use-package flyspell-correct
+    :commands (flyspell-correct-wrapper)
+    :general
+    (general-define-key
+     :keymaps 'flyspell-mode-map
+     "C-;" 'flyspell-correct-wrapper
+     "C-," nil
+     "C-'" 'flyspell-learn-word-at-point))
+#+end_src
+
+** 自动 revert
+#+begin_src emacs-lisp :tangle no
+  (use-package autorevert
+    :defer t
+    :ensure nil
+    :hook (after-init . global-auto-revert-mode))
+#+end_src
+
+** 错误检查
+lsp-mode 推荐使用 flycheck ，那我们尝试简单配置一下。使用 posframe 显示信息。
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :defer t
+    :init
+    (add-hook 'prog-mode-hook 'flycheck-mode)
+    (add-hook 'flycheck-mode-hook 'flycheck-posframe-mode))
+
+  (use-package flycheck-posframe
+    :after flycheck)
+#+end_src

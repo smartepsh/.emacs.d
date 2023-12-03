@@ -1,0 +1,847 @@
+#+title: 知识库配置文件
+#+STARTUP: overview
+
+* 移除 org-mode
+移除 emacs 自带 org 。
+#+begin_src emacs-lisp
+  (assq-delete-all 'org package--builtins)
+  (assq-delete-all 'org package--builtin-versions)
+#+end_src
+
+* 本体
+#+begin_src emacs-lisp
+  (use-package org
+    :pin gnu
+    :ensure nil
+    ;; :ensure-system-package terminal-notifier
+    :defer t
+    :init
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t)
+       (applescript . t)
+       (elixir . t)
+       (org . t)
+       (haskell . t)
+       (lisp . t)
+       (plantuml . t)
+       (racket . t)))
+    ;;(R . t)))
+    :config
+      ;;; auto display inline images on Org TAB cycle expand headlines.
+    ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
+    (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
+    (add-to-list 'org-export-backends 'md)
+    (setq org-todo-keywords '((sequence "TODO(t/!)" "DOING(i/!)" "|" "DONE(d/!)" "CANCELED(c@)"))
+          ;; org-default-notes-file org-agenda-file
+          org-archive-location (concat org-directory "Archived/" "%s_archive::")
+          org-id-locations-file (concat org-directory ".org-id-locations")
+          org-plantuml-jar-path (concat private/config-directory "plantuml-1.2021.16.jar")
+          org-log-done nil
+          ;; (nconc org-modules '(org-id))
+          ;; org-refile-targets '((org-agenda-files :maxlevel . 2))
+          org-refile-use-outline-path 'file
+          org-outline-path-complete-in-steps nil
+          org-refile-allow-creating-parent-nodes 'confirm
+          org-refile-use-cache t
+          org-startup-truncated nil
+          org-confirm-babel-evaluate nil
+          org-use-sub-superscripts  '{}
+          org-M-RET-may-split-line '((headline . nil) (item . nil) (default . t))
+          org-html-validation-link nil)
+    ;; refresh cache when emacs idle 5 mins
+    (run-with-idle-timer 300 t (lambda ()
+                                 (org-refile-cache-clear)
+                                 ;; (org-refile-get-targets)
+                                 (org-roam-db-sync))))
+#+end_src
+
+* 路径管理
+
+真实路径在 icloud 中。借由 icloud 实现云同步。
+#+begin_src emacs-lisp
+    (setq base-directory  (file-truename "~/KentonBase/")
+          private/book-directory (concat base-directory "publications/")
+          org-directory (concat base-directory "notes/")
+          old-org-directory (concat base-directory "old-archives/")
+          ejira-org-directory (concat org-directory "worklog/"))
+#+end_src
+
+为老的记录做个存档，进入该文件夹后依然可以进行搜索。
+#+begin_src emacs-lisp :tangle "/Users/smartepsh/KentonBase/old-archives/.dir-locals.el"
+  ((nil . (
+           (org-roam-directory . "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/KentonBase/old-archives/")
+           (org-roam-db-location . "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/KentonBase/old-archives/org-roam.db"))))
+#+end_src
+* 书籍管理 (calibredb)
+#+begin_src emacs-lisp
+  (use-package calibredb
+    :defer t
+    :quelpa (calibredb :fetcher github :repo "chenyanming/calibredb.el" :branch "develop")
+    :commands (calibredb)
+    :config
+    (setq calibredb-size-show t
+          ;;calibredb-format-all-the-icons t
+          calibredb-id-width 4
+          calibredb-title-width 40
+          calibredb-date-width 0
+          calibredb-root-dir private/book-directory
+          calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
+          calibredb-library-alist '(private/book-directory))
+    :general
+    (local-leader
+      :keymaps 'calibredb-show-mode-map
+      "?" 'calibredb-entry-dispatch
+      "o" 'calibredb-find-file
+      "O" 'calibredb-find-file-other-frame
+      "V" 'calibredb-open-file-with-default-tool
+      "s" 'calibredb-set-metadata-dispatch
+      "e" 'calibredb-export-dispatch
+      "q" 'calibredb-entry-quit
+      "y" 'calibredb-yank-dispatch
+      "," 'calibredb-quick-look
+      "." 'calibredb-open-dired
+      "\M-/" 'calibredb-rga
+      "\M-t" 'calibredb-set-metadata--tags
+      "\M-a" 'calibredb-set-metadata--author_sort
+      "\M-A" 'calibredb-set-metadata--authors
+      "\M-T" 'calibredb-set-metadata--title
+      "\M-c" 'calibredb-set-metadata--comments)
+    (local-leader
+      :keymaps 'calibredb-search-mode-map
+      "<RET>" 'calibredb-find-file
+      "?" 'calibredb-dispatch
+      "a" 'calibredb-add
+      "A" 'calibredb-add-dir
+      "c" 'calibredb-clone
+      "d" 'calibredb-remove
+      "D" 'calibredb-remove-marked-items
+      "j" 'calibredb-next-entry
+      "k" 'calibredb-previous-entry
+      "l" 'calibredb-virtual-library-list
+      "L" 'calibredb-library-list
+      "n" 'calibredb-virtual-library-next
+      "N" 'calibredb-library-next
+      "p" 'calibredb-virtual-library-previous
+      "P" 'calibredb-library-previous
+      "s" 'calibredb-set-metadata-dispatch
+      "S" 'calibredb-switch-library
+      "o" 'calibredb-find-file
+      "O" 'calibredb-find-file-other-frame
+      "v" 'calibredb-view
+      "V" 'calibredb-open-file-with-default-tool
+      "," 'calibredb-quick-look
+      "." 'calibredb-open-dired
+      "y" 'calibredb-yank-dispatch
+      "b" 'calibredb-catalog-bib-dispatch
+      "e" 'calibredb-export-dispatch
+      "r" 'calibredb-search-refresh-and-clear-filter
+      "R" 'calibredb-search-clear-filter
+      "q" 'calibredb-search-quit
+      "m" 'calibredb-mark-and-forward
+      "f" 'calibredb-toggle-favorite-at-point
+      "x" 'calibredb-toggle-archive-at-point
+      "h" 'calibredb-toggle-highlight-at-point
+      "u" 'calibredb-unmark-and-forward
+      "i" 'calibredb-edit-annotation
+      "<DEL>" 'calibredb-unmark-and-backward
+      "<backtab>" 'calibredb-toggle-view
+      "TAB" 'calibredb-toggle-view-at-point
+      "\M-n" 'calibredb-show-next-entry
+      "\M-p" 'calibredb-show-previous-entry
+      "/" 'calibredb-search-live-filter
+      "\M-t" 'calibredb-set-metadata--tags
+      "\M-a" 'calibredb-set-metadata--author_sort
+      "\M-A" 'calibredb-set-metadata--authors
+      "\M-T" 'calibredb-set-metadata--title
+      "\M-c" 'calibredb-set-metadata--comments))
+#+end_src
+
+* Org Mode
+
+** Ebook Reader
+org-mode 用来干嘛呢？对吧？
+*** epub
+#+begin_src emacs-lisp
+  (use-package nov
+    :mode ("\\.epub\\'" . nov-mode)
+    :init
+    (setq nov-save-place-file (concat org-directory "nov-places"))
+    :config
+    (clear-spc
+      :keymaps 'nov-mode-map))
+
+  (use-package nov-xwidget
+    :quelpa (nov-xwidget :fetcher github :repo "chenyanming/nov-xwidget" :branch "main")
+    :after nov
+    :config
+    (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files))
+#+end_src
+*** TODO skim with org-roam
+设置更加具有交互性的 skim 行为。探索中。。。想法 [[https://emacs-china.org/t/org-ref-integration-with-skim-app-update/4614/14][源自于此]] ，但这里的代码并不能成功运行，而且他是利用 skim 笔记在页面中的索引做导航的，所以干脆改为根据 note id 做导航吧。
+
+**** 在不存在 note 文件时
+首先，我们假设，只能从 emacs 打开新的 pdf ，此时可以为 pdf 绑定 note 文件。
+
+1. 当新 pdf 被打开时，检查首页是否有 skim note ，若没有 skim note 则认为是第一次打开的 pdf ，需要给 pdf 文件的首页添加一个 skim note ，绑定文件地址；如果有 skim note ，则认为是已经打开过的 pdf 。这个 note 的作用是，在从 skim 打开一个 pdf 文件时，可以由已经打开过的 pdf 直接进入 note 文件。
+2. 当老的 pdf 被打开时，允许使用快捷键进入 note 文件。
+
+#+begin_src emacs-lisp :tangle no
+  (defun private/get-skim-bibtex-key ()
+    (interactive)
+    (let* ((name (do-applescript
+                  (concat
+                   "tell application \"Skim\"\n"
+                   "set theDoc to front document\n"
+                   "set theTitle to (name of theDoc)\n"
+                   "end tell\n"
+                   "return theTitle as string\n")))
+           (key (when (string-match "\\(.+\\).pdf" name) (match-string 1 name))))
+      key))
+
+  (private/get-skim-bibtex-key)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (defun private/get-skim-link ()
+    "Generate the formatted skim link"
+    (do-applescript
+     (concat
+      "tell application \"Skim\"\n"
+      "  set theDoc to front document\n"
+      "  set theTitle to (name of theDoc)\n"
+      "  set thePath to (path of theDoc)\n"
+      "  set thePage to (get index of current page of theDoc)\n"
+      "  set theNote to (active note of theDoc)\n"
+      "  set theSelection to selection of theDoc\n"
+      "  set theContent to (contents of theSelection) as string\n"
+      "  if theNote is not missing value then\n"
+      "    set theContent to (contents of (get text of theNote))\n"
+      "    set theNotePage to (get page of theNote)\n"
+      "    set thePage to (get index of theNotePage)\n"
+      "    set theNoteID to (get id of theNote)\n"
+      "  else\n"
+      "    if theContent is \"\" then\n"
+      "        set theNoteID to \"0000\"\n"
+      "    else\n"
+      "        tell theDoc\n"
+      "            set theNote to make new note with data theSelection with properties {type:underline note, color: red}\n"
+      "            set active note of theDoc to theNote\n"
+      "            set text of theNote to (contents of theSelection) as string\n"
+      "            set theNotePage to (get page of theNote)\n"
+      "            set thePage to (get index of theNotePage)\n"
+      "            set theNoteID to (get id of theNote)\n"
+      "        end tell\n"
+      "    end if\n"
+      "  end if\n"
+      "  set theLink to \"skim://\" & thePath & \"::\" & thePage & \";;\" & theNoteID \n"
+      "end tell\n"
+      "return theLink as string\n")))
+
+  (defun private/open-skim-link (uri)
+    "Visit page of pdf in Skim"
+    (let* ((note-id (when (string-match ";;\\(.+\\)\\'" uri) (match-string 1 uri)))
+           (page (when (string-match "::\\(.+\\);;" uri) (match-string 1 uri)))
+           (document (substring uri 0 (match-beginning 0))))
+      (do-applescript
+       (concat
+        "tell application \"Skim\"\n"
+        "activate\n"
+        "set theDoc to open \"" document "\"\n"
+        "set thePage to (first page of theDoc where its index =\"" page "\")\n"
+        "try\n"
+        "  set theNote to (first note of thePage where its id = \"" note-id "\")\n"
+        "on error errMsg number errorNumber\n"
+        "  set theNote to 0\n"
+        "end try\n"
+        "if theNote is 0 then\n"
+        "    go document 1 to thePage\n"
+        "else\n"
+        "  set thePathList to (get path list of theNote)\n"
+        "  set thePoint to (first item of (first list of thePathList))\n"
+        "  go document 1 to thePage at thePoint\n"
+        "  set active note to theNote\n"
+        "end if\n"
+        "end tell"))))
+
+  (org-link-set-parameters "skim" :follow #'my-org-mac-skim-open)
+
+  (defadvice org-capture-finalize
+      (after org-capture-finalize-after activate)
+    "Advise capture-finalize to close the frame"
+    (if (equal "SA" (org-capture-get :key))
+        (do-applescript "tell application \"Skim\"\n    activate\nend tell")))
+
+  (defun private/clean-skim-page-link (link)
+    (let* ((link (replace-regexp-in-string "\n" " " link))
+           (link (replace-regexp-in-string "- " " " link)))
+      link))
+
+  (defun private/get-skim-page ()
+    (let* ((page (do-applescript
+                  (concat
+                   "tell application \"Skim\"\n"
+                   "set theDoc to front document\n"
+                   "set thePage to (get index of current page of theDoc)\n"
+                   "end tell\n"
+                   "return thePage as integer\n"))))
+      page))
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  (private/get-skim-page)
+
+
+  (defun my-org-mac-skim-get-page ()
+    (interactive)
+    (message "Applescript: Getting Skim page link...")
+    (org-mac-paste-applescript-links (my-as-clean-skim-page-link (my-as-get-skim-page-link))))
+
+  (defun my-org-mac-skim-insert-page ()
+    (interactive)
+    (insert (my-org-mac-skim-get-page)))
+  (defun my-org-move-point-to-capture ()
+    (cond ((org-at-heading-p) (org-beginning-of-line))
+          (t (org-previous-visible-heading 1))))
+
+  (add-hook 'org-capture-prepare-finalize-hook #'(lambda () (private/skim-org-link (org-id-get-create))))
+
+  (defun private/skim-org-link (id)
+    (do-applescript (concat
+                     "tell application \"Skim\"\n"
+                     "set runstatus to \"not set\"\n"
+                     "set theDoc to front document\n"
+                     "try\n"
+                     "    set theNote to active note of theDoc\n"
+                     "end try\n"
+                     "if theNote is not missing value then\n"
+                     "    set newText to text of theNote\n"
+                     "    set startpoint to  (offset of \"org-id:{\" in newtext)\n"
+                     "    set endpoint to  (offset of \"}:org-id\" in newtext)\n"
+                     "    if (startpoint is equal to endpoint) and (endpoint is equal to 0) then\n"
+                     "        set newText to text of theNote & \"\norg-id:{\" & "
+                     (applescript-quote-string id)
+                     " & \"}:org-id\"\n"
+                     "        set text of theNote to newText\n"
+                     "        return \"set success\"\n"
+                     "    end if\n"
+                     "end if\n"
+                     "end tell\n"
+                     "return \"unset\"\n"
+                     )))
+
+  (defun applescript-quote-string (argument)
+    "Quote a string for passing as a string to AppleScript."
+    (if (or (not argument) (string-equal argument ""))
+        "\"\""
+      ;; Quote using double quotes, but escape any existing quotes or
+      ;; backslashes in the argument with backslashes.
+      (let ((result "")
+            (start 0)
+            end)
+        (save-match-data
+          (if (or (null (string-match "[^\"\\]" argument))
+                  (< (match-end 0) (length argument)))
+              (while (string-match "[\"\\]" argument start)
+                (setq end (match-beginning 0)
+                      result (concat result (substring argument start end)
+                                     "\\" (substring argument end (1+ end)))
+                      start (1+ end))))
+          (concat "\"" result (substring argument start) "\"")))))
+#+end_src
+*** DONE 设置翻页快捷键
+- State "DONE"       from "TODO"       [2021-11-14 Sun 21:55]
+  检测当前是否有 nov buffer ，如果有，则执行 nov 翻页，否则执行 skim 翻页。
+
+#+begin_src emacs-lisp
+  ;;(add-to-list 'load-path "~/.emacs.d/helpers/")
+  (require 'skim)
+
+  (defun nov-buffer-in-current ()
+    (cl-find-if
+     (lambda (window)
+       (with-current-buffer (window-buffer window) (eq major-mode 'nov-mode)))
+     (window-list)))
+
+  (defun reader/scroll-up (arg)
+    (interactive "P")
+    (let ((nov-window (nov-buffer-in-current))
+          (current-window (get-buffer-window)))
+      (if nov-window
+          (progn
+            (select-window nov-window)
+            (nov-scroll-up arg)
+            (select-window current-window))
+        (skim-next-page))))
+
+  (defun reader/scroll-down (arg)
+    (interactive "P")
+    (let ((nov-window (nov-buffer-in-current))
+          (current-window (get-buffer-window)))
+      (if nov-window
+          (progn
+            (select-window nov-window)
+            (nov-scroll-down arg)
+            (select-window current-window))
+        (skim-prev-page))))
+
+  (defun reader/goto-pdf-first-page-or-nov-toc ()
+    (interactive)
+    (let ((nov-window (nov-buffer-in-current))
+          (current-window (get-buffer-window)))
+      (if nov-window
+          (progn
+            (select-window nov-window)
+            (nov-goto-toc)
+            (select-window current-window))
+        (skim-goto 1))))
+
+#+end_src
+** Helpers
+*** tab 循环展开图片
+#+begin_src emacs-lisp
+  ;;; Only display inline images under current subtree.
+  (defun org-display-subtree-inline-images (&optional state)
+    "Toggle the display of inline images under current subtree.
+  INCLUDE-LINKED is passed to `org-display-inline-images'."
+    (interactive)
+    (save-excursion
+      (save-restriction
+        (org-narrow-to-subtree)
+        (let* ((beg (point-min))
+               (end (point-max))
+               (image-overlays (cl-intersection
+                                org-inline-image-overlays
+                                (overlays-in beg end)))
+               (display-inline-images-local
+                (lambda ()
+                  (org-display-inline-images t t beg end)
+                  (setq image-overlays (cl-intersection
+                                        org-inline-image-overlays
+                                        (overlays-in beg end)))
+                  (if (and (org-called-interactively-p) image-overlays)
+                      (message "%d images displayed inline"
+                               (length image-overlays)))))
+               (hide-inline-images-local
+                (lambda ()
+                  (org-remove-inline-images)
+                  (message "Inline image display turned off"))))
+          (if state
+              (pcase state
+                ('subtree
+                 (funcall display-inline-images-local))
+                ('folded
+                 (funcall hide-inline-images-local)))
+            (if image-overlays
+                (funcall display-inline-images-local)
+              (funcall hide-inline-images-local)))))))
+#+end_src
+
+*** 循环展开 properties
+#+begin_src emacs-lisp
+  (defun org-hide-properties ()
+    "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
+    (interactive)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward
+              "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
+        (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
+          (overlay-put ov_this 'display "")
+          (overlay-put ov_this 'hidden-prop-drawer t))))
+    (put 'org-toggle-properties-hide-state 'state 'hidden))
+
+  (defun org-show-properties ()
+    "Show all org-mode property drawers hidden by org-hide-properties."
+    (interactive)
+    (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
+    (put 'org-toggle-properties-hide-state 'state 'shown))
+
+  (defun org-toggle-properties ()
+    "Toggle visibility of property drawers."
+    (interactive)
+    (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
+        (org-show-properties)
+      (org-hide-properties)))
+#+end_src
+
+*** mac 通知
+依赖于终端软件 =terminal-notifier= 。
+#+begin_src emacs-lisp
+  (defun notify-osx (title message)
+    (call-process "terminal-notifier"
+                  nil 0 nil
+                  "-group" "Emacs"
+                  "-title" title
+                  "-sender" "org.gnu.Emacs"
+                  "-mesage" message
+                  "-activate" "org.gnu.Emacs"))
+#+end_src
+** Org-babel
+#+begin_src emacs-lisp
+  (use-package ob-elixir :after org)
+  (use-package ox-gfm :after org)
+  (use-package ob-applescript :after org)
+  (use-package ob-racket
+    :quelpa (ob-racket :fetcher github :repo "hasu/emacs-ob-racket" :branch "master")
+    :init
+    (setq ob-racket-default-lang "sicp")
+    :after org)
+#+end_src
+
+** 美观
+有时候反而觉得原始状态挺好看。。。而且这个插件极度影响性能。。。所以先禁止掉。
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :init
+    (add-hook 'org-mode-hook 'global-org-modern-mode)
+    :config
+    (setq org-pretty-entities t
+          org-ellipsis " ☇"
+          org-hide-emphasis-markers t
+          org-auto-align-tags nil
+          org-tags-column 0
+          org-insert-heading-respect-content t
+          org-startup-folded t
+          org-modern-star '("☯" "☰" "☱" "☲" "☳" "☴" "☵" "☶" "☷")
+          ;; 保持缩进，默认为 hide-leading ，会将各级 heading 对齐，并不是期待的效果。
+          ;; org-modern-hide-stars "  "
+          org-modern-hide-stars 'leading
+          org-modern-list
+          '(;; (?- . "-")
+            (?- . "•")
+            (?* . "‣")))
+    )
+#+end_src
+
+** Agenda
+#+begin_src emacs-lisp
+  (defun org-refresh-agenda-files ()
+    (interactive)
+    (setq org-agenda-files (directory-files (concat org-directory "worklog/") t ".org")))
+#+end_src
+
+** Bookmark
+使用 org 文件做了一个收藏夹。
+#+begin_src emacs-lisp
+  (setq private/bookmark-file (concat org-directory "bookmarks.org"))
+  (defun open-bookmarks ()
+    (interactive)
+    (if (buffer-live-p "bookmarks.org")
+        (pop-to-buffer "bookmarks.org")
+      (find-file private/bookmark-file)))
+#+end_src
+** Org-roam
+查阅相关资料后，对于我这种没有知识整理，文档输出的人废物来说，org-ref 没什么大作用。。。
+计划使用 citar 和 skim 构建一个基于 pdf 文件的笔记系统。
+#+begin_src emacs-lisp
+  (require 'date-calc)
+
+  (defun prefix-zero (number)
+    (if (< number 10)
+        (concat "0" (number-to-string number))
+      (number-to-string number)))
+  (defun first-day-of-this-week-str ()
+    (let* ((first-day (date-calc-first-day-of-this-week))
+           (month (nth 1 first-day))
+           (day (nth 2 first-day)))
+      (concat (prefix-zero month) "-" (prefix-zero day))))
+
+  (first-day-of-this-week-str)
+  (setq publication-bib (concat base-directory "publication_catelog.bib")
+        videos-bib (concat base-directory "videos.bib")
+        webpages-bib (concat base-directory "webpages.bib")
+        collections-bib (concat base-directory "collections.bib"))
+
+  (defun goto-videos-bib ()
+    (interactive)
+    (find-file videos-bib))
+
+  (use-package emacsql-sqlite-builtin)
+  (use-package org-roam
+    :init
+    (add-hook 'after-init-hook 'org-roam-setup)
+    (setq org-roam-v2-ack t
+          org-roam-directory org-directory
+          org-roam-db-gc-threshold most-positive-fixnum
+          org-roam-db-location (concat org-directory "org-roam.db")
+          org-roam-database-connector 'sqlite-builtin)
+
+    (require 'org-roam-protocol)
+    :config
+    ;; must after use-package org-roam
+    (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
+      "Return the file TITLE for the node."
+      (org-roam-get-keyword "TITLE" (org-roam-node-file node)))
+    (cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
+      "Return the hierarchy for the node."
+      (let ((title (org-roam-node-title node))
+            (olp (org-roam-node-olp node))
+            (level (org-roam-node-level node))
+            (filetitle (org-roam-node-filetitle node)))
+        (concat
+         (if (> level 0) (concat filetitle " > "))
+         (if (> level 1) (concat (string-join olp " > ") " > "))
+         title)))
+    (setq org-roam-node-display-template "${hierarchy:*}
+  ${tags:20}")
+    (setq org-roam-completion-everywhere t
+          org-roam-capture-templates
+          '(("w" "worklog" plain "** TODO @${who} ${title}%?"
+             :target
+             (file+olp "%(concat org-directory \"worklog/worklog.org\")" ("%<%Y>-W%<%W>/%(first-day-of-this-week-str)"))
+             :unnarrowed t
+             :immediate-finish t)
+            ("n" "new node" plain "%?"
+             :target
+             (file+head "${slug}.org" "#+title: ${title}\n")
+             :unnarrowed t
+             :immediate-finish t)
+            ("r" "bibliography reference" plain "%?"
+             :target
+             (file+head "${citekey}.org" "#+title: ${title}\n#+filetags: :Note:\n#+citation: [cite:@${citekey}]")
+             :unnarrowed t)))
+    (setq org-roam-capture-ref-templates
+          '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))))
+  (use-package org-roam-bibtex
+    :hook (org-mode . org-roam-bibtex-mode)
+    :after org-roam
+    :init
+    (setq orb-roam-ref-format 'org-cite))
+
+  (use-package bibtex-completion
+    :init
+    (setq bibtex-completion-bibliography `(,publication-bib ,videos-bib ,webpages-bib ,collections-bib)
+          bibtex-completion-pdf-field "file"))
+
+  (use-package citar
+    :config
+    (setq citar-bibliography `(,publication-bib ,videos-bib ,webpages-bib ,collections-bib)
+          org-cite-global-bibliography citar-bibliography
+          org-cite-insert-processor 'citar
+          org-cite-follow-processor 'citar
+          org-cite-activate-processor 'citar
+          citar-at-point-function 'embark-act
+          citar-open-note-functions '(orb-citar-edit-note)
+          citar-notes-paths `(,org-directory))
+    :general
+    (general-define-key
+     :keymaps 'minibuffer-local-map
+     "M-b" 'citar-insert-preset))
+#+end_src
+
+** Org-clock
+#+begin_src emacs-lisp
+  (setq org-clock-clocked-in-display nil
+        org-clock-mode-line-total 'current)
+#+end_src
+
+** Org-pomodoro
+番茄钟。但暂不使用。
+#+begin_src emacs-lisp :tangle no
+  (use-package org-pomodoro
+    :commands org-pomodoro
+    :config
+    (add-hook 'org-pomodoro-finished-hook
+              (lambda()
+                (notify-osx "Pomodoro completed!" "Time for a break.")))
+    (add-hook 'org-pomodoro-break-finished-hook
+              (lambda()
+                (notify-osx "Pomodoro Short Break Finished!" "Ready for Another?")))
+    (add-hook 'org-pomodoro-long-break-finished-hook
+              (lambda()
+                (notify-osx "Pomodoro Long Break Finished!" "Ready for Another?")))
+    (add-hook 'org-pomodoro-killed-hook
+              (lambda()
+                (notify-osx "Pomodoro Killed!" "One does not simply kill a pomodoro!"))))
+#+end_src
+** Org-download
+#+begin_src emacs-lisp
+  (use-package org-download
+    :after org
+    :config
+    (setq org-download-method 'directory
+          org-image-actual-width nil
+          org-download-screenshot-method "screencapture -i %s"
+          org-download-display-inline-images 'posframe
+          ;; disable DOWNLOAD link
+          org-download-annotate-function (lambda (_link) "")
+          org-download-image-attr-list '("#+ATTR_HTML: :width 70% :align center"))
+    (setq-default org-download-image-dir (concat org-directory "images/")))
+#+end_src
+** Toc-org
+#+begin_src emacs-lisp
+  (use-package toc-org
+    :init
+    (add-hook 'org-mode-hook 'toc-org-mode))
+#+end_src
+** ox-hugo
+#+begin_src emacs-lisp
+  (use-package ox-hugo
+    :after ox
+    :init
+    (setq org-hugo-base-dir "~/Kenton/kenton.wang/")
+    :config
+    (defun insert-mermaid ()
+      (interactive)
+      (yas-expand "<mermaid"))
+    )
+#+end_src
+** org-pandoc-import
+#+begin_src emacs-lisp
+  (use-package org-pandoc-import
+    :quelpa (org-pandoc-import :fetcher github :repo "tecosaur/org-pandoc-import" :branch "master" :files ("*.el" "filters" "preprocessors")))
+#+end_src
+** Org-media-note
+使用了自己本地的修改，修改的内容是可以获取继承的 property ，可以播放父级下的视频。
+#+begin_src emacs-lisp
+  (use-package org-media-note
+    :hook (org-mode .  org-media-note-mode)
+    :quelpa (org-media-note :fetcher github :repo "yuchen-lea/org-media-note" :branch "master")
+    ;; :quelpa (org-media-note :fetcher file :path "~/Kenton/org-media-note")
+    :init
+    (setq org-media-note-use-org-ref nil
+          org-media-note-ref-key-field "Video_ID")
+    :config
+    (setq org-media-note-screenshot-image-dir (concat org-directory "images/org-media/")
+          org-media-note-use-refcite-first t))
+#+end_src
+
+** 翻译
+注意， =sdcv-dictionary-data-dir= 必须使用绝对地址。
+#+begin_src emacs-lisp
+  (use-package sdcv
+    :quelpa (sdcv :fetcher github :repo "manateelazycat/sdcv" :branch "master")
+    :init
+    (setq sdcv-dictionary-data-dir (file-truename (concat  private/config-directory "dictionary/"))
+          sdcv-program "/opt/homebrew/bin/sdcv")
+    :config
+    (setq sdcv-dictionary-simple-list '("21世纪英汉汉英双向词典")
+          sdcv-dictionary-complete-list '("21世纪英汉汉英双向词典"))
+    (defun private/say-word-at-point ()
+      (interactive)
+      (sdcv-say-word (sdcv-region-or-word)))
+    :general
+    (general-define-key
+     "s-E" 'sdcv-search-pointer+)
+    (common-leader
+      "k" '(:igonre :whick-key "sdcv")
+      "ks" 'private/say-word-at-point
+      "kk" 'sdcv-search-pointer+
+      "kf" 'sdcv-search-pointer))
+#+end_src
+
+#+RESULTS:
+
+** KeyBindings
+整体规划 org-mode 的按键。涉及到默认按键更改、全局按键、org-mode 按键。
+#+begin_src emacs-lisp
+  (general-define-key
+   :keymaps 'org-mode-map
+   "C-c C-r" nil
+   "C-c r" 'org-reveal
+   "C-s-4" 'org-download-screenshot
+   "H-v" 'org-media-note-hydra/body
+   "C-c ]" 'citar-insert-link)
+
+  (common-leader
+    "r" '(:ignore t :which-key "org-roam")
+    "rf" 'org-roam-node-find
+    "rr" 'org-roam-buffer-toggle)
+
+  (local-leader
+    :keymaps 'org-mode-map
+    "i" '(:ignore t :which-key "insert")
+    "ii" 'org-roam-node-insert
+    "ia" 'org-roam-alias-add
+    "ir" 'org-roam-ref-add
+    "it" 'org-roam-tag-add
+    "l" '(:ignore t :which-key "link")
+    ;; "lr" 'org-mac-skim-insert-page ;; skim
+    ;; "ls"  'org-mac-safari-insert-frontmost-url ;; internet
+    ;; "lf"  'org-mac-finder-insert-selected ;; finder
+    "ll" 'org-store-link
+    "li" 'org-insert-last-stored-link)
+
+  (general-define-key
+   :keymaps 'org-mode-map
+   "M-o" 'reader/goto-pdf-first-page-or-nov-toc
+   "M-n" 'reader/scroll-up
+   "M-p" 'reader/scroll-down)
+
+  (general-define-key
+   :keymaps 'nov-mode-map
+   "M-n" 'nov-scroll-up
+   "M-p" 'nov-scroll-down)
+
+  (general-define-key
+   :keymaps 'org-mode-map
+   :prefix "C-c C-r"
+   "r" 'org-roam-buffer-toggle
+   "C-i" 'org-roam-node-insert
+   "g" 'org-roam-graph
+   "i" '(:ignore t :which-key "add property")
+   "i a" 'org-roam-alias-add
+   "i r" 'org-roam-ref-add
+   "i t" 'org-roam-tag-add
+   "d" '(:ignore t :which-key "remove property")
+   "d a" 'org-roam-alias-remove
+   "d r" 'org-roam-ref-remove
+   "d t" 'org-roam-tag-remove)
+
+  (general-define-key
+   :keymaps 'org-roam-mode-map
+   [mouse-1] 'org-roam-visit-thing)
+#+end_src
+
+** pdf-tools
+
+install =epdfinfo= server by run =pdf-tools-install .=
+
+#+begin_src emacs-lisp
+  (use-package pdf-tools
+    :config
+    (setq pdf-view-selection-style 'glyph
+          pdf-view-use-imagemagick t)
+    (pdf-tools-install)
+    )
+
+  (use-package org-pdftools
+    :hook (org-mode . org-pdftools-setup-link))
+
+  (use-package org-noter
+    :config
+    ;; Your org-noter config ........
+    (require 'org-noter-pdftools))
+
+  (use-package org-noter-pdftools
+    :after org-noter
+    :config
+    ;; Add a function to ensure precise note is inserted
+    (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+      (interactive "P")
+      (org-noter--with-valid-session
+       (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+                                                     (not org-noter-insert-note-no-questions)
+                                                   org-noter-insert-note-no-questions))
+             (org-pdftools-use-isearch-link t)
+             (org-pdftools-use-freepointer-annot t))
+         (org-noter-insert-note (org-noter--get-precise-info)))))
+
+    ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
+    (defun org-noter-set-start-location (&optional arg)
+      "When opening a session with this document, go to the current location.
+      With a prefix ARG, remove start location."
+      (interactive "P")
+      (org-noter--with-valid-session
+       (let ((inhibit-read-only t)
+             (ast (org-noter--parse-root))
+             (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+         (with-current-buffer (org-noter--session-notes-buffer session)
+           (org-with-wide-buffer
+            (goto-char (org-element-property :begin ast))
+            (if arg
+                (org-entry-delete nil org-noter-property-note-location)
+              (org-entry-put nil org-noter-property-note-location
+                             (org-noter--pretty-print-location location))))))))
+    (with-eval-after-load 'pdf-annot
+      (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+#+end_src
