@@ -25,6 +25,7 @@
        (haskell . t)
        (lisp . t)
        (plantuml . t)
+       (mermaid . t)
        (racket . t)))
     ;;(R . t)))
     :config
@@ -484,6 +485,9 @@ org-mode 用来干嘛呢？对吧？
     :init
     (setq ob-racket-default-lang "sicp")
     :after org)
+  (use-package ob-mermaid :after org
+    :config
+    (setq ob-mermaid-cli-path "/opt/homebrew/bin/mmdc"))
 #+end_src
 
 ** 美观
