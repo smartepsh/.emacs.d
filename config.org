@@ -487,7 +487,14 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
     :init
     (add-hook 'prog-mode-hook 'copilot-mode)
     :config
-    (setq copilot-indent-offset-warning-disable t))
+    (setq copilot-indent-offset-warning-disable t)
+    :general
+    (general-define-key
+     :states 'insert
+     "\C-c \C-c" 'copilot-accept-completion
+     "\C-c \C-n" 'copilot-next-completion
+     "\C-c \C-p" 'copilot-previous-completion
+     ))
 #+end_src
 
 #+RESULTS:
@@ -508,8 +515,9 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
     :config
     (setq acm-fetch-candidate-doc-delay 1
           acm-enable-doc nil
-          acm-enable-copilot t
-          acm-completion-backend-merge-order '("copilot-candidates" "template-first-part-candidates" "mode-first-part-candidates" "tabnine-candidates" "template-second-part-candidates" "mode-second-part-candidates"))
+          acm-enable-copilot nil
+          ;; "copilot-candidates"
+          acm-completion-backend-merge-order '("template-first-part-candidates" "mode-first-part-candidates" "tabnine-candidates" "template-second-part-candidates" "mode-second-part-candidates"))
     :general
     (general-define-key
      :keymaps 'acm-mode-map
