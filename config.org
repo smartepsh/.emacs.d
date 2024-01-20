@@ -476,6 +476,21 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
     :config
     (setq crdt-ask-for-name nil))
 #+end_src
+** Copilot
+#+begin_src emacs-lisp
+  (use-package copilot
+    :defer t
+    :quelpa (copilot :fetcher github
+                     :repo "copilot-emacs/copilot.el"
+                     :branch "main"
+                     :files ("dist" "*.el"))
+    :init
+    (add-hook 'prog-mode-hook 'copilot-mode)
+    :config
+    (setq copilot-indent-offset-warning-disable t))
+#+end_src
+
+#+RESULTS:
 
 ** LSP
 尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
@@ -493,7 +508,8 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
     :config
     (setq acm-fetch-candidate-doc-delay 1
           acm-enable-doc nil
-          acm-completion-backend-merge-order '("template-first-part-candidates" "mode-first-part-candidates" "tabnine-candidates" "template-second-part-candidates" "mode-second-part-candidates"))
+          acm-enable-copilot t
+          acm-completion-backend-merge-order '("copilot-candidates" "template-first-part-candidates" "mode-first-part-candidates" "tabnine-candidates" "template-second-part-candidates" "mode-second-part-candidates"))
     :general
     (general-define-key
      :keymaps 'acm-mode-map
