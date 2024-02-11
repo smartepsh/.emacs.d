@@ -545,6 +545,7 @@ org-mode 用来干嘛呢？对吧？
   (setq publication-bib (concat base-directory "publication_catelog.bib")
         videos-bib (concat base-directory "videos.bib")
         webpages-bib (concat base-directory "webpages.bib")
+        zotero-bib (concat base-directory "zotero.bib")
         collections-bib (concat base-directory "collections.bib"))
 
   (defun goto-videos-bib ()
@@ -619,7 +620,7 @@ org-mode 用来干嘛呢？对吧？
 
   (use-package citar
     :config
-    (setq citar-bibliography `(,publication-bib ,videos-bib ,webpages-bib ,collections-bib)
+    (setq citar-bibliography `(,zotero-bib)
           org-cite-global-bibliography citar-bibliography
           org-cite-insert-processor 'citar
           org-cite-follow-processor 'citar
