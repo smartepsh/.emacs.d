@@ -301,7 +301,6 @@
     (evil-mode)
     :config
     (setq evil-shift-width 2)
-    (evil-set-initial-state 'calibredb-search-mode 'emacs)
     (evil-set-initial-state 'custom-mode 'emacs)
     (evil-set-initial-state 'code-review-mode 'emacs)
     (with-eval-after-load 'evil-maps (define-key evil-motion-state-map (kbd "TAB") nil))

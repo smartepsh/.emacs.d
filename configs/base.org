@@ -74,7 +74,7 @@
            (org-roam-db-location . "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/KentonBase/old-archives/org-roam.db"))))
 #+end_src
 * 书籍管理 (calibredb)
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package calibredb
     :defer t
     :quelpa (calibredb :fetcher github :repo "chenyanming/calibredb.el" :branch "develop")
