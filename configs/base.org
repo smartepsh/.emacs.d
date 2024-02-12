@@ -543,14 +543,8 @@ org-mode 用来干嘛呢？对吧？
 
   (first-day-of-this-week-str)
   (setq publication-bib (concat base-directory "publication_catelog.bib")
-        videos-bib (concat base-directory "videos.bib")
-        webpages-bib (concat base-directory "webpages.bib")
         zotero-bib (concat base-directory "zotero.bib")
         collections-bib (concat base-directory "collections.bib"))
-
-  (defun goto-videos-bib ()
-    (interactive)
-    (find-file videos-bib))
 
   (use-package emacsql-sqlite-builtin)
   (use-package org-roam
@@ -607,16 +601,25 @@ org-mode 用来干嘛呢？对吧？
              :unnarrowed t)))
     (setq org-roam-capture-ref-templates
           '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))))
+
   (use-package org-roam-bibtex
     :hook (org-mode . org-roam-bibtex-mode)
     :after org-roam
     :init
-    (setq orb-roam-ref-format 'org-cite))
+    (setq orb-roam-ref-format 'org-cite)
+    :config
+    (setq orb-note-actions-interface 'hydra))
 
   (use-package bibtex-completion
     :init
-    (setq bibtex-completion-bibliography `(,publication-bib ,videos-bib ,webpages-bib ,collections-bib)
-          bibtex-completion-pdf-field "file"))
+    (setq bibtex-completion-bibliography `(,zotero-bib))
+    :config
+    (setq bibtex-completion-pdf-field "file"
+          bibtex-completion-pdf-symbol "⌘"
+          bibtex-completion-notes-symbol "✎"
+          bibtex-completion-pdf-open-function
+          (lambda (fpath)
+            (call-process "open" nil 0 nil "-a" "/Applications/Skim.app" fpath))))
 
   (use-package citar
     :config
@@ -632,6 +635,12 @@ org-mode 用来干嘛呢？对吧？
     (general-define-key
      :keymaps 'minibuffer-local-map
      "M-b" 'citar-insert-preset))
+  (use-package citar-org-roam
+    :after (citar org-roam)
+    :config
+      (citar-org-roam-mode)
+      (setq citar-org-roam-note-title-template "${title} - ${author}")
+    )
 #+end_src
 
 ** Org-clock
