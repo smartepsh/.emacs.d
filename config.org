@@ -80,6 +80,10 @@
   (defun goto-configuration-org ()
     (interactive)
     (find-file "~/.emacs.d/config.org"))
+
+  (defun goto-base-org ()
+    (interactive)
+    (find-file "~/.emacs.d/configs/base.org"))
 #+end_src
 ** gpg
 #+begin_src emacs-lisp
@@ -368,6 +372,7 @@
       "SPC" nil)
     (common-leader
       "fed" 'goto-configuration-org
+      "fee" 'goto-base-org
       "SPC" 'execute-extended-command))
 #+end_src
 ** 提示

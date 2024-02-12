@@ -515,15 +515,88 @@ org-mode 用来干嘛呢？对吧？
     )
 #+end_src
 
-** Bookmark
-使用 org 文件做了一个收藏夹。
+** Citar & Bibtex
 #+begin_src emacs-lisp
-  (setq private/bookmark-file (concat org-directory "bookmarks.org"))
-  (defun open-bookmarks ()
-    (interactive)
-    (if (buffer-live-p "bookmarks.org")
-        (pop-to-buffer "bookmarks.org")
-      (find-file private/bookmark-file)))
+  (use-package citar
+    :config
+    (defvar citar-indicator-files-icons
+      (citar-indicator-create
+       :symbol (nerd-icons-faicon
+                "nf-fa-file_o"
+                :face 'nerd-icons-green
+                :v-adjust -0.1)
+       :function #'citar-has-files
+       :padding "  " ; need this because the default padding is too low for these icons
+       :tag "has:files"))
+    (defvar citar-indicator-links-icons
+      (citar-indicator-create
+       :symbol (nerd-icons-faicon
+                "nf-fa-link"
+                :face 'nerd-icons-orange
+                :v-adjust 0.01)
+       :function #'citar-has-links
+       :padding "  "
+       :tag "has:links"))
+    (defvar citar-indicator-notes-icons
+      (citar-indicator-create
+       :symbol (nerd-icons-codicon
+                "nf-cod-note"
+                :face 'nerd-icons-blue
+                :v-adjust -0.3)
+       :function #'citar-has-notes
+       :padding "    "
+       :tag "has:notes"))
+    (defvar citar-indicator-cited-icons
+      (citar-indicator-create
+       :symbol (nerd-icons-faicon
+                "nf-fa-circle_o"
+                :face 'nerd-icon-green)
+       :function #'citar-is-cited
+       :padding "  "
+       :tag "is:cited"))
+    (setq citar-bibliography `(,zotero-bib)
+          org-cite-global-bibliography citar-bibliography
+          org-cite-insert-processor 'citar
+          org-cite-follow-processor 'citar
+          org-cite-activate-processor 'citar
+          citar-at-point-function 'embark-act
+          citar-open-note-functions '(orb-citar-edit-note)
+          citar-file-open-functions '((t . citar-file-open-external))
+          citar-notes-paths `(,org-directory)
+          citar-indicators (list citar-indicator-files-icons
+                                 citar-indicator-links-icons
+                                 citar-indicator-notes-icons
+                                 citar-indicator-cited-icons))
+    (defun private/open-in-zotero (citekey)
+      "Open a reference item in Zotero."
+      (interactive (list (citar-select-ref)))
+      (citar-file-open-external
+       (concat "zotero://select/items/@" citekey)))
+    :general
+    (general-define-key
+     :keymaps 'minibuffer-local-map
+     "M-b" 'citar-insert-preset))
+
+  (use-package citar-embark
+    :after (citar embark)
+    :no-require
+    :config (citar-embark-mode))
+
+  (use-package citar-org-roam
+    :after (citar org-roam)
+    :config
+    (citar-org-roam-mode)
+    (setq citar-org-roam-note-title-template "${title}"
+          citar-org-roam-capture-template-key "r")
+    (citar-register-notes-source
+     'orb-citar-source (list :name "Org-Roam Notes"
+                             :category 'org-roam-node
+                             :items #'citar-org-roam--get-candidates
+                             :hasitems #'citar-org-roam-has-notes
+                             :open #'citar-org-roam-open-note
+                             :create #'orb-citar-edit-note
+                             :annotate #'citar-org-roam--annotate))
+    (setq citar-notes-source 'orb-citar-source))
 #+end_src
 ** Org-roam
 查阅相关资料后，对于我这种没有知识整理，文档输出的人废物来说，org-ref 没什么大作用。。。
@@ -597,10 +670,8 @@ org-mode 用来干嘛呢？对吧？
              :immediate-finish t)
             ("r" "bibliography reference" plain "%?"
              :target
-             (file+head "${citekey}.org" "#+title: ${title}\n#+filetags: :Note:\n#+citation: [cite:@${citekey}]")
-             :unnarrowed t)))
-    (setq org-roam-capture-ref-templates
-          '(("b" "Bookmark" plain "%?\n*** ${title}\n:PROPERTIES:\n:ID: %(org-id-new)\n:ROAM_REFS: ${ref}\n:ROAM_EXCLUDE: t\n:END:" :if-new (file+olp "%(symbol-value 'bookmark-file)" ("Uncategorized")) :immediate-finish t :unnarrowed t :empty-lines-after 1))))
+             (file+head "${citar-citekey}.org" "#+title: ${title}\n#+filetags: :Note:\n")
+             :unnarrowed t))))
 
   (use-package org-roam-bibtex
     :hook (org-mode . org-roam-bibtex-mode)
@@ -617,32 +688,10 @@ org-mode 用来干嘛呢？对吧？
     (setq bibtex-completion-pdf-field "file"
           bibtex-completion-pdf-symbol "⌘"
           bibtex-completion-notes-symbol "✎"
-          bibtex-completion-pdf-open-function
-          (lambda (fpath)
+          bibtex-completion-pdf-open-function (lambda (fpath)
             (call-process "open" nil 0 nil "-a" "/Applications/Skim.app" fpath))))
 
-  (use-package citar
-    :config
-    (setq citar-bibliography `(,zotero-bib)
-          org-cite-global-bibliography citar-bibliography
-          org-cite-insert-processor 'citar
-          org-cite-follow-processor 'citar
-          org-cite-activate-processor 'citar
-          citar-at-point-function 'embark-act
-          citar-open-note-functions '(orb-citar-edit-note)
-          citar-notes-paths `(,org-directory))
-    :general
-    (general-define-key
-     :keymaps 'minibuffer-local-map
-     "M-b" 'citar-insert-preset))
-  (use-package citar-org-roam
-    :after (citar org-roam)
-    :config
-      (citar-org-roam-mode)
-      (setq citar-org-roam-note-title-template "${title} - ${author}")
-    )
 #+end_src
-
 ** Org-clock
 #+begin_src emacs-lisp
   (setq org-clock-clocked-in-display nil
