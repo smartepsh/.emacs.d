@@ -798,18 +798,35 @@ org-mode 用来干嘛呢？对吧？
 ** KeyBindings
 整体规划 org-mode 的按键。涉及到默认按键更改、全局按键、org-mode 按键。
 #+begin_src emacs-lisp
+  (defun private/org-roam-node-find-with-choiceform-filter ()
+  (interactive)
+  (let ((tag "choiceform"))
+    (org-roam-node-find nil nil
+                        (lambda (node)
+                          (member tag
+                                  (org-roam-node-tags node))))))
+
+  (defun private/org-roam-node-find-without-choiceform-filter ()
+  (interactive)
+  (let ((tag "choiceform"))
+    (org-roam-node-find nil nil
+                        (lambda (node)
+                          (not (member tag
+                                  (org-roam-node-tags node)))))))
+
   (general-define-key
    :keymaps 'org-mode-map
    "C-c C-r" nil
    "C-c r" 'org-reveal
    "C-s-4" 'org-download-screenshot
    "H-v" 'org-media-note-hydra/body
-   "C-c ]" 'citar-insert-link)
+   "C-c ]" 'citar-insert-citation)
 
   (common-leader
     "r" '(:ignore t :which-key "org-roam")
-    "rf" 'org-roam-node-find
-    "rr" 'org-roam-buffer-toggle)
+    "rf" 'private/org-roam-node-find-without-choiceform-filter
+    "wf" 'private/org-roam-node-find-with-choiceform-filter
+    "rr" 'citar-open)
 
   (local-leader
     :keymaps 'org-mode-map
