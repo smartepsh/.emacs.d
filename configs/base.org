@@ -642,12 +642,27 @@ org-mode 用来干嘛呢？对吧？
             (level (org-roam-node-level node))
             (filetitle (org-roam-node-filetitle node)))
         (concat
-         (if (> level 0) (concat filetitle " > "))
-         (if (> level 1) (concat (string-join olp " > ") " > "))
-         title)))
-    (setq org-roam-node-display-template "${hierarchy:*}
-  ${tags:20}")
+         title
+         (if (> level 0) (concat " | " filetitle))
+         (if (> level 1) (concat " > " (string-join olp " > ")))
+         )))
+
+    (cl-defmethod org-roam-node-directories ((node org-roam-node))
+      (if-let ((dirs (file-name-directory (file-relative-name (org-roam-node-file node) org-roam-directory))))
+          (format "(%s)" (car (split-string dirs "/")))
+        ""))
+
+    (cl-defmethod org-roam-node-backlinkscount ((node org-roam-node))
+      (let* ((count (caar (org-roam-db-query
+                           [:select (funcall count source)
+                                    :from links
+                                    :where (= dest $s1)
+                                    :and (= type "id")]
+                           (org-roam-node-id node)))))
+        (format "[%d]" count)))
+
     (setq org-roam-completion-everywhere t
+          org-roam-node-display-template "${directories:10} ${tags:10} ${title:100} ${backlinkscount:6}"
           org-roam-capture-templates
           '(
             ("e" "immediate worklog" plain "** TODO ${title}\n:PROPERTIES:\n :ID: %(org-id-uuid)\n:END:\n"
