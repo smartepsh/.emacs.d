@@ -913,6 +913,7 @@ skim 链接只支持到 page 级别，无法定位 note 。
 
   (local-leader
     :keymaps 'org-mode-map
+    "," 'orb-note-actions
     "i" '(:ignore t :which-key "insert")
     "ii" 'org-roam-node-insert
     "ia" 'org-roam-alias-add
