@@ -73,7 +73,7 @@
            (org-roam-directory . "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/KentonBase/old-archives/")
            (org-roam-db-location . "/Users/smartepsh/Library/Mobile Documents/com~apple~CloudDocs/KentonBase/old-archives/org-roam.db"))))
 #+end_src
-* 书籍管理 (calibredb)
+* 书籍管理 (calibredb)(改为 zotero 管理)
 #+begin_src emacs-lisp :tangle no
   (use-package calibredb
     :defer t
@@ -461,41 +461,23 @@ org-mode 用来干嘛呢？对吧？
 
 可以通过 emacsclient 打开 ="org-protocol://skimnote?nodeid={nodeid}&noteid={noteid}&ref={citekey}&body={quote}"= 该链接，会自动创建笔记
 
+我们使用 alfred 的 workflow [[../Skim to org-roam.alfredworkflow]] 来整合流程。
+
 **** capture 模板
 此处无法使用 file+olp target ，可能是个 bug ，参考[[https://github.com/org-roam/org-roam/issues/2199][该 issue]] 。
 
-#+begin_src emacs-lisp :tangle no
-  ;; 该值在后续代码中有设置，此处无需 tangle
-  (setq org-roam-capture-templates
-        '(("q" "fleeting skim note" entry "* TODO ${noteid}\n:PROPERTIES:\n:ID: ${nodeid}\n:ROAM_REFS: ${ref}\n:SKIM_NOTE_ID: ${noteid}\n:END:\n#+begin_quote\n${body}\n#+end_quote\n%?"
-           :target
-           ;;(file+olp "ref/${ref}.org" ("Fleeting"))
-           (file "ref/${ref}.org")
-           :unnarrowed t
-           :immediate-finish t
-           :jump-to-captured t
-           :prepend t)
-          ("s" "fleeting skim note without quote" entry "* TODO ${noteid}\n:PROPERTIES:\n:ID: ${nodeid}\n:ROAM_REFS: ${ref}\n:SKIM_NOTE_ID: ${noteid}\n:END:\n%?"
-           :target
-           ;;(file+olp "ref/${ref}.org" ("Fleeting"))
-           (file "ref/${ref}.org")
-           :unnarrowed t
-           :immediate-finish t
-           :jump-to-captured t
-           :prepend t)
-          ))
-#+end_src
+具体代码见 [[*Org-roam][Org-roam]] 中的配置。
+
 **** protocol 配置
 #+begin_src emacs-lisp
   (defun skim-note-handler (data)
-    (let ((body (plist-get data :body)))
+    (let ((body (private/get-data-from-plink data)))
       (if body
           (org-roam-capture-
            :keys "q"
            :node (org-roam-node-create :id (plist-get data :nodeid))
            :info (list :ref (plist-get data :ref)
-                       :body (plist-get data :body)
-                       :link (plist-get data :link)
+                       :body (string-trim body)
                        :noteid (plist-get data :noteid)
                        :nodeid (plist-get data :nodeid))
            :templates org-roam-capture-templates)
@@ -503,13 +485,19 @@ org-mode 用来干嘛呢？对吧？
          :keys "s"
          :node (org-roam-node-create :id (plist-get data :nodeid))
          :info (list :ref (plist-get data :ref)
-                     :body (plist-get data :body)
-                     :link (plist-get data :link)
                      :noteid (plist-get data :noteid)
                      :nodeid (plist-get data :nodeid))
          :templates org-roam-capture-templates))
       )
     nil)
+
+  (defun private/get-data-from-plink (data)
+    (let* ((origin (plist-get data :body))
+           (body (if origin (string-trim origin))))
+      (if body
+          (if (not (string-equal body ""))
+              body)
+        )))
 #+end_src
 
 *** 打开对应的 note org 文件
@@ -556,10 +544,6 @@ Note 文件一共分为 2 类：
           (citekey (private/org-roam-get-property-at-point "ROAM_REFS"))
           )
       (list 'noteid noteid 'citekey citekey)))
-
-  ;; add note action to orb
-  (with-eval-after-load 'orb-note-actions
-    (add-to-list 'orb-note-actions-user (cons "Open note in skim" 'private/open-note-in-skim)))
 
   (defun private/open-note-in-skim ()
     (interactive)
@@ -737,8 +721,7 @@ skim 链接只支持到 page 级别，无法定位 note 。
              (file+head "${slug}.org" "#+title: ${title}\n")
              :unnarrowed t
              :immediate-finish t)
-
-            ("s" "fleeting skim note without quote" entry "* TODO ${noteid}\n:PROPERTIES:\n:ID: ${nodeid}\n:SKIM_LINK: ${link}\n:END:\n%?"
+            ("q" "fleeting skim note" entry "* TODO ${noteid}\n:PROPERTIES:\n:ID: ${nodeid}\n:ROAM_REFS: ${ref}\n:SKIM_NOTE_ID: ${noteid}\n:END:\n#+begin_quote\n${body}\n#+end_quote\n%?"
              :target
              ;;(file+olp "ref/${ref}.org" ("Fleeting"))
              (file "ref/${ref}.org")
@@ -746,7 +729,7 @@ skim 链接只支持到 page 级别，无法定位 note 。
              :immediate-finish t
              :jump-to-captured t
              :prepend t)
-            ("q" "fleeting skim note" entry "* TODO ${noteid}\n:PROPERTIES:\n:ID: ${nodeid}\n:SKIM_LINK: ${link}\n:END:\n#+begin_quote\n${body}\n#+end_quote\n%?"
+            ("s" "fleeting skim note without quote" entry "* TODO ${noteid}\n:PROPERTIES:\n:ID: ${nodeid}\n:ROAM_REFS: ${ref}\n:SKIM_NOTE_ID: ${noteid}\n:END:\n%?"
              :target
              ;;(file+olp "ref/${ref}.org" ("Fleeting"))
              (file "ref/${ref}.org")
@@ -774,6 +757,10 @@ skim 链接只支持到 page 级别，无法定位 note 。
     :after org-roam
     :init
     (setq orb-roam-ref-format 'org-cite)
+    ;; add note action to orb
+    (with-eval-after-load 'orb-note-actions
+      (add-to-list 'orb-note-actions-user (cons "Open note in skim" 'private/open-note-in-skim)))
+
     :config
     (setq orb-note-actions-interface 'hydra))
 
