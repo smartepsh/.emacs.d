@@ -177,288 +177,6 @@ org-mode 用来干嘛呢？对吧？
     :config
     (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files))
 #+end_src
-*** TODO skim with org-roam
-设置更加具有交互性的 skim 行为。探索中。。。想法 [[https://emacs-china.org/t/org-ref-integration-with-skim-app-update/4614/14][源自于此]] ，但这里的代码并不能成功运行，而且他是利用 skim 笔记在页面中的索引做导航的，所以干脆改为根据 note id 做导航吧。
-
-
-**** 资料数据库 Zotero
-在家庭网络环境中，有一台 calibredb 服务器保存了全量的发行物。但众所周知，本人一贯是“买过即看过”的忠实拥护者，所以里面的书籍，绝大多数都是只看了封面，那必然不配“污染”我的笔记环境。
-所以，我们会利用 Zotero 在本机来整理我们“阅读中”的资料。
-
-除发行物、论文外，Zotero 还可以抓取网页快照，非常适合资料的收集。并统一由 BetterBibtex 插件进行 bibtex 文件的导出，该 bibtex 文件会作为我们的 =资料数据库= 使用。
-
-**** 为 pdf 设置 citekey
-
-打开 pdf 有以下几个途径：
-1. 在 emacs 中通过 =citar-open= 方法选中对应的 pdf ，会通过 skim 打开；
-2. 在 Zotero 选中 entry 使用 skim 打开；
-3. 直接在 skim 中打开文件。
-
-可以看出，pdf 文件的入口均为 =skim= 。
-
-所以，我们在 alfred 中设置 workflow 来实现 =为 pdf 设置 citekey= 的功能。
-
-主要思路：
-1. 在 skim 中获取文件路径
-2. 通过程序根据文件路径在 bibtex 文件中查找对应的 entry , 拿到 citekey
-3. 通过 Applescript 在 skim 中为 pdf 首页添加含有 citekey 的 note 记录。
-
-**** 创建 fleeting note
-
-针对 bibtex 中的每一个 entry ，我们都会创建一个对应的总笔记，用于集中与之相关的散笔记，和 fleeting 笔记，以供后续整理。
-
-我们最终采用 =org-protocol= 与 =org-roam-capture= 配合生成 note 。
-
-可以通过 emacsclient 打开 ="org-protocol://skimnote?nodeid={nodeid}&noteid={noteid}&ref={citekey}&body={quote}"= 该链接，会自动创建笔记
-
-***** capture 模板
-此处无法使用 file+olp target ，可能是个 bug ，参考[[https://github.com/org-roam/org-roam/issues/2199][该 issue]] 。
-
-#+begin_src emacs-lisp :tangle no
-  ;; 该值在后续代码中有设置，此处无需 tangle
-  (setq org-roam-capture-templates
-        '(("q" "fleeting skim note" entry "* TODO ${noteid}\n:PROPERTIES:\n:ID: ${nodeid}\n:ROAM_REFS: ${ref}\n:SKIM_NOTE_ID: ${noteid}\n:END:\n#+begin_quote\n${body}\n#+end_quote\n%?"
-           :target
-           ;;(file+olp "ref/${ref}.org" ("Fleeting"))
-           (file "ref/${ref}.org")
-           :unnarrowed t
-           :immediate-finish t
-           :jump-to-captured t
-           :prepend t)
-          ("s" "fleeting skim note without quote" entry "* TODO ${noteid}\n:PROPERTIES:\n:ID: ${nodeid}\n:ROAM_REFS: ${ref}\n:SKIM_NOTE_ID: ${noteid}\n:END:\n%?"
-           :target
-           ;;(file+olp "ref/${ref}.org" ("Fleeting"))
-           (file "ref/${ref}.org")
-           :unnarrowed t
-           :immediate-finish t
-           :jump-to-captured t
-           :prepend t)
-          ))
-#+end_src
-***** protocol 配置
-#+begin_src emacs-lisp
-  (defun skim-note-handler (data)
-    (let ((body (plist-get data :body)))
-      (if body
-          (org-roam-capture-
-           :keys "q"
-           :node (org-roam-node-create :id (plist-get data :nodeid))
-           :info (list :ref (plist-get data :ref)
-                       :body (plist-get data :body)
-                       :link (plist-get data :link)
-                       :noteid (plist-get data :noteid)
-                       :nodeid (plist-get data :nodeid))
-           :templates org-roam-capture-templates)
-        (org-roam-capture-
-         :keys "s"
-         :node (org-roam-node-create :id (plist-get data :nodeid))
-         :info (list :ref (plist-get data :ref)
-                     :body (plist-get data :body)
-                     :link (plist-get data :link)
-                     :noteid (plist-get data :noteid)
-                     :nodeid (plist-get data :nodeid))
-         :templates org-roam-capture-templates))
-      )
-    nil)
-#+end_src
-
-**** 打开对应的 note org 文件
-Note 文件一共分为 2 类：
-1. 与 bibtex entry 对应的总笔记
-2. 自己建立的各类分笔记
-
-前者我们可以处理，后者仅通过 org-roam 处理。
-
-打开的情况分为两种：
-***** 在 skim 中仅打开文件，没有选中特定的 note
-由 alfred 控制，通过 org-roam-ref-capture 创建/打开对应的 note 文件。 ref 为 citekey ，通过 pdf 首页的 note 获取。
-#+begin_src emacs-lisp :tangle no
-  ;; 该值在后续代码中有设置，此处无需 tangle
-  (setq org-roam-capture-ref-templates
-        '(("n" "single note" plain "%?"
-           :target
-           (file+head "ref/${ref}.org" "#+title: ${title}\n#+filetags: :Note:\n")
-           :unnarrowed t
-           :immediate-finish t
-           :jump-to-captured t)))
-#+end_src
-***** 在 skim 中选中了某条特定的 note
-
-通过读取 note 中设置的 org roam node id ，使用 emacsclient 直接打开。
-
-**** 打开 note 对应的 pdf 位置
-
-每条记录对应的位置，都是一个 org roam node ，会设置一个 SKIM_LINK 的 property ，该链接可以直接在 skim 中打开到对应的 pdf 及位置。
-
-实现效果：跳转到笔记所在页面，并选中该笔记。
-并未直接跳转到笔记的原因是，skim 默认跳转位置，会将笔记置于窗口的最上端，不符合需求；如果定制跳转规则，比较麻烦。
-
-#+begin_src emacs-lisp
-  (defun private/org-roam-get-property-at-point (key)
-    (let* ((node (org-roam-node-at-point))
-           (record (assoc key (org-roam-node-properties node))))
-      (if record
-          (cdr record)
-        (error "no property found!"))))
-
-  (defun private/org-roam-get-skim-note-info-at-point ()
-    (let ((noteid (private/org-roam-get-property-at-point "SKIM_NOTE_ID"))
-          (citekey (private/org-roam-get-property-at-point "ROAM_REFS"))
-          )
-      (list 'noteid noteid 'citekey citekey)))
-
-  ;; add note action to orb
-  (with-eval-after-load 'orb-note-actions
-    (add-to-list 'orb-note-actions-user (cons "Open note in skim" 'private/open-note-in-skim)))
-
-  (defun private/open-note-in-skim ()
-    (interactive)
-    (let ((citekey (private/org-roam-get-property-at-point "ROAM_REFS")))
-      (private/open-note-in-skim citekey)))
-
-  (defun private/open-note-in-skim (citekey)
-    (let* ((noteid (private/org-roam-get-property-at-point "SKIM_NOTE_ID"))
-           (key (car citekey))
-           (attachment (orb-get-attached-file key)))
-      (if attachment
-          (funcall 'private/do-open-note-in-skim
-                   (if orb-open-attached-file-as-truename
-                       (file-truename attachment)
-                     attachment)
-                   noteid)
-        (message "No PDF(s) found for this entry: %s" key))))
-
-  (defun private/do-open-note-in-skim (filepath noteid)
-    (if (string-equal (do-applescript
-                       (concat
-                        "tell application \"Skim\"\n"
-                        "  set theDoc to (open \"" filepath "\")\n"
-                        "  set theNotes to (every note of theDoc) whose id is \"" noteid "\"\n"
-                        "  if (count theNotes) is 0 then\n"
-                        "    return \"Error\"\n"
-                        "  else\n"
-                        "    set theNote to item 1 of theNotes\n"
-                        "    go theDoc to page of theNote\n"
-                        "    set (active note of theDoc) to theNote\n"
-                        "    return \"Success\"\n"
-                        "  end if\n"
-                        "end tell\n"
-                        )) "Success")
-        (message "Success open the note.")
-      (message "Error! No note.")))
-#+end_src
-
-
-#+begin_src emacs-lisp :tangle no
-  (defun private/open-skim-link (uri)
-    "Visit page of pdf in Skim"
-    (let* ((note-id (when (string-match ";;\\(.+\\)\\'" uri) (match-string 1 uri)))
-           (page (when (string-match "::\\(.+\\);;" uri) (match-string 1 uri)))
-           (document (substring uri 0 (match-beginning 0))))
-      (do-applescript
-       (concat
-        "tell application \"Skim\"\n"
-        "activate\n"
-        "set theDoc to open \"" document "\"\n"
-        "set thePage to (first page of theDoc where its index =\"" page "\")\n"
-        "try\n"
-        "  set theNote to (first note of thePage where its id = \"" note-id "\")\n"
-        "on error errMsg number errorNumber\n"
-        "  set theNote to 0\n"
-        "end try\n"
-        "if theNote is 0 then\n"
-        "    go document 1 to thePage\n"
-        "else\n"
-        "  set thePathList to (get path list of theNote)\n"
-        "  set thePoint to (first item of (first list of thePathList))\n"
-        "  go document 1 to thePage at thePoint\n"
-        "  set active note to theNote\n"
-        "end if\n"
-        "end tell"))))
-
-  (org-link-set-parameters "skim" :follow #'my-org-mac-skim-open)
-
-  (defadvice org-capture-finalize
-      (after org-capture-finalize-after activate)
-    "Advise capture-finalize to close the frame"
-    (if (equal "SA" (org-capture-get :key))
-        (do-applescript "tell application \"Skim\"\n    activate\nend tell")))
-
-  (defun private/clean-skim-page-link (link)
-    (let* ((link (replace-regexp-in-string "\n" " " link))
-           (link (replace-regexp-in-string "- " " " link)))
-      link))
-
-  (defun private/get-skim-page ()
-    (let* ((page (do-applescript
-                  (concat
-                   "tell application \"Skim\"\n"
-                   "set theDoc to front document\n"
-                   "set thePage to (get index of current page of theDoc)\n"
-                   "end tell\n"
-                   "return thePage as integer\n"))))
-      page))
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  (private/get-skim-page)
-
-
-  (defun my-org-mac-skim-get-page ()
-    (interactive)
-    (message "Applescript: Getting Skim page link...")
-    (org-mac-paste-applescript-links (my-as-clean-skim-page-link (my-as-get-skim-page-link))))
-
-  (defun my-org-mac-skim-insert-page ()
-    (interactive)
-    (insert (my-org-mac-skim-get-page)))
-  (defun my-org-move-point-to-capture ()
-    (cond ((org-at-heading-p) (org-beginning-of-line))
-          (t (org-previous-visible-heading 1))))
-
-  (add-hook 'org-capture-prepare-finalize-hook #'(lambda () (private/skim-org-link (org-id-get-create))))
-
-  (defun private/skim-org-link (id)
-    (do-applescript (concat
-                     "tell application \"Skim\"\n"
-                     "set runstatus to \"not set\"\n"
-                     "set theDoc to front document\n"
-                     "try\n"
-                     "    set theNote to active note of theDoc\n"
-                     "end try\n"
-                     "if theNote is not missing value then\n"
-                     "    set newText to text of theNote\n"
-                     "    set startpoint to  (offset of \"org-id:{\" in newtext)\n"
-                     "    set endpoint to  (offset of \"}:org-id\" in newtext)\n"
-                     "    if (startpoint is equal to endpoint) and (endpoint is equal to 0) then\n"
-                     "        set newText to text of theNote & \"\norg-id:{\" & "
-                     (applescript-quote-string id)
-                     " & \"}:org-id\"\n"
-                     "        set text of theNote to newText\n"
-                     "        return \"set success\"\n"
-                     "    end if\n"
-                     "end if\n"
-                     "end tell\n"
-                     "return \"unset\"\n"
-                     )))
-
-  (defun applescript-quote-string (argument)
-    "Quote a string for passing as a string to AppleScript."
-    (if (or (not argument) (string-equal argument ""))
-        "\"\""
-      ;; Quote using double quotes, but escape any existing quotes or
-      ;; backslashes in the argument with backslashes.
-      (let ((result "")
-            (start 0)
-            end)
-        (save-match-data
-          (if (or (null (string-match "[^\"\\]" argument))
-                  (< (match-end 0) (length argument)))
-              (while (string-match "[\"\\]" argument start)
-                (setq end (match-beginning 0)
-                      result (concat result (substring argument start end)
-                                     "\\" (substring argument end (1+ end)))
-                      start (1+ end))))
-          (concat "\"" result (substring argument start) "\"")))))
-#+end_src
 *** DONE 设置翻页快捷键
 - State "DONE"       from "TODO"       [2021-11-14 Sun 21:55]
   检测当前是否有 nov buffer ，如果有，则执行 nov 翻页，否则执行 skim 翻页。
@@ -709,6 +427,223 @@ Note 文件一共分为 2 类：
                              :create #'orb-citar-edit-note
                              :annotate #'citar-org-roam--annotate))
     (setq citar-notes-source 'orb-citar-source))
+#+end_src
+** TODO skim with org-roam
+设置更加具有交互性的 skim 行为。探索中。。。想法 [[https://emacs-china.org/t/org-ref-integration-with-skim-app-update/4614/14][源自于此]] ，但这里的代码并不能成功运行，而且他是利用 skim 笔记在页面中的索引做导航的，所以干脆改为根据 note id 做导航吧。
+
+*** 资料数据库 Zotero
+在家庭网络环境中，有一台 calibredb 服务器保存了全量的发行物。但众所周知，本人一贯是“买过即看过”的忠实拥护者，所以里面的书籍，绝大多数都是只看了封面，那必然不配“污染”我的笔记环境。
+所以，我们会利用 Zotero 在本机来整理我们“阅读中”的资料。
+
+除发行物、论文外，Zotero 还可以抓取网页快照，非常适合资料的收集。并统一由 BetterBibtex 插件进行 bibtex 文件的导出，该 bibtex 文件会作为我们的 =资料数据库= 使用。
+
+*** 为 pdf 设置 citekey
+
+打开 pdf 有以下几个途径：
+1. 在 emacs 中通过 =citar-open= 方法选中对应的 pdf ，会通过 skim 打开；
+2. 在 Zotero 选中 entry 使用 skim 打开；
+3. 直接在 skim 中打开文件。
+
+可以看出，pdf 文件的入口均为 =skim= 。
+
+所以，我们在 alfred 中设置 workflow 来实现 =为 pdf 设置 citekey= 的功能。
+
+主要思路：
+1. 在 skim 中获取文件路径
+2. 通过程序根据文件路径在 bibtex 文件中查找对应的 entry , 拿到 citekey
+3. 通过 Applescript 在 skim 中为 pdf 首页添加含有 citekey 的 note 记录。
+
+*** 创建 fleeting note
+
+针对 bibtex 中的每一个 entry ，我们都会创建一个对应的总笔记，用于集中与之相关的散笔记，和 fleeting 笔记，以供后续整理。
+
+我们最终采用 =org-protocol= 与 =org-roam-capture= 配合生成 note 。
+
+可以通过 emacsclient 打开 ="org-protocol://skimnote?nodeid={nodeid}&noteid={noteid}&ref={citekey}&body={quote}"= 该链接，会自动创建笔记
+
+**** capture 模板
+此处无法使用 file+olp target ，可能是个 bug ，参考[[https://github.com/org-roam/org-roam/issues/2199][该 issue]] 。
+
+#+begin_src emacs-lisp :tangle no
+  ;; 该值在后续代码中有设置，此处无需 tangle
+  (setq org-roam-capture-templates
+        '(("q" "fleeting skim note" entry "* TODO ${noteid}\n:PROPERTIES:\n:ID: ${nodeid}\n:ROAM_REFS: ${ref}\n:SKIM_NOTE_ID: ${noteid}\n:END:\n#+begin_quote\n${body}\n#+end_quote\n%?"
+           :target
+           ;;(file+olp "ref/${ref}.org" ("Fleeting"))
+           (file "ref/${ref}.org")
+           :unnarrowed t
+           :immediate-finish t
+           :jump-to-captured t
+           :prepend t)
+          ("s" "fleeting skim note without quote" entry "* TODO ${noteid}\n:PROPERTIES:\n:ID: ${nodeid}\n:ROAM_REFS: ${ref}\n:SKIM_NOTE_ID: ${noteid}\n:END:\n%?"
+           :target
+           ;;(file+olp "ref/${ref}.org" ("Fleeting"))
+           (file "ref/${ref}.org")
+           :unnarrowed t
+           :immediate-finish t
+           :jump-to-captured t
+           :prepend t)
+          ))
+#+end_src
+**** protocol 配置
+#+begin_src emacs-lisp
+  (defun skim-note-handler (data)
+    (let ((body (plist-get data :body)))
+      (if body
+          (org-roam-capture-
+           :keys "q"
+           :node (org-roam-node-create :id (plist-get data :nodeid))
+           :info (list :ref (plist-get data :ref)
+                       :body (plist-get data :body)
+                       :link (plist-get data :link)
+                       :noteid (plist-get data :noteid)
+                       :nodeid (plist-get data :nodeid))
+           :templates org-roam-capture-templates)
+        (org-roam-capture-
+         :keys "s"
+         :node (org-roam-node-create :id (plist-get data :nodeid))
+         :info (list :ref (plist-get data :ref)
+                     :body (plist-get data :body)
+                     :link (plist-get data :link)
+                     :noteid (plist-get data :noteid)
+                     :nodeid (plist-get data :nodeid))
+         :templates org-roam-capture-templates))
+      )
+    nil)
+#+end_src
+
+*** 打开对应的 note org 文件
+Note 文件一共分为 2 类：
+1. 与 bibtex entry 对应的总笔记
+2. 自己建立的各类分笔记
+
+前者我们可以处理，后者仅通过 org-roam 处理。
+
+打开的情况分为两种：
+**** 在 skim 中仅打开文件，没有选中特定的 note
+由 alfred 控制，通过 org-roam-ref-capture 创建/打开对应的 note 文件。 ref 为 citekey ，通过 pdf 首页的 note 获取。
+#+begin_src emacs-lisp :tangle no
+  ;; 该值在后续代码中有设置，此处无需 tangle
+  (setq org-roam-capture-ref-templates
+        '(("n" "single note" plain "%?"
+           :target
+           (file+head "ref/${ref}.org" "#+title: ${title}\n#+filetags: :Note:\n")
+           :unnarrowed t
+           :immediate-finish t
+           :jump-to-captured t)))
+#+end_src
+**** 在 skim 中选中了某条特定的 note
+
+通过读取 note 中设置的 org roam node id ，使用 emacsclient 直接打开。
+
+*** 打开 note 对应的 pdf 位置
+
+每条记录对应的位置，都是一个 org roam node ，会设置一个 SKIM_LINK 的 property ，该链接可以直接在 skim 中打开到对应的 pdf 及位置。
+
+实现效果：跳转到笔记所在页面，并选中该笔记。
+并未直接跳转到笔记的原因是，skim 默认跳转位置，会将笔记置于窗口的最上端，不符合需求；如果定制跳转规则，比较麻烦。
+
+#+begin_src emacs-lisp
+  (defun private/org-roam-get-property-at-point (key)
+    (let* ((node (org-roam-node-at-point))
+           (record (assoc key (org-roam-node-properties node))))
+      (if record
+          (cdr record)
+        (error "no property found!"))))
+
+  (defun private/org-roam-get-skim-note-info-at-point ()
+    (let ((noteid (private/org-roam-get-property-at-point "SKIM_NOTE_ID"))
+          (citekey (private/org-roam-get-property-at-point "ROAM_REFS"))
+          )
+      (list 'noteid noteid 'citekey citekey)))
+
+  ;; add note action to orb
+  (with-eval-after-load 'orb-note-actions
+    (add-to-list 'orb-note-actions-user (cons "Open note in skim" 'private/open-note-in-skim)))
+
+  (defun private/open-note-in-skim ()
+    (interactive)
+    (let ((citekey (private/org-roam-get-property-at-point "ROAM_REFS")))
+      (private/open-note-in-skim citekey)))
+
+  (defun private/open-note-in-skim (citekey)
+    (let* ((noteid (private/org-roam-get-property-at-point "SKIM_NOTE_ID"))
+           (key (car citekey))
+           (attachment (orb-get-attached-file key)))
+      (if attachment
+          (funcall 'private/do-open-note-in-skim
+                   (if orb-open-attached-file-as-truename
+                       (file-truename attachment)
+                     attachment)
+                   noteid)
+        (message "No PDF(s) found for this entry: %s" key))))
+
+  (defun private/do-open-note-in-skim (filepath noteid)
+    (if (string-equal (do-applescript
+                       (concat
+                        "tell application \"Skim\"\n"
+                        "  set theDoc to (open \"" filepath "\")\n"
+                        "  set theNotes to (every note of theDoc) whose id is \"" noteid "\"\n"
+                        "  if (count theNotes) is 0 then\n"
+                        "    return \"Error\"\n"
+                        "  else\n"
+                        "    set theNote to item 1 of theNotes\n"
+                        "    go theDoc to page of theNote\n"
+                        "    set (active note of theDoc) to theNote\n"
+                        "    return \"Success\"\n"
+                        "  end if\n"
+                        "end tell\n"
+                        )) "Success")
+        (message "Success open the note.")
+      (message "Error! No note.")))
+#+end_src
+
+*** 打开 skim 链接
+
+skim 链接只支持到 page 级别，无法定位 note 。
+
+#+begin_src emacs-lisp :tangle no
+  (defun private/follow-skim-link (link)
+    (let ((skimlink (concat "skim:" link)))
+    (call-process "open" nil 0 nil skimlink)))
+
+  (org-link-set-parameters "skim" :follow 'private/follow-skim-link)
+#+end_src
+
+*** 创建 skim 链接
+
+按照设想，应该很少使用，但还是先处理掉。
+
+使用 =private/insert-skim-page-link= 可以在当前位置插入该链接。
+
+#+begin_src emacs-lisp
+  (defun private/get-skim-page-link ()
+    (let ((result (do-applescript
+                   (concat
+                    "tell application \"Skim\"\n"
+                    "  if (count of documents) is equal to 0 then\n"
+                    "    return \"false\"\n"
+                    "  else\n"
+                    "    set theDoc to document 1\n"
+                    "    set thePage to current page of theDoc\n"
+                    "    set theFile to file of theDoc\n"
+                    "    set theIndex to index of thePage\n"
+                    "    set thePath to POSIX path of theFile\n"
+                    "    set theLink to \"skim://\" & thePath & \"#page=\" & theIndex\n"
+                    "    return theLink\n"
+                    "  end if\n"
+                    "end tell\n"
+                    ))))
+
+      (if (string-equal result "false")
+          (error "No pdf opened in skim.")
+        result)))
+
+  (defun private/insert-skim-page-link ()
+    (interactive)
+    (let* ((link (private/get-skim-page-link)))
+      (when (string-match "page=\\([0-9]+\\)$" link)
+        (insert (org-make-link-string link (concat "P. " (match-string 1 link)))))))
 #+end_src
 ** Org-roam
 查阅相关资料后，对于我这种没有知识整理，文档输出的人废物来说，org-ref 没什么大作用。。。
