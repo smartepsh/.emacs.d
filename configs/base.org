@@ -703,14 +703,19 @@ skim 链接只支持到 page 级别，无法定位 note 。
           org-roam-node-display-template "${directories:10} ${tags:10} ${title:100} ${backlinkscount:6}"
           org-roam-capture-templates
           '(
-            ("e" "immediate worklog" plain "** TODO ${title}\n:PROPERTIES:\n :ID: %(org-id-uuid)\n:END:\n"
+            ("d" "new work node" plain "%?"
              :target
-             (file+olp "%(concat org-directory \"worklog.org\")" ("%<%Y>-W%<%W>/%(first-day-of-this-week-str)"))
+             (file+head "worklog/${slug}.org" "#+title: ${title}\n#+filetags: :choiceform:\n")
              :unnarrowed t
              :immediate-finish t)
-            ("w" "worklog" plain "** TODO ${title}\n:PROPERTIES:\n :ID: %(org-id-uuid)\n:END:\n %?"
+            ("e" "immediate worklog" plain "** TODO ${title} :choiceform: \n:PROPERTIES:\n :ID: %(org-id-uuid)\n:END:\n"
              :target
-             (file+olp "%(concat org-directory \"worklog.org\")" ("%<%Y>-W%<%W>/%(first-day-of-this-week-str)"))
+             (file+head "%(concat org-directory \"worklog/\" \"%<%Y>-W%<%W>-%(first-day-of-this-week-str).org\")" "#+title: %<%Y>-W%<%W>-%(first-day-of-this-week-str)\n#+filetags: :choiceform:\n")
+             :unnarrowed t
+             :immediate-finish t)
+            ("w" "worklog" plain "* TODO ${title} :choiceform: \n:PROPERTIES:\n :ID: %(org-id-uuid)\n:END:\n %?"
+             :target
+             (file+head "%(concat org-directory \"worklog/\" \"%<%Y>-W%<%W>-%(first-day-of-this-week-str).org\")" "#+title: %<%Y>-W%<%W>-%(first-day-of-this-week-str)\n#+filetags: :choiceform:\n")
              :unnarrowed t)
             ("f" "fleeting" plain "** TODO ${title}\n:PROPERTIES:\n :ID: %(org-id-uuid)\n:END:\n %?"
              :target
