@@ -745,12 +745,10 @@ skim 链接只支持到 page 级别，无法定位 note 。
     :after org-roam
     :init
     (setq orb-roam-ref-format 'org-cite)
-    ;; add note action to orb
-    (with-eval-after-load 'orb-note-actions
-      (add-to-list 'orb-note-actions-user (cons "Open note in skim" 'private/open-note-in-skim)))
 
     :config
-    (setq orb-note-actions-interface 'hydra))
+    (push (cons "Open note in skim" 'private/open-note-in-skim) orb-note-actions-user)
+    (setq orb-note-actions-interface 'default))
 
   (use-package bibtex-completion
     :init
