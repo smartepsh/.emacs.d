@@ -472,23 +472,15 @@ org-mode 用来干嘛呢？对吧？
 #+begin_src emacs-lisp
   (defun skim-note-handler (data)
     (let ((body (private/get-data-from-plink data)))
-      (if body
-          (org-roam-capture-
-           :keys "q"
-           :node (org-roam-node-create :id (plist-get data :nodeid))
-           :info (list :ref (plist-get data :ref)
-                       :body (string-trim body)
-                       :noteid (plist-get data :noteid)
-                       :nodeid (plist-get data :nodeid))
-           :templates org-roam-capture-templates)
-        (org-roam-capture-
-         :keys "s"
-         :node (org-roam-node-create :id (plist-get data :nodeid))
-         :info (list :ref (plist-get data :ref)
-                     :noteid (plist-get data :noteid)
-                     :nodeid (plist-get data :nodeid))
-         :templates org-roam-capture-templates))
-      )
+      (org-roam-capture-
+       :keys "s"
+       :node (org-roam-node-create :id (plist-get data :nodeid))
+       :info (list :ref (plist-get data :ref)
+                   :body (string-trim body)
+                   :noteid (plist-get data :noteid)
+                   :nodeid (plist-get data :nodeid))
+       :templates org-roam-capture-templates)
+      (message "capture skim note error."))
     nil)
 
   (defun private/get-data-from-plink (data)
@@ -496,8 +488,7 @@ org-mode 用来干嘛呢？对吧？
            (body (if origin (string-trim origin))))
       (if body
           (if (not (string-equal body ""))
-              body)
-        )))
+              body))))
 #+end_src
 
 *** 打开对应的 note org 文件
@@ -726,15 +717,7 @@ skim 链接只支持到 page 级别，无法定位 note 。
              (file+head "${slug}.org" "#+title: ${title}\n")
              :unnarrowed t
              :immediate-finish t)
-            ("q" "fleeting skim note" entry "* TODO ${noteid}\n:PROPERTIES:\n:ID: ${nodeid}\n:ROAM_REFS: ${ref}\n:SKIM_NOTE_ID: ${noteid}\n:END:\n#+begin_quote\n${body}\n#+end_quote\n%?"
-             :target
-             ;;(file+olp "ref/${ref}.org" ("Fleeting"))
-             (file "ref/${ref}.org")
-             :unnarrowed t
-             :immediate-finish t
-             :jump-to-captured t
-             :prepend t)
-            ("s" "fleeting skim note without quote" entry "* TODO ${noteid}\n:PROPERTIES:\n:ID: ${nodeid}\n:ROAM_REFS: ${ref}\n:SKIM_NOTE_ID: ${noteid}\n:END:\n%?"
+            ("s" "fleeting skim note" entry "* TODO ${body}\n:PROPERTIES:\n:ID: ${nodeid}\n:ROAM_REFS: ${ref}\n:SKIM_NOTE_ID: ${noteid}\n:END:\n%?"
              :target
              ;;(file+olp "ref/${ref}.org" ("Fleeting"))
              (file "ref/${ref}.org")
