@@ -416,7 +416,8 @@ org-mode 用来干嘛呢？对吧？
     :after (citar org-roam)
     :config
     (citar-org-roam-mode)
-    (setq citar-org-roam-note-title-template "${title}"))
+    (setq citar-org-roam-note-title-template "${title}"
+          citar-org-roam-capture-template-key "r"))
 #+end_src
 ** TODO skim with org-roam
 设置更加具有交互性的 skim 行为。探索中。。。想法 [[https://emacs-china.org/t/org-ref-integration-with-skim-app-update/4614/14][源自于此]] ，但这里的代码并不能成功运行，而且他是利用 skim 笔记在页面中的索引做导航的，所以干脆改为根据 note id 做导航吧。
@@ -717,7 +718,8 @@ skim 链接只支持到 page 级别，无法定位 note 。
              :prepend t)
             ("r" "bibliography reference" plain "%?"
              :target
-             (file+head "${citar-citekey}.org" "#+title: ${title}\n#+filetags: :Note:\n")
+             (file+head "ref/@${citar-citekey}.org" "#+title: ${title}\n#+filetags: :Note:\n")
+             :immediate-finish t
              :unnarrowed t))
           org-roam-capture-ref-templates '(
                                            ("n" "single note" plain "%?"
