@@ -419,7 +419,7 @@ org-mode 用来干嘛呢？对吧？
     (setq citar-org-roam-note-title-template "${title}"
           citar-org-roam-capture-template-key "r"))
 #+end_src
-** TODO skim with org-roam
+** skim with org-roam
 设置更加具有交互性的 skim 行为。探索中。。。想法 [[https://emacs-china.org/t/org-ref-integration-with-skim-app-update/4614/14][源自于此]] ，但这里的代码并不能成功运行，而且他是利用 skim 笔记在页面中的索引做导航的，所以干脆改为根据 note id 做导航吧。
 
 *** 资料数据库 Zotero
@@ -519,7 +519,7 @@ Note 文件一共分为 2 类：
            (record (assoc key (org-roam-node-properties node))))
       (if record
           (cdr record)
-        (error "no property found!"))))
+        (error (concat "No property - " key "found!")))))
 
   (defun private/org-roam-get-skim-note-info-at-point ()
     (let ((noteid (private/org-roam-get-property-at-point "SKIM_NOTE_ID"))
