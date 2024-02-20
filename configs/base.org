@@ -759,7 +759,7 @@ skim 链接只支持到 page 级别，无法定位 note 。
     `(let ((citekey (orb-get-node-citekey nil 'assert)))
        (funcall ,function (list citekey))))
 
-  (defhydra private/orb-note-actions (:exit t)
+  (defhydra private/orb-note-actions (:exit t :color blue)
     "
                 Orb Note Actions
 
@@ -767,7 +767,7 @@ skim 链接只支持到 page 级别，无法定位 note 。
               |-------------------------------------+----------------------------------|
               | _n_: Open note in skim                | _o_: Open PDF file(s)              |
               | _c_: Open PDF Table of Content Buffer | _l_: Open URL or DOI in browser    |
-              |                                     | _d_:Show record in the bibtex file |
+              |                                     | _d_: Show record in the bibtex file |
 
   _q_: quit
                   "
