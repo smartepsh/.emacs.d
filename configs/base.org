@@ -636,7 +636,7 @@ skim 链接只支持到 page 级别，无法定位 note 。
 
   (use-package org-roam
     :init
-    (add-hook 'after-init-hook 'org-roam-setup)
+    (add-hook 'after-init-hook 'org-roam-db-autosync-enable)
     (setq org-roam-v2-ack t
           org-roam-directory org-directory
           org-roam-db-gc-threshold most-positive-fixnum
