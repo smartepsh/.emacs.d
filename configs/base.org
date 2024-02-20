@@ -523,13 +523,13 @@ Note 文件一共分为 2 类：
 
   (defun private/org-roam-get-skim-note-info-at-point ()
     (let ((noteid (private/org-roam-get-property-at-point "SKIM_NOTE_ID"))
-          (citekey (private/org-roam-get-property-at-point "ROAM_REFS"))
+          (citekey (orb-get-node-citekey nil 'assert))
           )
       (list 'noteid noteid 'citekey citekey)))
 
   (defun private/open-note-in-skim ()
     (interactive)
-    (let ((citekey (private/org-roam-get-property-at-point "ROAM_REFS")))
+    (let ((citekey (orb-get-node-citekey nil 'assert)))
       (private/open-note-in-skim citekey)))
 
   (defun private/open-note-in-skim (citekey)
@@ -736,11 +736,7 @@ skim 链接只支持到 page 级别，无法定位 note 。
     :hook (org-mode . org-roam-bibtex-mode)
     :after org-roam
     :init
-    (setq orb-roam-ref-format 'org-cite)
-
-    :config
-    (push (cons "Open note in skim" 'private/open-note-in-skim) orb-note-actions-user)
-    (setq orb-note-actions-interface 'default))
+    (setq orb-roam-ref-format 'org-cite))
 
   (use-package bibtex-completion
     :init
@@ -751,7 +747,37 @@ skim 链接只支持到 page 级别，无法定位 note 。
           bibtex-completion-notes-symbol "✎"
           bibtex-completion-pdf-open-function (lambda (fpath)
                                                 (call-process "open" nil 0 nil "-a" "/Applications/Skim.app" fpath))))
+#+end_src
 
+*** Alternative to orb-note-actions
+
+因为 orb-note-actions 默认模式没有快捷键，hydra 模式无法自定义快捷键，所以这里自己制作一个 hydra 菜单来替代他。
+#+begin_src emacs-lisp
+  (defmacro private/hydra-with-current-citekey (function)
+    "Macro to make functions in the hydra with citekey argument."
+    (interactive)
+    `(let ((citekey (orb-get-node-citekey nil 'assert)))
+       (funcall ,function (list citekey))))
+
+  (defhydra private/orb-note-actions (:exit t)
+    "
+                Orb Note Actions
+
+              | Skim                                | Bibtex                           |
+              |-------------------------------------+----------------------------------|
+              | _n_: Open note in skim                | _o_: Open PDF file(s)              |
+              | _c_: Open PDF Table of Content Buffer | _l_: Open URL or DOI in browser    |
+              |                                     | _d_:Show record in the bibtex file |
+
+  _q_: quit
+                  "
+    ("o" (private/hydra-with-current-citekey 'orb-open-attached-file) nil)
+    ("l" (private/hydra-with-current-citekey 'bibtex-completion-open-url-or-doi)  nil)
+    ("d" (private/hydra-with-current-citekey 'bibtex-completion-show-entry)  nil)
+    ("n" (private/hydra-with-current-citekey 'private/open-note-in-skim)  nil)
+    ;; TODO implement show toc buffer
+    ("c" (private/hydra-with-current-citekey 'private/open-note-in-skim)  nil)
+    ("q" nil nil))
 #+end_src
 ** Org-clock
 #+begin_src emacs-lisp
@@ -891,7 +917,7 @@ skim 链接只支持到 page 级别，无法定位 note 。
 
   (local-leader
     :keymaps 'org-mode-map
-    "," 'orb-note-actions
+    "," 'private/orb-note-actions/body
     "i" '(:ignore t :which-key "insert")
     "ii" 'org-roam-node-insert
     "ia" 'org-roam-alias-add
