@@ -530,7 +530,7 @@ Note 文件一共分为 2 类：
   (defun private/open-note-in-skim ()
     (interactive)
     (let ((citekey (orb-get-node-citekey nil 'assert)))
-      (private/open-note-in-skim citekey)))
+      (private/open-note-in-skim (list citekey))))
 
   (defun private/open-note-in-skim (citekey)
     (let* ((noteid (private/org-roam-get-property-at-point "SKIM_NOTE_ID"))
@@ -568,7 +568,7 @@ Note 文件一共分为 2 类：
 
 skim 链接只支持到 page 级别，无法定位 note 。
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (defun private/follow-skim-link (link)
     (let ((skimlink (concat "skim:" link)))
     (call-process "open" nil 0 nil skimlink)))
@@ -610,6 +610,99 @@ skim 链接只支持到 page 级别，无法定位 note 。
     (let* ((link (private/get-skim-page-link)))
       (when (string-match "page=\\([0-9]+\\)$" link)
         (insert (org-make-link-string link (concat "P. " (match-string 1 link)))))))
+#+end_src
+
+*** TODO 打开 skim 书籍目录
+#+begin_src emacs-lisp
+  (defun private/do-get-skim-toc (filepath)
+    (let ((content (do-applescript (concat
+                                    "tell application \"Skim\"\n"
+                                    "  set theDoc to (open \"" filepath "\")\n"
+                                    "  set acc to {}\n"
+                                    "  set theOuts to outlines of theDoc\n"
+                                    "  if (count theOuts) is not equal to 0 then\n"
+                                    "    repeat with xElement in theOuts\n" "set theName to name of xElement\n"
+                                    "      set thePage to page of xElement\n" "set theIndex to index of thePage\n"
+                                    "      set theOutline to outlines of xElement\n"
+                                    "      copy {1, theName, theIndex} to the end of acc\n"
+                                    "      set theOuts to outlines of xElement\n"
+                                    "      if (count theOuts) is not equal to 0 then\n"
+                                    "        repeat with yElement in theOuts\n"
+                                    "          set theName to name of yElement\n"
+                                    "          set thePage to page of yElement\n"
+                                    "          set theIndex to index of thePage\n"
+                                    "          set theOutline to outlines of yElement\n"
+                                    "          copy {2, theName, theIndex} to the end of acc\n"
+                                    "          set theOuts to outlines of yElement\n"
+                                    "          if (count theOuts) is not equal to 0 then\n"
+                                    "            repeat with zElement in theOuts\n"
+                                    "              set theName to name of zElement\n"
+                                    "              set thePage to page of zElement\n"
+                                    "              set theIndex to index of thePage\n"
+                                    "              set theOutline to outlines of zElement\n"
+                                    "              copy {3, theName, theIndex} to the end of acc\n"
+                                    "            end repeat\n"
+                                    "          end if\n"
+                                    "        end repeat\n"
+                                    "      end if\n"
+                                    "    end repeat\n"
+                                    "  end if\n"
+                                    "  set theFile to file of theDoc\n"
+                                    "  set thePath to POSIX path of theFile\n"
+                                    "  set theResult to \"\"\n"
+                                    "  repeat with x in acc\n"
+                                    "    set theLevel to item 1 of x\n"
+                                    "    set theName to item 2 of x\n"
+                                    "    set thePage to item 3 of x\n"
+                                    "    set levelStr to \"\"\n"
+                                    "      repeat theLevel times\n"
+                                    "        set levelStr to levelStr & \"*\"\n"
+                                    "      end repeat\n"
+                                    "    set theResult to theResult & levelStr & \" [[skim://\" & thePath & \"#page=\" & thePage & \"][\" & theName & \"]]\n\"\n"
+                                    "  end repeat\n"
+                                    "  return theResult\n"
+                                    "end tell\n"
+                                    ;; open file will activate skim, but I want to stay in emacs
+                                    "tell application \"Emacs\" to activate\n"
+                                    ))))
+      (if (string-equal content "")
+          (error (concat "No TOC of " filepath))
+        content)))
+
+  (defun private/read-skim-toc-from-file (filepath)
+    (let ((buf (find-file-noselect filepath)))
+      (with-current-buffer buf
+        (read-only-mode 1)
+        (view-buffer buf))))
+
+  (defun private/create-skim-toc-file (key)
+    (if-let ((title (or (cdr (assoc 'title (org-cite-basic--get-entry key))) "Skim TOC"))
+             (attachment (orb-get-attached-file key))
+             (not_used orb-open-attached-file-as-truename)
+             (filepath (file-truename attachment))
+             (content (concat title "\n\n" (private/do-get-skim-toc (or filepath attachment))))
+             (org-filepath (file-truename (concat org-directory "tocs/@" key ".org")))
+             (buf (generate-new-buffer org-filepath)))
+        (progn
+          (with-current-buffer buf
+            (insert content)
+            (read-only-mode 1)
+            (write-file org-filepath t))
+          (view-buffer buf))
+
+      (message "No PDF(s) found for this entry: %s" key)))
+
+  (defun private/open-skim-toc-in-new-buffer-interactive ()
+    (interactive)
+    (let ((citekey (orb-get-node-citekey nil 'assert)))
+      (private/open-skim-toc-in-new-buffer (list citekey))))
+
+  (defun private/open-skim-toc-in-new-buffer (citekey)
+    (if-let ((key (car citekey))
+             (filepath (file-truename (concat org-directory "tocs/@" key ".org")))
+             (file-exists (file-exists-p filepath)))
+            (private/read-skim-toc-from-file filepath)
+          (private/create-skim-toc-file key)))
 #+end_src
 ** Org-roam
 查阅相关资料后，对于我这种没有知识整理，文档输出的人废物来说，org-ref 没什么大作用。。。
@@ -775,8 +868,7 @@ skim 链接只支持到 page 级别，无法定位 note 。
     ("l" (private/hydra-with-current-citekey 'bibtex-completion-open-url-or-doi)  nil)
     ("d" (private/hydra-with-current-citekey 'bibtex-completion-show-entry)  nil)
     ("n" (private/hydra-with-current-citekey 'private/open-note-in-skim)  nil)
-    ;; TODO implement show toc buffer
-    ("c" (private/hydra-with-current-citekey 'private/open-note-in-skim)  nil)
+    ("c" (private/hydra-with-current-citekey 'private/open-skim-toc-in-new-buffer)  nil)
     ("q" nil nil))
 #+end_src
 ** Org-clock
