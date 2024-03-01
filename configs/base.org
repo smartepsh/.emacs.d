@@ -775,7 +775,7 @@ skim 链接只支持到 page 级别，无法定位 note 。
         (format "[%d]" count)))
 
     (setq org-roam-completion-everywhere t
-          org-roam-node-display-template "${directories:10} ${tags:10} ${title:100} ${backlinkscount:6}"
+          org-roam-node-display-template "${directories:6} ${tags:16} ${title:100} ${backlinkscount:6}"
           org-roam-capture-templates
           '(
             ("d" "new work node" plain "%?"
