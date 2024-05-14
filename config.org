@@ -880,11 +880,9 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
      "s--" 'cnfonts-decrease-fontsize))
 
   (use-package rime
-    :defer t
-    :custom
-    (default-input-method "rime")
     :init
-    (setq rime-librime-root (concat private/rime-directory "dist/")
+    (setq default-input-method "rime"
+          rime-librime-root (concat private/rime-directory "dist/")
           rime-show-candidate 'posframe
           rime-posframe-style 'vertical
           rime-posframe-properties '(:internal-border-width 0)
@@ -892,15 +890,24 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
           rime-disable-predicates '(rime-predicate-hydra-p
                                     rime-predicate-prog-in-code-p
                                     rime-predicate-punctuation-after-ascii-p))
-    (global-set-key (kbd "s-SPC") 'toggle-input-method)
     (general-define-key
      :keymaps 'rime-mode-map
-     "C-`" 'rime-send-keybinding)
-    (general-define-key
-     :keymaps 'rime-active-mode-map
-     "M-j" 'rime-inline-ascii))
-#+end_src
+     "C-`" 'rime-send-keybinding))
 
+  ;; 使用 key-echo 进行单修饰键触发（用于输入法切换）
+  (use-package key-echo
+    :quelpa (key-echo :fetcher github :repo "manateelazycat/key-echo" :branch "master" :files ("*"))
+    :config
+    (key-echo-enable)
+    (defun key-echo-shift-to-switch-input-method (key)
+      (interactive)
+      (when (string-equal key "Key.shift")
+        (if (string-equal current-input-method "rime")
+            (rime-inline-ascii)
+          (toggle-input-method))))
+    (setq key-echo-single-key-trigger-func 'key-echo-shift-to-switch-input-method))
+
+#+end_src
 * 窗口管理
 快捷键设置向 iterm 靠拢。
 #+begin_src emacs-lisp
