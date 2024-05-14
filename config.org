@@ -777,7 +777,13 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
     :init
     (setq completion-styles '(orderless basic)
           completion-category-defaults nil
-          completion-category-overrides '((file (styles partial-completion)))))
+          completion-category-overrides '((file (styles partial-completion))))
+
+    (defun my-orderless-regexp (orig-func component)
+      (let ((result (funcall orig-func component)))
+        (pyim-cregexp-build result)))
+
+    (advice-add 'orderless-regexp :around #'my-orderless-regexp))
 #+end_src
 
 * 页面内搜索
@@ -878,6 +884,8 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
     (general-define-key
      "s-=" 'cnfonts-increase-fontsize
      "s--" 'cnfonts-decrease-fontsize))
+
+  (use-package pyim)
 
   (use-package rime
     :init
