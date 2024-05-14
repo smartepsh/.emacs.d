@@ -31,6 +31,10 @@
     :config
       ;;; auto display inline images on Org TAB cycle expand headlines.
     ;; (add-hook 'org-mode-hook 'scimax-src-keymap-mode)
+    (defun shk-fix-inline-images ()
+      (when org-inline-image-overlays
+        (org-redisplay-inline-images)))
+    (add-hook 'org-babel-after-execute-hook 'shk-fix-inline-images)
     (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
     (add-to-list 'org-export-backends 'md)
     (setq org-todo-keywords '((sequence "TODO(t/!)" "DOING(i/!)" "|" "DONE(d/!)" "CANCELED(c@)"))
@@ -904,10 +908,10 @@ skim 链接只支持到 page 级别，无法定位 note 。
     (setq org-download-method 'directory
           org-image-actual-width nil
           org-download-screenshot-method "screencapture -i %s"
-          org-download-display-inline-images 'posframe
+          org-download-display-inline-images t
           ;; disable DOWNLOAD link
           org-download-annotate-function (lambda (_link) "")
-          org-download-image-attr-list '("#+ATTR_HTML: :width 70% :align center"))
+          org-download-image-attr-list '("#+ATTR_HTML: :width 50% :align center"))
     (setq-default org-download-image-dir (concat org-directory "images/")))
 #+end_src
 ** Toc-org
