@@ -492,15 +492,14 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
     (add-hook 'prog-mode-hook 'copilot-mode)
     :config
     (setq copilot-indent-offset-warning-disable t
-          copilot-max-char -1
-          acm-enable-copilot t))
-  ;; :general
-  ;; (general-define-key
-  ;;  :states 'insert
-  ;;  :keymaps '(prog-mode-map acm-mode-map)
-  ;;  "\C-c \C-c" 'copilot-accept-completion
-  ;;  "\C-c \C-n" 'copilot-next-completion
-  ;;  "\C-c \C-p" 'copilot-previous-completion))
+          copilot-max-char -1)
+    :general
+    (general-define-key
+     :states 'insert
+     :keymaps '(prog-mode-map acm-mode-map)
+     "\C-c \C-c" 'copilot-accept-completion
+     "\C-c \C-n" 'copilot-next-completion
+     "\C-c \C-p" 'copilot-previous-completion))
 #+end_src
 
 #+RESULTS:
@@ -519,12 +518,10 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
     :init
     (global-lsp-bridge-mode)
     :config
-    (push 'lisp-mode-hook lsp-bridge-default-mode-hooks)
     (setq acm-fetch-candidate-doc-delay 1
           acm-enable-doc nil
           acm-enable-copilot nil
-          ;; "copilot-candidates"
-          acm-completion-backend-merge-order '("template-first-part-candidates" "copilot-candidates" "mode-first-part-candidates" "tabnine-candidates" "template-second-part-candidates" "mode-second-part-candidates"))
+          acm-completion-backend-merge-order '("template-first-part-candidates" "mode-first-part-candidates" "template-second-part-candidates" "mode-second-part-candidates"))
     :general
     (general-define-key
      :keymaps 'acm-mode-map
