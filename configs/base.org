@@ -981,21 +981,40 @@ skim 链接只支持到 page 级别，无法定位 note 。
 ** KeyBindings
 整体规划 org-mode 的按键。涉及到默认按键更改、全局按键、org-mode 按键。
 #+begin_src emacs-lisp
-  (defun private/org-roam-node-find-with-choiceform-filter ()
-  (interactive)
-  (let ((tag "choiceform"))
-    (org-roam-node-find nil nil
-                        (lambda (node)
-                          (member tag
-                                  (org-roam-node-tags node))))))
+  (setq special-org-roam-tags '("软考" "recite"))
 
-  (defun private/org-roam-node-find-without-choiceform-filter ()
-  (interactive)
-  (let ((tag "choiceform"))
-    (org-roam-node-find nil nil
-                        (lambda (node)
-                          (not (member tag
-                                  (org-roam-node-tags node)))))))
+  (defun private/org-roam-node-find-with-specific-tag ()
+    (interactive)
+    (let* ((tags (org-roam-tag-completions))
+           (tag (completing-read "Select a tag: " tags nil t)))
+      (org-roam-node-find nil nil
+                          (lambda (node)
+                            (member tag
+                                    (org-roam-node-tags node))))))
+
+  (defun private/org-roam-node-find-without-specific-tag ()
+    (interactive)
+    (let ((tags special-org-roam-tags))
+      (org-roam-node-find nil nil
+                          (lambda (node)
+                            (let ((node-tags (org-roam-node-tags node)))
+                              (cl-every (lambda (x) (not (member x node-tags))) tags))))))
+
+  (defun private/org-roam-node-insert-with-specific-tag ()
+    (interactive)
+    (let* ((tags (org-roam-tag-completions))
+           (tag (completing-read "Select a tag: " tags nil t)))
+      (org-roam-node-insert
+       (lambda (node)
+         (member tag (org-roam-node-tags node))))))
+
+  (defun private/org-roam-node-insert-without-specific-tag ()
+    (interactive)
+    (let ((tags special-org-roam-tags))
+      (org-roam-node-insert(lambda (node)
+                             (let ((node-tags (org-roam-node-tags node)))
+                               (cl-every (lambda (x) (not (member x node-tags))) tags))
+                             ))))
 
   (general-define-key
    :keymaps 'org-mode-map
@@ -1007,15 +1026,17 @@ skim 链接只支持到 page 级别，无法定位 note 。
 
   (common-leader
     "r" '(:ignore t :which-key "org-roam")
-    "rf" 'private/org-roam-node-find-without-choiceform-filter
-    "wf" 'private/org-roam-node-find-with-choiceform-filter
+    "rf" 'private/org-roam-node-find-without-specific-tag
+    "ri" 'private/org-roam-node-insert-without-specific-tag
+    "wf" 'private/org-roam-node-find-with-specific-tag
+    "wi" 'private/org-roam-node-insert-with-specific-tag
     "rr" 'citar-open)
 
   (local-leader
     :keymaps 'org-mode-map
     "," 'private/orb-note-actions/body
     "i" '(:ignore t :which-key "insert")
-    "ii" 'org-roam-node-insert
+    "ii" 'private/org-roam-node-insert-without-specific-tag
     "ia" 'org-roam-alias-add
     "ir" 'org-roam-ref-add
     "it" 'org-roam-tag-add
