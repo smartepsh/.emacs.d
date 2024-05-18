@@ -838,6 +838,52 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
   (use-package yasnippet-snippets
     :defer t
     :hook (yas-minor-mode . yas-reload-all))
+
+  (use-package consult-yasnippet
+    :defer t
+    :commands (consult-yasnippet)
+    :general
+    (general-define-key
+     "M-y" 'consult-yasnippet))
+
+  (use-package corfu
+    :defer t
+    :init
+    (setq global-corfu-modes '((not elixir-mode) t))
+    (global-corfu-mode)
+    :config
+    (setq corfu-quit-at-boundary nil
+          corfu-auto t
+          corfu-cycle t
+          corfu-on-exact-match nil
+          corfu-quit-no-match 'separator
+          corfu-auto-prefix 2
+          corfu-preview-current nil)
+    (defun corfu-move-to-minibuffer ()
+      (interactive)
+      (pcase completion-in-region--data
+        (`(,begin ,end ,table ,pred ,extras)
+         (let ((completion-extra-properties extras)
+               completion-cycle-threshold completion-cycling)
+           (consult-completion-in-region begin end table pred)))))
+    (add-to-list 'corfu-continue-commands #'corfu-move-to-minibuffer)
+    :general
+    (general-define-key
+     :keymaps 'corfu-map
+     "<RET>" 'corfu-quit
+     "<return>" 'corfu-quit
+     "M-m" 'corfu-move-to-minibuffer))
+
+  (use-package cape
+    :init
+    (add-hook 'completion-at-point-function #'cape-dabbrev)
+    (add-hook 'completion-at-point-functions #'cape-file)
+    (add-hook 'completion-at-point-functions #'cape-elisp-block))
+
+  (use-package nerd-icons-corfu
+    :defer t
+    :init
+    (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 #+end_src
 
 * Projectile
