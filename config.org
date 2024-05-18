@@ -523,8 +523,9 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
   (use-package lsp-bridge
     :defer t
     :quelpa (lsp-bridge :fetcher github :repo "manateelazycat/lsp-bridge" :branch "master" :files ("*"))
-    :init
-    (global-lsp-bridge-mode)
+    ;; :init
+    ;; (global-lsp-bridge-mode)
+    :hook (elixir-mode . lsp-bridge-mode)
     :config
     (setq acm-fetch-candidate-doc-delay 1
           acm-enable-doc nil
