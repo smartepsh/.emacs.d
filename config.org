@@ -515,33 +515,45 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
 ** LSP
 尝试使用 lsp-mode ，之前使用的是 nox ，但见其许久未更新，考虑切换。
 #+begin_src emacs-lisp
-  (defun private/lsp-return ()
-    (interactive)
-    (acm-hide)
-    (newline))
-
-  (use-package lsp-bridge
-    :defer t
-    :quelpa (lsp-bridge :fetcher github :repo "manateelazycat/lsp-bridge" :branch "master" :files ("*"))
-    ;; :init
-    ;; (global-lsp-bridge-mode)
-    :hook (elixir-mode . lsp-bridge-mode)
+  (use-package eglot
+    :init
+    (add-hook 'prog-mode-hook 'eglot-ensure)
     :config
-    (setq acm-fetch-candidate-doc-delay 1
-          acm-enable-doc nil
-          acm-enable-copilot nil
-          acm-completion-backend-merge-order '("template-first-part-candidates" "mode-first-part-candidates" "template-second-part-candidates" "mode-second-part-candidates"))
+    (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+    (setq completion-category-overrides '((eglot (styles orderless))
+                                      (eglot-capf (styles orderless))))
+    (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
     :general
-    (general-define-key
-     :keymaps 'acm-mode-map
-     [remap evil-complete-next] 'acm-select-next
-     [remap evil-complete-previous] 'acm-select-prev
-     [remap yas-expand] 'acm-complete
-     "<return>" 'private/lsp-return
-     "<escape>" 'acm-hide)
     (common-leader
-      "." 'lsp-bridge-find-def
-      "," 'lsp-bridge-find-def-return))
+      "." 'xref-find-definitions
+      "," 'xref-go-back))
+  ;; (defun private/lsp-return ()
+  ;;   (interactive)
+  ;;   (acm-hide)
+  ;;   (newline))
+
+  ;; (use-package lsp-bridge
+  ;;   :defer t
+  ;;   :quelpa (lsp-bridge :fetcher github :repo "manateelazycat/lsp-bridge" :branch "master" :files ("*"))
+  ;;   ;; :init
+  ;;   ;; (global-lsp-bridge-mode)
+  ;;   :hook (elixir-mode . lsp-bridge-mode)
+  ;;   :config
+  ;;   (setq acm-fetch-candidate-doc-delay 1
+  ;;         acm-enable-doc nil
+  ;;         acm-enable-copilot nil
+  ;;         acm-completion-backend-merge-order '("template-first-part-candidates" "mode-first-part-candidates" "template-second-part-candidates" "mode-second-part-candidates"))
+  ;;   :general
+  ;;   (general-define-key
+  ;;    :keymaps 'acm-mode-map
+  ;;    [remap evil-complete-next] 'acm-select-next
+  ;;    [remap evil-complete-previous] 'acm-select-prev
+  ;;    [remap yas-expand] 'acm-complete
+  ;;    "<return>" 'private/lsp-return
+  ;;    "<escape>" 'acm-hide)
+  ;;   (common-leader
+  ;;     "." 'lsp-bridge-find-def
+  ;;     "," 'lsp-bridge-find-def-return))
 #+end_src
 ** Language
 *** Elixir
@@ -846,10 +858,15 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
     (general-define-key
      "M-y" 'consult-yasnippet))
 
+  ;; (use-package yasnippet-capf
+  ;;   :after cape
+  ;;   :config
+  ;;   (add-to-list 'completion-at-point-functions #'yasnippet-capf))
+
   (use-package corfu
     :defer t
     :init
-    (setq global-corfu-modes '((not elixir-mode) t))
+    ;; (setq global-corfu-modes '((not elixir-mode) t))
     (global-corfu-mode)
     :config
     (setq corfu-quit-at-boundary nil
@@ -876,8 +893,10 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
 
   (use-package cape
     :init
-    (add-hook 'completion-at-point-function #'cape-dabbrev)
+    (add-hook 'completion-at-point-functions #'cape-dabbrev)
     (add-hook 'completion-at-point-functions #'cape-file)
+    (add-hook 'completion-at-point-functions #'cape-keyword)
+    (add-hook 'completion-at-point-functions #'cape-elisp-symbol)
     (add-hook 'completion-at-point-functions #'cape-elisp-block))
 
   (use-package nerd-icons-corfu
