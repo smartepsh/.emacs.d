@@ -149,6 +149,13 @@
 #+begin_src emacs-lisp
   (setq use-dialog-box nil)
 #+end_src
+** 禁止 Warning 频繁弹出
+由于使用 =eglot= 导致会有个 deprecated 的 warning ，每次启动 eglot 都会弹出 Warnings buffer ，十分烦人……
+
+#+begin_src emacs-lisp
+  (setq warning-minimum-level :error)
+#+end_src
+
 
 * 辅助代码、方法
 有一些辅助方法，之前存在于本文件中，但一般此类代码更新频率较低、代码量大，所以独立抽出文件管理。
@@ -519,7 +526,6 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
     :init
     (add-hook 'prog-mode-hook 'eglot-ensure)
     :config
-    (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
     (setq completion-category-overrides '((eglot (styles orderless))
                                       (eglot-capf (styles orderless))))
     (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
