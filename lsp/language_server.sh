@@ -1,0 +1,1 @@
+./elixir-ls/language_server.sh
