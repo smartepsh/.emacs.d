@@ -845,7 +845,10 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
   (use-package yasnippet
     :defer t
     :hook (prog-mode . yas-minor-mode)
-    :hook (org-mode . yas-minor-mode))
+    :hook (org-mode . yas-minor-mode)
+    :general
+    (general-define-key
+     "M-y" 'yas-expand))
 
   (use-package yasnippet-snippets
     :defer t
@@ -856,7 +859,7 @@ keypad 模式由 meow 自己提供按键提示，其他提示由 which-key 提�
     :commands (consult-yasnippet)
     :general
     (general-define-key
-     "M-y" 'consult-yasnippet))
+     "M-s-y" 'consult-yasnippet))
 
   ;; (use-package yasnippet-capf
   ;;   :after cape
