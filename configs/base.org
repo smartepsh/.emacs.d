@@ -350,6 +350,16 @@ org-mode 用来干嘛呢？对吧？
             (?* . "•")
             (?- . "‣")))
     )
+
+  (use-package org-appear
+    :defer t
+    :quelpa (org-appear :fetcher github :repo "awth13/org-appear" :branch "master")
+    :init
+    (add-hook 'org-mode-hook 'org-appear-mode)
+    :config
+    (setq org-appear-autoemphasis t
+          org-appear-autolinks t
+          org-appear-autosubmarkers t))
 #+end_src
 
 ** Citar & Bibtex
