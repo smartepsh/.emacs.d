@@ -340,14 +340,15 @@ org-mode 用来干嘛呢？对吧？
           org-tags-column 0
           org-insert-heading-respect-content t
           org-startup-folded t
-          org-modern-star '("☯" "☰" "☱" "☲" "☳" "☴" "☵" "☶" "☷")
+          org-modern-star 'replace
+          org-modern-replace-stars '("☯" "☰" "☱" "☲" "☳" "☴" "☵" "☶" "☷")
           ;; 保持缩进，默认为 hide-leading ，会将各级 heading 对齐，并不是期待的效果。
           ;; org-modern-hide-stars "  "
           org-modern-hide-stars 'leading
           org-modern-list
           '(;; (?- . "-")
-            (?- . "•")
-            (?* . "‣")))
+            (?* . "•")
+            (?- . "‣")))
     )
 #+end_src
 
