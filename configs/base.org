@@ -178,6 +178,8 @@ org-mode 用来干嘛呢？对吧？
   (use-package nov-xwidget
     :quelpa (nov-xwidget :fetcher github :repo "chenyanming/nov-xwidget" :branch "main")
     :after nov
+    :init
+    (setq nov-xwidget-header-function nil)
     :config
     (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files))
 #+end_src
