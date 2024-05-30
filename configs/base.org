@@ -1084,7 +1084,7 @@ skim 链接只支持到 page 级别，无法定位 note 。
 
 install =epdfinfo= server by run =pdf-tools-install .=
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package pdf-tools
     :config
     (setq pdf-view-selection-style 'glyph
