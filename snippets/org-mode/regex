@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: regex
+# key: reg
+# --
+
+#+begin_src emacs-lisp :post hl-regexp(regexp = *this*)
+  ${}
+#+end_src
