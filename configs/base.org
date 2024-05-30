@@ -35,7 +35,7 @@
       (when org-inline-image-overlays
         (org-redisplay-inline-images)))
     (add-hook 'org-babel-after-execute-hook 'shk-fix-inline-images)
-    (add-hook 'org-cycle-hook #'org-display-subtree-inline-images)
+    (add-hook 'org-cycle-hook 'org-display-subtree-inline-images)
     (add-to-list 'org-export-backends 'md)
     (setq org-todo-keywords '((sequence "TODO(t/!)" "DOING(i/!)" "|" "DONE(d/!)" "CANCELED(c@)"))
           ;; org-default-notes-file org-agenda-file
@@ -359,7 +359,7 @@ org-mode 用来干嘛呢？对吧？
                 "nf-fa-file_o"
                 :face 'nerd-icons-green
                 :v-adjust -0.1)
-       :function #'citar-has-files
+       :function 'citar-has-files
        :padding "  " ; need this because the default padding is too low for these icons
        :tag "has:files"))
     (defvar citar-indicator-links-icons
@@ -368,7 +368,7 @@ org-mode 用来干嘛呢？对吧？
                 "nf-fa-link"
                 :face 'nerd-icons-orange
                 :v-adjust 0.01)
-       :function #'citar-has-links
+       :function 'citar-has-links
        :padding "  "
        :tag "has:links"))
     (defvar citar-indicator-notes-icons
@@ -377,7 +377,7 @@ org-mode 用来干嘛呢？对吧？
                 "nf-cod-note"
                 :face 'nerd-icons-blue
                 :v-adjust -0.3)
-       :function #'citar-has-notes
+       :function 'citar-has-notes
        :padding "    "
        :tag "has:notes"))
     (defvar citar-indicator-cited-icons
@@ -385,7 +385,7 @@ org-mode 用来干嘛呢？对吧？
        :symbol (nerd-icons-faicon
                 "nf-fa-circle_o"
                 :face 'nerd-icon-green)
-       :function #'citar-is-cited
+       :function 'citar-is-cited
        :padding "  "
        :tag "is:cited"))
     (setq citar-bibliography `(,zotero-bib)
@@ -1129,5 +1129,5 @@ install =epdfinfo= server by run =pdf-tools-install .=
               (org-entry-put nil org-noter-property-note-location
                              (org-noter--pretty-print-location location))))))))
     (with-eval-after-load 'pdf-annot
-      (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+      (add-hook 'pdf-annot-activate-handler-functions 'org-noter-pdftools-jump-to-note)))
 #+end_src
